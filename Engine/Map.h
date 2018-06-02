@@ -55,8 +55,8 @@ public:
 				return;
 			}
 
-			Vei2 topLeft = (Vei2)map.Location + (Vei2)((Vec2)Location * map.CellSize);
-			Vei2 bottomRight = topLeft + Vei2( (int)std::ceil( map.CellSize ) - 1, (int)std::ceil( map.CellSize ) - 1 );
+			Vei2 topLeft( (int)std::ceil( map.Location.x ) + (int)std::ceil( (float)Location.x * map.CellSize ), (int)std::ceil( map.Location.y ) + (int)std::ceil( (float)Location.y * map.CellSize ) );
+			Vei2 bottomRight( (int)std::ceil( map.Location.x ) + (int)std::ceil( (float)(Location.x + 1) * map.CellSize ) - 1, (int)std::ceil( map.Location.y ) + (int)std::ceil( (float)(Location.y + 1) * map.CellSize ) - 1 );
 			gfx.DrawBox( topLeft, bottomRight, Colour );
 		}
 
