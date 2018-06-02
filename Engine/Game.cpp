@@ -25,7 +25,7 @@ Game::Game( MainWindow& wnd )
 	:
 	wnd( wnd ),
 	gfx( wnd ),
-	Map( 50, 40, Vec2( 80.0f, 60.0f ) )
+	Map( 140, 80, Vec2( 0.0f, 0.0f ) )
 {
 }
 
@@ -39,45 +39,7 @@ void Game::Go()
 
 void Game::UpdateModel()
 {
-	while ( !wnd.mouse.IsEmpty() )
-	{
-		Mouse::Event e = wnd.mouse.Read();
-		Mouse::Event::Type meType = e.GetType();
-
-		switch ( meType )
-		{
-		case Mouse::Event::Type::LPress:
-			Map.Click( e.GetPos() );
-			break;
-		case Mouse::Event::Type::Move:
-			if ( e.LeftIsPressed() )
-			{
-				Map.Click( e.GetPos() );
-			}
-
-			if ( e.MiddleIsPressed() )
-			{
-				const Vei2 temp = e.GetPos();
-				const Vei2 delta = temp - MMouseButtonLocation;
-				MMouseButtonLocation = temp;
-				Map.Move( (Vec2)delta );
-			}
-			break;
-		case Mouse::Event::Type::MPress:
-			MMouseButtonLocation = e.GetPos();
-			break;
-		case Mouse::Event::Type::WheelUp:
-		case Mouse::Event::Type::WheelDown:
-		{
-			ZoomLevel *= (meType == Mouse::Event::Type::WheelUp ? ZoomFactor : ZoomFactorInverse);
-			ZoomLevel = std::max( std::min( ZoomLevel, Game::MaximumZoomLevel ), Game::MinimumZoomLevel );
-			Map.Zoom( (Vec2)e.GetPos(), ZoomLevel );
-		}
-		break;
-		default:
-			break;
-		}
-	}
+	Map.DoMouseEvents( wnd.mouse );
 }
 
 void Game::ComposeFrame()

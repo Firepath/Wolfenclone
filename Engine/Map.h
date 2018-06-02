@@ -1,14 +1,27 @@
 #pragma once
 
+#define NOMINMAX
+
 #include <unordered_map>
 
 #include "Colors.h"
 #include "Graphics.h"
+#include "Mouse.h"
 #include "Vec2.h"
 
 class Map
 {
 public:
+	struct MouseInfo
+	{
+		// In Grid Coordinates
+		Vei2 HoverGridLocation = Vei2( -1, -1 );
+		Vei2 LMouseButtonGridLocation = Vei2( -1, -1 );
+
+		// In Screen Coordinates
+		Vei2 MMouseButtonLocation = Vei2( -1, -1 );
+	};
+
 	class Cell
 	{
 	public:
@@ -16,6 +29,11 @@ public:
 			:
 			Location( location )
 		{
+		}
+
+		void Clear()
+		{
+			Colour = Colors::Black;
 		}
 
 		void Click()
@@ -26,7 +44,7 @@ public:
 			}
 			else
 			{
-				Colour = Colors::Yellow;
+				Colour.SetB( std::max( 0, (int)Colour.GetB() - 20 ) );
 			}
 		}
 
@@ -54,14 +72,20 @@ public:
 public:
 	Map( const int width, const int height, const Vec2& location );
 
-	void Click( const Vei2& clickLocation );
 	void Draw( Graphics& gfx );
+	void DoMouseEvents( Mouse& mouse );
 	void Move( const Vec2& delta );
 	void Zoom( const Vec2& zoomLocation, const float zoomLevel );
 
 private:
+	static constexpr float MaximumZoomLevel = 10.0f;
+	static constexpr float MinimumZoomLevel = 1.0f / MaximumZoomLevel;
+	static constexpr float ZoomFactor = 1.25;
+	static constexpr float ZoomFactorInverse = 1.0f / ZoomFactor;
 	static constexpr Color GridColour = Colors::DarkGray;
-	static constexpr float DefaultCellSize = 40.0f;
+	static constexpr float DefaultCellSize = 10.0f;
+
+	MouseInfo MouseInf;
 
 	float ZoomLevel = 1.0f;
 	float CellSize;
@@ -70,4 +94,9 @@ private:
 	Vec2 Location;
 
 	std::unordered_map<Vei2, Cell, Vei2::Hasher> Cells;
+
+	void Clear( const Vei2& screenLocation );
+	void Click( const Vei2& screenLocation );
+	bool IsOnGrid( const Vei2& gridLocation );
+	const Vei2 ScreenToGrid( const Vei2& screenLocation );
 };

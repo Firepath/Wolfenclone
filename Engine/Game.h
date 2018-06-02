@@ -44,14 +44,6 @@ private:
 	Graphics gfx;
 	/********************************/
 	/*  User Variables              */
-	static constexpr float MaximumZoomLevel = 10.0f;
-	static constexpr float MinimumZoomLevel = 1.0f / MaximumZoomLevel;
-	static constexpr float ZoomFactor = 1.25;
-	static constexpr float ZoomFactorInverse = 1.0f / ZoomFactor;
-
-	float ZoomLevel = 1.0f;
-
 	Map Map;
-	Vei2 MMouseButtonLocation = Vei2( 0, 0 );
 	/********************************/
 };

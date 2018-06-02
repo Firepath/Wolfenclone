@@ -14,24 +14,9 @@ Map::Map( const int width, const int height, const Vec2& location )
 		{
 			Vei2 l( i, j );
 			Cell c( l );
-			//c.Colour = Colors::White;
 			Cells.emplace( l, c );
 		}
 	}
-}
-
-void Map::Click( const Vei2 & clickLocation )
-{
-	Vec2 gridLocationF = (Vec2)clickLocation - Location;
-	Vei2 gridLocation( (int)(gridLocationF.x / CellSize), (int)(gridLocationF.y / CellSize) );
-	if ( gridLocation.x < 0 || gridLocation.y < 0 ||
-		gridLocation.x >= Width || gridLocation.y >= Height )
-	{
-		// Not on the grid
-		return;
-	}
-
-	Cells.at( gridLocation ).Click();
 }
 
 void Map::Draw( Graphics& gfx )
@@ -84,6 +69,60 @@ void Map::Draw( Graphics& gfx )
 	}
 }
 
+void Map::DoMouseEvents( Mouse & mouse )
+{
+	while ( !mouse.IsEmpty() )
+	{
+		Mouse::Event e = mouse.Read();
+		Mouse::Event::Type meType = e.GetType();
+
+		switch ( meType )
+		{
+		case Mouse::Event::Type::LPress:
+			Click( e.GetPos() );
+			break;
+		case Mouse::Event::Type::LRelease:
+			MouseInf.LMouseButtonGridLocation = Vei2( -1, -1 );
+			break;
+		case Mouse::Event::Type::Move:
+			if ( e.LeftIsPressed() )
+			{
+				Click( e.GetPos() );
+			}
+
+			if ( e.MiddleIsPressed() )
+			{
+				const Vei2 temp = e.GetPos();
+				const Vei2 delta = temp - MouseInf.MMouseButtonLocation;
+				MouseInf.MMouseButtonLocation = temp;
+				Move( (Vec2)delta );
+			}
+
+			if ( e.RightIsPressed() )
+			{
+				Clear( e.GetPos() );
+			}
+			break;
+		case Mouse::Event::Type::MPress:
+			MouseInf.MMouseButtonLocation = e.GetPos();
+			break;
+		case Mouse::Event::Type::RPress:
+			Clear( e.GetPos() );
+			break;
+		case Mouse::Event::Type::WheelUp:
+		case Mouse::Event::Type::WheelDown:
+		{
+			float zoomLevel = ZoomLevel * (meType == Mouse::Event::Type::WheelUp ? Map::ZoomFactor : Map::ZoomFactorInverse);
+			zoomLevel = std::max( std::min( zoomLevel, Map::MaximumZoomLevel ), Map::MinimumZoomLevel );
+			Zoom( (Vec2)e.GetPos(), zoomLevel );
+		}
+		break;
+		default:
+			break;
+		}
+	}
+}
+
 void Map::Move( const Vec2 & delta )
 {
 	Location += delta;
@@ -98,4 +137,46 @@ void Map::Zoom( const Vec2& zoomLocation, const float zoomLevel )
 	ZoomLevel = zoomLevel;
 	CellSize = Map::DefaultCellSize * ZoomLevel;
 	Location += deltaLocation;
+}
+
+void Map::Clear( const Vei2& screenLocation )
+{
+	const Vei2 gridLocation = ScreenToGrid( screenLocation );
+	if ( !IsOnGrid( gridLocation ) )
+	{
+		return;
+	}
+
+	Cells.at( gridLocation ).Clear();
+}
+
+void Map::Click( const Vei2& screenLocation )
+{
+	const Vei2 gridLocation = ScreenToGrid( screenLocation );
+	if ( !IsOnGrid( gridLocation ) )
+	{
+		return;
+	}
+
+	if ( gridLocation == MouseInf.LMouseButtonGridLocation )
+	{
+		// Don't want to be automatically clicking the same thing more than once
+		return;
+	}
+
+	MouseInf.LMouseButtonGridLocation = gridLocation;
+	Cells.at( gridLocation ).Click();
+}
+
+bool Map::IsOnGrid( const Vei2& gridLocation )
+{
+	return gridLocation.x >= 0 && gridLocation.y >= 0 &&
+		gridLocation.x < Width && gridLocation.y < Height;
+}
+
+const Vei2 Map::ScreenToGrid( const Vei2& screenLocation )
+{
+	const Vec2 gridLocationF = (Vec2)screenLocation - (Vec2)Location;
+	const Vei2 gridLocation( (int)(gridLocationF.x / CellSize), (int)(gridLocationF.y / CellSize) );
+	return gridLocation;
 }
