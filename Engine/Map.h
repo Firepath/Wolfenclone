@@ -55,8 +55,12 @@ public:
 				return;
 			}
 
-			Vei2 topLeft( (int)std::ceil( map.Location.x ) + (int)std::ceil( (float)Location.x * map.CellSize ), (int)std::ceil( map.Location.y ) + (int)std::ceil( (float)Location.y * map.CellSize ) );
-			Vei2 bottomRight( (int)std::ceil( map.Location.x ) + (int)std::ceil( (float)(Location.x + 1) * map.CellSize ) - 1, (int)std::ceil( map.Location.y ) + (int)std::ceil( (float)(Location.y + 1) * map.CellSize ) - 1 );
+			const Vei2 mapScreenLocation = map.ScreenLocation();
+
+			//Vei2 topLeft( (int)std::ceil( map.Location.x ) + (int)std::ceil( (float)Location.x * map.CellSize ), (int)std::ceil( map.Location.y ) + (int)std::ceil( (float)Location.y * map.CellSize ) );
+			//Vei2 bottomRight( (int)std::ceil( map.Location.x ) + (int)std::ceil( (float)(Location.x + 1) * map.CellSize ) - 1, (int)std::ceil( map.Location.y ) + (int)std::ceil( (float)(Location.y + 1) * map.CellSize ) - 1 );
+			Vei2 topLeft = mapScreenLocation + Vei2( (int)std::ceil( (float)Location.x * map.CellSize ), (int)std::ceil( (float)Location.y * map.CellSize ) );
+			Vei2 bottomRight = mapScreenLocation + Vei2( (int)std::ceil( (float)(Location.x + 1) * map.CellSize ) - 1, (int)std::ceil( (float)(Location.y + 1) * map.CellSize ) - 1 );
 			gfx.DrawBox( topLeft, bottomRight, Colour );
 		}
 
@@ -76,7 +80,7 @@ public:
 	void Draw( Graphics& gfx );
 	void DoMouseEvents( Mouse& mouse );
 	void Move( const Vec2& delta );
-	void Zoom( const Vec2& zoomLocation, const float zoomLevel );
+	void Zoom( const Vec2& zoomLocation, const bool zoomingIn );
 
 private:
 	static constexpr float MaximumZoomLevel = 10.0f;
@@ -86,6 +90,7 @@ private:
 	static constexpr Color GridBorderColour = Colors::Gray;
 	static constexpr Color GridColour = Colors::DarkGray;
 	static constexpr float DefaultCellSize = 8.0f;
+	static constexpr float MinimumCellSize = 2.0f;
 
 	MouseInfo MouseInf;
 
@@ -100,5 +105,6 @@ private:
 	void Clear( const Vei2& screenLocation );
 	void Click( const Vei2& screenLocation );
 	bool IsOnGrid( const Vei2& gridLocation );
+	const Vei2 ScreenLocation() const;
 	const Vei2 ScreenToGrid( const Vei2& screenLocation );
 };

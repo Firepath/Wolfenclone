@@ -117,9 +117,7 @@ void Map::DoMouseEvents( Mouse & mouse )
 		case Mouse::Event::Type::WheelUp:
 		case Mouse::Event::Type::WheelDown:
 		{
-			float zoomLevel = ZoomLevel * (meType == Mouse::Event::Type::WheelUp ? Map::ZoomFactor : Map::ZoomFactorInverse);
-			zoomLevel = std::max( std::min( zoomLevel, Map::MaximumZoomLevel ), Map::MinimumZoomLevel );
-			Zoom( (Vec2)e.GetPos(), zoomLevel );
+			Zoom( (Vec2)e.GetPos(), meType == Mouse::Event::Type::WheelUp );
 		}
 		break;
 		default:
@@ -133,14 +131,27 @@ void Map::Move( const Vec2 & delta )
 	Location += delta;
 }
 
-void Map::Zoom( const Vec2& zoomLocation, const float zoomLevel )
+void Map::Zoom( const Vec2& zoomLocation, const bool zoomingIn )
 {
+	float zoomLevel = ZoomLevel * (zoomingIn ? Map::ZoomFactor : Map::ZoomFactorInverse);
+	zoomLevel = std::max( std::min( zoomLevel, Map::MaximumZoomLevel ), Map::MinimumZoomLevel );
+	const float newCellSize = std::max( Map::DefaultCellSize * zoomLevel, Map::MinimumCellSize );
+
+	if ( newCellSize == CellSize )
+	{
+		// No zooming, nothing to do
+		return;
+	}
+
+	const float ratio = newCellSize / CellSize;
+	zoomLevel = ratio * ZoomLevel;
+
 	const Vec2 oldDistance = Location - zoomLocation;
-	const Vec2 newDistance = oldDistance * (zoomLevel / ZoomLevel);
+	const Vec2 newDistance = oldDistance * ratio;
 	const Vec2 deltaLocation = newDistance - oldDistance;
 
 	ZoomLevel = zoomLevel;
-	CellSize = Map::DefaultCellSize * ZoomLevel;
+	CellSize = newCellSize;
 	Location += deltaLocation;
 }
 
@@ -177,6 +188,11 @@ bool Map::IsOnGrid( const Vei2& gridLocation )
 {
 	return gridLocation.x >= 0 && gridLocation.y >= 0 &&
 		gridLocation.x < Width && gridLocation.y < Height;
+}
+
+const Vei2 Map::ScreenLocation() const
+{
+	return Vei2( std::ceil( Location.x ), std::ceil( Location.y ) );
 }
 
 const Vei2 Map::ScreenToGrid( const Vei2& screenLocation )
