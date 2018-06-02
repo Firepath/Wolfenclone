@@ -25,7 +25,7 @@ Game::Game( MainWindow& wnd )
 	:
 	wnd( wnd ),
 	gfx( wnd ),
-	Map( 20, 10, Vei2( 80, 60 ) )
+	Map( 20, 10, Vec2( 80.0f, 60.0f ) )
 {
 }
 
@@ -39,6 +39,18 @@ void Game::Go()
 
 void Game::UpdateModel()
 {
+	while ( !wnd.mouse.IsEmpty() )
+	{
+		Mouse::Event e = wnd.mouse.Read();
+		Mouse::Event::Type meType = e.GetType();
+
+		if ( meType == Mouse::Event::Type::WheelUp || meType == Mouse::Event::Type::WheelDown )
+		{
+			ZoomLevel *= (meType == Mouse::Event::Type::WheelUp ? ZoomFactor : ZoomFactorInverse);
+			ZoomLevel = std::max( std::min( ZoomLevel, Game::MaximumZoomLevel ), Game::MinimumZoomLevel );
+			Map.Zoom( ZoomLevel );
+		}
+	}
 }
 
 void Game::ComposeFrame()

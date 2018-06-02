@@ -44,8 +44,12 @@ private:
 	Graphics gfx;
 	/********************************/
 	/*  User Variables              */
-	const int MapWidth = 20;
-	const int MapHeight = 10;
+	static constexpr float MaximumZoomLevel = 10.0f;
+	static constexpr float MinimumZoomLevel = 1.0f / MaximumZoomLevel;
+	static constexpr float ZoomFactor = 1.25;
+	static constexpr float ZoomFactorInverse = 1.0f / ZoomFactor;
+
+	float ZoomLevel = 1.0f;
 
 	MapGrid Map;
 	/********************************/
