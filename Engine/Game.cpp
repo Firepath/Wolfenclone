@@ -44,11 +44,30 @@ void Game::UpdateModel()
 		Mouse::Event e = wnd.mouse.Read();
 		Mouse::Event::Type meType = e.GetType();
 
-		if ( meType == Mouse::Event::Type::WheelUp || meType == Mouse::Event::Type::WheelDown )
+		switch ( meType )
+		{
+		case Mouse::Event::Type::WheelUp:
+		case Mouse::Event::Type::WheelDown:
 		{
 			ZoomLevel *= (meType == Mouse::Event::Type::WheelUp ? ZoomFactor : ZoomFactorInverse);
 			ZoomLevel = std::max( std::min( ZoomLevel, Game::MaximumZoomLevel ), Game::MinimumZoomLevel );
 			Map.Zoom( (Vec2)e.GetPos(), ZoomLevel );
+		}
+		break;
+		case Mouse::Event::Type::MPress:
+			MMouseButtonLocation = e.GetPos();
+			break;
+		case Mouse::Event::Type::Move:
+			if ( e.MiddleIsPressed() )
+			{
+				const Vei2 temp = e.GetPos();
+				const Vei2 delta = temp - MMouseButtonLocation;
+				MMouseButtonLocation = temp;
+				Map.Move( (Vec2)delta );
+			}
+			break;
+		default:
+			break;
 		}
 	}
 }

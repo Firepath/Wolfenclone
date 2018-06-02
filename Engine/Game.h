@@ -52,5 +52,6 @@ private:
 	float ZoomLevel = 1.0f;
 
 	MapGrid Map;
+	Vei2 MMouseButtonLocation = Vei2( 0, 0 );
 	/********************************/
 };
