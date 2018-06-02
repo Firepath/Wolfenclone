@@ -59,6 +59,7 @@ public:
 	}
 	void PutPixel( int x,int y,Color c );
 	void DrawLine( Vei2 p1, Vei2 p2, Color colour );
+	void DrawBox( Vei2 topLeft, Vei2 bottomRight, Color colour );
 	void DrawBoxBorder( Vei2 topLeft, Vei2 bottomRight, Color colour );
 	~Graphics();
 private:

@@ -376,6 +376,25 @@ void Graphics::DrawLine( Vei2 p1, Vei2 p2, Color colour )
 	}
 }
 
+void Graphics::DrawBox( Vei2 topLeft, Vei2 bottomRight, Color colour )
+{
+	assert( bottomRight.x - topLeft.x > 0 );
+	assert( bottomRight.y - topLeft.y > 0 );
+
+	int left = std::max( topLeft.x, 0 );
+	int right = std::min( bottomRight.x, ScreenWidth - 1 );
+	int top = std::max( topLeft.y, 0 );
+	int bottom = std::min( bottomRight.y, ScreenHeight - 1 );
+
+	for ( int j = top; j <= bottom; j++ )
+	{
+		for ( int i = left; i <= right; i++ )
+		{
+			PutPixel( i, j, colour );
+		}
+	}
+}
+
 void Graphics::DrawBoxBorder( Vei2 topLeft, Vei2 bottomRight, Color colour )
 {
 	assert( bottomRight.x - topLeft.x > 0 );
