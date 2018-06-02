@@ -27,6 +27,19 @@ template <typename T>
 class _Vec2
 {
 public:
+	struct Hasher
+	{
+		size_t operator()( const _Vec2<T>& vec ) const
+		{
+			std::hash<T> hasher;
+			auto hashX = hasher( vec.x );
+			auto hashY = hasher( vec.y );
+
+			hashX ^= hashY + 0x9e3779b9 + (hashX << 6) + (hashX >> 2);
+			return hashX;
+		}
+	};
+
 	_Vec2()
 	{}
 	_Vec2( T x,T y )
