@@ -83,6 +83,7 @@ private:
 	static constexpr float MinimumZoomLevel = 1.0f / MaximumZoomLevel;
 	static constexpr float ZoomFactor = 1.25;
 	static constexpr float ZoomFactorInverse = 1.0f / ZoomFactor;
+	static constexpr Color GridBorderColour = Colors::Gray;
 	static constexpr Color GridColour = Colors::DarkGray;
 	static constexpr float DefaultCellSize = 10.0f;
 

@@ -54,16 +54,16 @@ void Map::Draw( Graphics& gfx )
 
 	Vei2 topLeft = (Vei2)Location;
 	Vei2 bottomRight = Vei2( (int)Location.x + (int)std::ceil( Width * CellSize ) - 1, (int)Location.y + (int)std::ceil( Height * CellSize ) - 1 );
-	gfx.DrawBoxBorder( topLeft, bottomRight, Map::GridColour );
+	gfx.DrawBoxBorder( topLeft, bottomRight, Map::GridBorderColour );
 
-	for ( int i = 0; i < Width; i++ )
+	for ( int i = 1; i < Width; i++ )
 	{
 		Vei2 top = Vei2( (int)(i * CellSize), 0 ) + (Vei2)Location;
 		Vei2 bottom = Vei2( (int)(i * CellSize), (int)(Height * CellSize) - 1 ) + (Vei2)Location;
 		gfx.DrawLine( top, bottom, Map::GridColour );
 	}
 
-	for ( int j = 0; j < Height; j++ )
+	for ( int j = 1; j < Height; j++ )
 	{
 		Vei2 left = Vei2( 0, (int)(j * CellSize) ) + (Vei2)Location;
 		Vei2 right = Vei2( (int)(Width * CellSize) - 1, (int)(j * CellSize) ) + (Vei2)Location;
