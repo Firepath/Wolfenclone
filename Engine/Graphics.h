@@ -24,6 +24,8 @@
 #include "ChiliException.h"
 #include "Colors.h"
 
+#include "Vec2.h"
+
 class Graphics
 {
 public:
@@ -56,6 +58,8 @@ public:
 		PutPixel( x,y,{ unsigned char( r ),unsigned char( g ),unsigned char( b ) } );
 	}
 	void PutPixel( int x,int y,Color c );
+	void DrawLine( Vei2 p1, Vei2 p2, Color colour );
+	void DrawBoxBorder( Vei2 topLeft, Vei2 bottomRight, Color colour );
 	~Graphics();
 private:
 	Microsoft::WRL::ComPtr<IDXGISwapChain>				pSwapChain;

@@ -26,6 +26,8 @@
 #include <string>
 #include <array>
 
+#include <limits>
+
 // Ignore the intellisense error "cannot open source file" for .shh files.
 // They will be created during the build sequence before the preprocessor runs.
 namespace FramebufferShaders
@@ -314,6 +316,84 @@ void Graphics::PutPixel( int x,int y,Color c )
 	assert( y >= 0 );
 	assert( y < int( Graphics::ScreenHeight ) );
 	pSysBuffer[Graphics::ScreenWidth * y + x] = c;
+}
+
+void Graphics::DrawLine( Vei2 p1, Vei2 p2, Color colour )
+{
+	// Same point?
+	//if ( p1 == p2 )
+	//{
+	//	// Draw a pixel and return - this also ensure m never divides by zero
+	//	PutPixel( p1.x, p1.y, colour );
+	//	return;
+	//}
+
+	if ( p1.x > p2.x )
+	{
+		std::swap( p1, p2 );
+	}
+
+	float m = std::numeric_limits<float>::max();
+	if ( p1.x != p2.x )
+	{
+		m = (p2.y - p1.y) / (p2.x - p1.x);
+	}
+
+	if ( abs( m ) > 1.0f )
+	{
+		if ( p1.y > p2.y )
+		{
+			std::swap( p1, p2 );
+		}
+
+		m = 0.0f;
+		if ( p2.y != p1.y )
+		{
+			m = (p2.x - p1.x) / (p2.y - p1.y);
+		}
+
+		float c = p1.x - m * p1.y;
+
+		int startY = std::max( p1.y, 0 );
+		int endY = std::min( p2.y, Graphics::ScreenHeight - 1 );
+
+		int y = startY;
+		float x = m * startY + c;
+		do
+		{
+			PutPixel( (int)x, y, colour );
+			x += m;
+		} while ( ++y <= endY );
+	}
+	else
+	{
+		float c = p1.y - m * p1.x;
+
+		int startX = std::max( p1.x, 0 );
+		int endX = std::min( p2.x, Graphics::ScreenWidth - 1 );
+
+		int x = startX;
+		float y = m * startX + c;
+		do
+		{
+			PutPixel( x, (int)y, colour );
+			y += m;
+		} while ( ++x <= endX );
+	}
+}
+
+void Graphics::DrawBoxBorder( Vei2 topLeft, Vei2 bottomRight, Color colour )
+{
+	assert( bottomRight.x - topLeft.x > 0 );
+	assert( bottomRight.y - topLeft.y > 0 );
+
+	Vei2 topRight = Vei2( bottomRight.x, topLeft.y );
+	Vei2 bottomLeft = Vei2( topLeft.x, bottomRight.y );
+
+	DrawLine( topLeft, topRight, colour );
+	DrawLine( topLeft, bottomLeft, colour );
+	DrawLine( topRight, bottomRight, colour );
+	DrawLine( bottomLeft, bottomRight, colour );
 }
 
 
