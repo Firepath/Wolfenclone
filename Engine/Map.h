@@ -37,8 +37,8 @@ public:
 				return;
 			}
 
-			Vei2 location = (Vei2)map.Location + Location * map.CellSize;
-			gfx.DrawBox( location, location + Vei2( map.CellSize, map.CellSize ), Colour );
+			Vei2 location = (Vei2)(map.Location + (Vec2)Location * map.CellSize);
+			gfx.DrawBox( location, location + Vei2( (int)map.CellSize, (int)map.CellSize ), Colour );
 		}
 
 		const Vei2& GetLocation() const
@@ -61,10 +61,10 @@ public:
 
 private:
 	static constexpr Color GridColour = Colors::DarkGray;
-	static constexpr int DefaultCellSize = 40;
+	static constexpr float DefaultCellSize = 40.0f;
 
 	float ZoomLevel = 1.0f;
-	int CellSize;
+	float CellSize;
 	const int Width;
 	const int Height;
 	Vec2 Location;

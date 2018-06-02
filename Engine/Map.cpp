@@ -38,8 +38,8 @@ void Map::Draw( Graphics& gfx )
 {
 	for ( int j = 0; j < Height; j++ )
 	{
-		const int y = (int)Location.y + j * CellSize;
-		const int y1 = y + CellSize - 1;
+		const int y = (int)(Location.y + j * CellSize);
+		const int y1 = y + (int)CellSize - 1;
 		if ( y1 < 0 )
 		{
 			continue;
@@ -51,8 +51,8 @@ void Map::Draw( Graphics& gfx )
 
 		for ( int i = 0; i < Width; i++ )
 		{
-			const int x = (int)Location.x + i * CellSize;
-			const int x1 = x + CellSize - 1;
+			const int x = (int)(Location.x + i * CellSize);
+			const int x1 = x + (int)CellSize - 1;
 			if ( x1 < 0 )
 			{
 				continue;
@@ -67,19 +67,19 @@ void Map::Draw( Graphics& gfx )
 		}
 	}
 
-	gfx.DrawBoxBorder( (Vei2)Location, Vei2( (int)Location.x + Width * CellSize - 1, (int)Location.y + Height * CellSize - 1 ), Map::GridColour );
+	gfx.DrawBoxBorder( (Vei2)Location, Vei2( (int)(Location.x + Width * CellSize) - 1, (int)(Location.y + Height * CellSize) - 1 ), Map::GridColour );
 
 	for ( int i = 0; i < Width; i++ )
 	{
-		Vei2 top = Vei2( i * CellSize, 0 ) + (Vei2)Location;
-		Vei2 bottom = Vei2( i * CellSize, Height * CellSize - 1 ) + (Vei2)Location;
+		Vei2 top = Vei2( (int)(i * CellSize), 0 ) + (Vei2)Location;
+		Vei2 bottom = Vei2( (int)(i * CellSize), (int)(Height * CellSize) - 1 ) + (Vei2)Location;
 		gfx.DrawLine( top, bottom, Map::GridColour );
 	}
 
 	for ( int j = 0; j < Height; j++ )
 	{
-		Vei2 left = Vei2( 0, j * CellSize ) + (Vei2)Location;
-		Vei2 right = Vei2( Width * CellSize - 1, j * CellSize ) + (Vei2)Location;
+		Vei2 left = Vei2( 0, (int)(j * CellSize) ) + (Vei2)Location;
+		Vei2 right = Vei2( (int)(Width * CellSize) - 1, (int)(j * CellSize) ) + (Vei2)Location;
 		gfx.DrawLine( left, right, Map::GridColour );
 	}
 }
@@ -96,6 +96,6 @@ void Map::Zoom( const Vec2& zoomLocation, const float zoomLevel )
 	const Vec2 deltaLocation = newDistance - oldDistance;
 
 	ZoomLevel = zoomLevel;
-	CellSize = (int)(Map::DefaultCellSize * ZoomLevel);
+	CellSize = Map::DefaultCellSize * ZoomLevel;
 	Location += deltaLocation;
 }
