@@ -320,14 +320,6 @@ void Graphics::PutPixel( int x,int y,Color c )
 
 void Graphics::DrawLine( Vei2 p1, Vei2 p2, Color colour )
 {
-	// Same point?
-	//if ( p1 == p2 )
-	//{
-	//	// Draw a pixel and return - this also ensure m never divides by zero
-	//	PutPixel( p1.x, p1.y, colour );
-	//	return;
-	//}
-
 	if ( p1.x > p2.x )
 	{
 		std::swap( p1, p2 );
@@ -359,11 +351,12 @@ void Graphics::DrawLine( Vei2 p1, Vei2 p2, Color colour )
 
 		int y = startY;
 		float x = m * startY + c;
-		do
+		while ( (int)x >= 0 && (int)x < Graphics::ScreenWidth && y <= endY )
 		{
 			PutPixel( (int)x, y, colour );
 			x += m;
-		} while ( ++y <= endY );
+			y++;
+		}
 	}
 	else
 	{
@@ -374,11 +367,12 @@ void Graphics::DrawLine( Vei2 p1, Vei2 p2, Color colour )
 
 		int x = startX;
 		float y = m * startX + c;
-		do
+		while ( (int)y >= 0 && (int)y < Graphics::ScreenHeight && x <= endX )
 		{
 			PutPixel( x, (int)y, colour );
 			y += m;
-		} while ( ++x <= endX );
+			x++;
+		}
 	}
 }
 
