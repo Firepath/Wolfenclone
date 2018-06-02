@@ -37,7 +37,7 @@ public:
 				return;
 			}
 
-			Vei2 location = (Vei2)(map.Location + (Vec2)Location * map.CellSize);
+			Vei2 location = (Vei2)map.Location + (Vei2)((Vec2)Location * map.CellSize);
 			gfx.DrawBox( location, location + Vei2( (int)map.CellSize, (int)map.CellSize ), Colour );
 		}
 
