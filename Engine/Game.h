@@ -24,7 +24,7 @@
 #include "Mouse.h"
 #include "Graphics.h"
 
-#include "MapGrid.h"
+#include "Map.h"
 
 class Game
 {
@@ -51,7 +51,7 @@ private:
 
 	float ZoomLevel = 1.0f;
 
-	MapGrid Map;
+	Map Map;
 	Vei2 MMouseButtonLocation = Vei2( 0, 0 );
 	/********************************/
 };
