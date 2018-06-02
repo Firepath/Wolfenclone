@@ -378,8 +378,8 @@ void Graphics::DrawLine( Vei2 p1, Vei2 p2, Color colour )
 
 void Graphics::DrawBox( Vei2 topLeft, Vei2 bottomRight, Color colour )
 {
-	assert( bottomRight.x - topLeft.x > 0 );
-	assert( bottomRight.y - topLeft.y > 0 );
+	assert( bottomRight.x >= topLeft.x );
+	assert( bottomRight.y >= topLeft.y );
 
 	int left = std::max( topLeft.x, 0 );
 	int right = std::min( bottomRight.x, ScreenWidth - 1 );
@@ -397,8 +397,8 @@ void Graphics::DrawBox( Vei2 topLeft, Vei2 bottomRight, Color colour )
 
 void Graphics::DrawBoxBorder( Vei2 topLeft, Vei2 bottomRight, Color colour )
 {
-	assert( bottomRight.x - topLeft.x > 0 );
-	assert( bottomRight.y - topLeft.y > 0 );
+	assert( bottomRight.x >= topLeft.x );
+	assert( bottomRight.y >= topLeft.y );
 
 	Vei2 topRight = Vei2( bottomRight.x, topLeft.y );
 	Vei2 bottomLeft = Vei2( topLeft.x, bottomRight.y );

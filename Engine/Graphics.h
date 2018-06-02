@@ -78,5 +78,5 @@ private:
 	Color*                                              pSysBuffer = nullptr;
 public:
 	static constexpr int ScreenWidth = 1400;
-	static constexpr int ScreenHeight = 900;
+	static constexpr int ScreenHeight = 800;
 };
