@@ -85,7 +85,7 @@ private:
 	static constexpr float ZoomFactorInverse = 1.0f / ZoomFactor;
 	static constexpr Color GridBorderColour = Colors::Gray;
 	static constexpr Color GridColour = Colors::DarkGray;
-	static constexpr float DefaultCellSize = 10.0f;
+	static constexpr float DefaultCellSize = 8.0f;
 
 	MouseInfo MouseInf;
 

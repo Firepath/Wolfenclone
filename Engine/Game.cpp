@@ -25,7 +25,7 @@ Game::Game( MainWindow& wnd )
 	:
 	wnd( wnd ),
 	gfx( wnd ),
-	Map( 140, 80, Vec2( 0.0f, 0.0f ) )
+	Map( 180, 100, Vec2( 0.0f, 0.0f ) )
 {
 }
 
