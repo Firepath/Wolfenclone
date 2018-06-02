@@ -24,6 +24,8 @@
 #include "Mouse.h"
 #include "Graphics.h"
 
+#include "MapGrid.h"
+
 class Game
 {
 public:
@@ -42,5 +44,9 @@ private:
 	Graphics gfx;
 	/********************************/
 	/*  User Variables              */
+	const int MapWidth = 20;
+	const int MapHeight = 10;
+
+	MapGrid Map;
 	/********************************/
 };
