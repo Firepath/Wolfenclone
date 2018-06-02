@@ -328,7 +328,7 @@ void Graphics::DrawLine( Vei2 p1, Vei2 p2, Color colour )
 	float m = std::numeric_limits<float>::max();
 	if ( p1.x != p2.x )
 	{
-		m = (p2.y - p1.y) / (p2.x - p1.x);
+		m = ((float)(p2.y - p1.y)) / (float)(p2.x - p1.x);
 	}
 
 	if ( abs( m ) > 1.0f )
@@ -341,7 +341,7 @@ void Graphics::DrawLine( Vei2 p1, Vei2 p2, Color colour )
 		m = 0.0f;
 		if ( p2.y != p1.y )
 		{
-			m = (p2.x - p1.x) / (p2.y - p1.y);
+			m = ((float)(p2.x - p1.x)) / (float)(p2.y - p1.y);
 		}
 
 		float c = p1.x - m * p1.y;
