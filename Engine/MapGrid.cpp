@@ -34,10 +34,9 @@ void MapGrid::Move( const Vec2 & delta )
 	Location += delta;
 }
 
-void MapGrid::Zoom( const float zoomLevel )
+void MapGrid::Zoom( const Vec2& zoomLocation, const float zoomLevel )
 {
-	const Vec2 screenCentre( (float)Graphics::ScreenWidth / 2.0f, (float)Graphics::ScreenHeight / 2.0f );
-	const Vec2 oldDistance = Location - screenCentre;
+	const Vec2 oldDistance = Location - zoomLocation;
 	const Vec2 newDistance = oldDistance * (zoomLevel / ZoomLevel);
 	const Vec2 deltaLocation = newDistance - oldDistance;
 

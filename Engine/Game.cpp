@@ -48,7 +48,7 @@ void Game::UpdateModel()
 		{
 			ZoomLevel *= (meType == Mouse::Event::Type::WheelUp ? ZoomFactor : ZoomFactorInverse);
 			ZoomLevel = std::max( std::min( ZoomLevel, Game::MaximumZoomLevel ), Game::MinimumZoomLevel );
-			Map.Zoom( ZoomLevel );
+			Map.Zoom( (Vec2)e.GetPos(), ZoomLevel );
 		}
 	}
 }

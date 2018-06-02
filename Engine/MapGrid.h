@@ -10,7 +10,7 @@ public:
 
 	void Draw( Graphics& gfx );
 	void Move( const Vec2& delta );
-	void Zoom( const float zoomLevel );
+	void Zoom( const Vec2& zoomLocation, const float zoomLevel );
 
 private:
 	static constexpr Color GridColour = Colors::DarkGray;
