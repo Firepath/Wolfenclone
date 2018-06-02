@@ -21,6 +21,8 @@
 #pragma once
 #include <queue>
 
+#include "Vec2.h"
+
 class Mouse
 {
 	friend class MainWindow;
@@ -70,7 +72,7 @@ public:
 		{
 			return type;
 		}
-		std::pair<int,int> GetPos() const
+		Vei2 GetPos() const
 		{
 			return{ x,y };
 		}
@@ -95,7 +97,7 @@ public:
 	Mouse() = default;
 	Mouse( const Mouse& ) = delete;
 	Mouse& operator=( const Mouse& ) = delete;
-	std::pair<int,int> GetPos() const;
+	Vei2 GetPos() const;
 	int GetPosX() const;
 	int GetPosY() const;
 	bool LeftIsPressed() const;
