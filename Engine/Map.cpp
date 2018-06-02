@@ -52,7 +52,9 @@ void Map::Draw( Graphics& gfx )
 		}
 	}
 
-	gfx.DrawBoxBorder( (Vei2)Location, Vei2( (int)(Location.x + Width * CellSize) - 1, (int)(Location.y + Height * CellSize) - 1 ), Map::GridColour );
+	Vei2 topLeft = (Vei2)Location;
+	Vei2 bottomRight = Vei2( (int)Location.x + (int)std::ceil( Width * CellSize ) - 1, (int)Location.y + (int)std::ceil( Height * CellSize ) - 1 );
+	gfx.DrawBoxBorder( topLeft, bottomRight, Map::GridColour );
 
 	for ( int i = 0; i < Width; i++ )
 	{

@@ -55,8 +55,9 @@ public:
 				return;
 			}
 
-			Vei2 location = (Vei2)map.Location + (Vei2)((Vec2)Location * map.CellSize);
-			gfx.DrawBox( location, location + Vei2( (int)map.CellSize, (int)map.CellSize ), Colour );
+			Vei2 topLeft = (Vei2)map.Location + (Vei2)((Vec2)Location * map.CellSize);
+			Vei2 bottomRight = topLeft + Vei2( (int)std::ceil( map.CellSize ) - 1, (int)std::ceil( map.CellSize ) - 1 );
+			gfx.DrawBox( topLeft, bottomRight, Colour );
 		}
 
 		const Vei2& GetLocation() const
