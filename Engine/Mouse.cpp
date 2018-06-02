@@ -41,6 +41,11 @@ bool Mouse::LeftIsPressed() const
 	return leftIsPressed;
 }
 
+bool Mouse::MiddleIsPressed() const
+{
+	return middleIsPressed;
+}
+
 bool Mouse::RightIsPressed() const
 {
 	return rightIsPressed;
@@ -102,6 +107,22 @@ void Mouse::OnLeftReleased( int x,int y )
 	leftIsPressed = false;
 
 	buffer.push( Mouse::Event( Mouse::Event::LRelease,*this ) );
+	TrimBuffer();
+}
+
+void Mouse::OnMiddlePressed( int x, int y )
+{
+	middleIsPressed = true;
+
+	buffer.push( Mouse::Event( Mouse::Event::MPress, *this ) );
+	TrimBuffer();
+}
+
+void Mouse::OnMiddleReleased( int x, int y )
+{
+	middleIsPressed = false;
+
+	buffer.push( Mouse::Event( Mouse::Event::MRelease, *this ) );
 	TrimBuffer();
 }
 

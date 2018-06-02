@@ -34,6 +34,8 @@ public:
 		{
 			LPress,
 			LRelease,
+			MPress,
+			MRelease,
 			RPress,
 			RRelease,
 			WheelUp,
@@ -44,6 +46,7 @@ public:
 	private:
 		Type type;
 		bool leftIsPressed;
+		bool middleIsPressed;
 		bool rightIsPressed;
 		int x;
 		int y;
@@ -52,6 +55,7 @@ public:
 			:
 			type( Invalid ),
 			leftIsPressed( false ),
+			middleIsPressed( false ),
 			rightIsPressed( false ),
 			x( 0 ),
 			y( 0 )
@@ -60,6 +64,7 @@ public:
 			:
 			type( type ),
 			leftIsPressed( parent.leftIsPressed ),
+			middleIsPressed( parent.middleIsPressed ),
 			rightIsPressed( parent.rightIsPressed ),
 			x( parent.x ),
 			y( parent.y )
@@ -88,6 +93,10 @@ public:
 		{
 			return leftIsPressed;
 		}
+		bool MiddleIsPressed() const
+		{
+			return middleIsPressed;
+		}
 		bool RightIsPressed() const
 		{
 			return rightIsPressed;
@@ -101,6 +110,7 @@ public:
 	int GetPosX() const;
 	int GetPosY() const;
 	bool LeftIsPressed() const;
+	bool MiddleIsPressed() const;
 	bool RightIsPressed() const;
 	bool IsInWindow() const;
 	Mouse::Event Read();
@@ -115,6 +125,8 @@ private:
 	void OnMouseEnter();
 	void OnLeftPressed( int x,int y );
 	void OnLeftReleased( int x,int y );
+	void OnMiddlePressed( int x, int y );
+	void OnMiddleReleased( int x, int y );
 	void OnRightPressed( int x,int y );
 	void OnRightReleased( int x,int y );
 	void OnWheelUp( int x,int y );
@@ -125,6 +137,7 @@ private:
 	int x;
 	int y;
 	bool leftIsPressed = false;
+	bool middleIsPressed = false;
 	bool rightIsPressed = false;
 	bool isInWindow = false;
 	std::queue<Event> buffer;

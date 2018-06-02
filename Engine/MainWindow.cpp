@@ -192,6 +192,13 @@ LRESULT MainWindow::HandleMsg( HWND hWnd,UINT msg,WPARAM wParam,LPARAM lParam )
 		mouse.OnLeftPressed( x,y );
 		break;
 	}
+	case WM_MBUTTONDOWN:
+	{
+		int x = LOWORD( lParam );
+		int y = HIWORD( lParam );
+		mouse.OnMiddlePressed( x, y );
+		break;
+	}
 	case WM_RBUTTONDOWN:
 	{
 		int x = LOWORD( lParam );
@@ -204,6 +211,13 @@ LRESULT MainWindow::HandleMsg( HWND hWnd,UINT msg,WPARAM wParam,LPARAM lParam )
 		int x = LOWORD( lParam );
 		int y = HIWORD( lParam );
 		mouse.OnLeftReleased( x,y );
+		break;
+	}
+	case WM_MBUTTONUP:
+	{
+		int x = LOWORD( lParam );
+		int y = HIWORD( lParam );
+		mouse.OnMiddleReleased( x, y );
 		break;
 	}
 	case WM_RBUTTONUP:
