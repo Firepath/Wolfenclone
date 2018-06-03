@@ -309,6 +309,15 @@ void Graphics::BeginFrame()
 	memset( pSysBuffer,0u,sizeof( Color ) * Graphics::ScreenHeight * Graphics::ScreenWidth );
 }
 
+Color Graphics::GetPixel( int x, int y ) const
+{
+	assert( x >= 0 );
+	assert( x < int( Graphics::ScreenWidth ) );
+	assert( y >= 0 );
+	assert( y < int( Graphics::ScreenHeight ) );
+	return pSysBuffer[Graphics::ScreenWidth * y + x];
+}
+
 void Graphics::PutPixel( int x,int y,Color c )
 {
 	assert( x >= 0 );
@@ -372,25 +381,6 @@ void Graphics::DrawLine( Vei2 p1, Vei2 p2, Color colour )
 			PutPixel( x, (int)y, colour );
 			y += m;
 			x++;
-		}
-	}
-}
-
-void Graphics::DrawBox( Vei2 topLeft, Vei2 bottomRight, Color colour )
-{
-	assert( bottomRight.x >= topLeft.x );
-	assert( bottomRight.y >= topLeft.y );
-
-	int left = std::max( topLeft.x, 0 );
-	int right = std::min( bottomRight.x, ScreenWidth - 1 );
-	int top = std::max( topLeft.y, 0 );
-	int bottom = std::min( bottomRight.y, ScreenHeight - 1 );
-
-	for ( int j = top; j <= bottom; j++ )
-	{
-		for ( int i = left; i <= right; i++ )
-		{
-			PutPixel( i, j, colour );
 		}
 	}
 }

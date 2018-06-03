@@ -204,7 +204,7 @@ bool Map::IsOnGrid( const Vei2& gridLocation )
 
 const Vei2 Map::ScreenLocation() const
 {
-	return Vei2( std::ceil( Location.x ), std::ceil( Location.y ) );
+	return Vei2( (int)std::ceil( Location.x ), (int)std::ceil( Location.y ) );
 }
 
 const Vei2 Map::ScreenToGrid( const Vei2& screenLocation )

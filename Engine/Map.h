@@ -7,6 +7,7 @@
 #include "Colors.h"
 #include "Graphics.h"
 #include "Mouse.h"
+#include "PixelEffect.h"
 #include "Vec2.h"
 
 class Map
@@ -58,7 +59,8 @@ public:
 			const Vei2 mapScreenLocation = map.ScreenLocation();
 			Vei2 topLeft = mapScreenLocation + Vei2( (int)std::ceil( (float)Location.x * map.CellSize ), (int)std::ceil( (float)Location.y * map.CellSize ) );
 			Vei2 bottomRight = mapScreenLocation + Vei2( (int)std::ceil( (float)(Location.x + 1) * map.CellSize ) - 1, (int)std::ceil( (float)(Location.y + 1) * map.CellSize ) - 1 );
-			gfx.DrawBox( topLeft, bottomRight, Colour );
+			
+			gfx.DrawBox( topLeft, bottomRight, Colour, PixelEffect::Copy() );
 		}
 
 		const Vei2& GetLocation() const
@@ -68,11 +70,12 @@ public:
 
 		void Hover( const Map& map, Graphics& gfx ) const
 		{
-			// TODO: Make this overlay a "brightening" on the cell, no just draw a different colour
 			const Vei2 mapScreenLocation = map.ScreenLocation();
 			Vei2 topLeft = mapScreenLocation + Vei2( (int)std::ceil( (float)Location.x * map.CellSize ), (int)std::ceil( (float)Location.y * map.CellSize ) );
 			Vei2 bottomRight = mapScreenLocation + Vei2( (int)std::ceil( (float)(Location.x + 1) * map.CellSize ) - 1, (int)std::ceil( (float)(Location.y + 1) * map.CellSize ) - 1 );
-			gfx.DrawBox( topLeft, bottomRight, Colors::DarkGray );
+
+			PixelEffect::Transparency effect( Colors::Magenta, 50.0f );
+			gfx.DrawBox( topLeft, bottomRight, Colors::MediumGray, effect );
 		}
 
 	private:
