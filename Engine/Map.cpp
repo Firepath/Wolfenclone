@@ -21,10 +21,12 @@ Map::Map( const int width, const int height, const Vec2& location )
 
 void Map::Draw( Graphics& gfx )
 {
+	const Vei2 screenLocation = ScreenLocation();
+
 	for ( int j = 0; j < Height; j++ )
 	{
-		const int y = (int)(Location.y + j * CellSize);
-		const int y1 = y + (int)CellSize - 1;
+		const int y = screenLocation.y + (int)std::ceil( j * CellSize );
+		const int y1 = screenLocation.y + (int)std::ceil( (j + 1) * CellSize ) - 1;
 		if ( y1 < 0 )
 		{
 			continue;
@@ -36,8 +38,8 @@ void Map::Draw( Graphics& gfx )
 
 		for ( int i = 0; i < Width; i++ )
 		{
-			const int x = (int)(Location.x + i * CellSize);
-			const int x1 = x + (int)CellSize - 1;
+			const int x = screenLocation.x + (int)std::ceil( i * CellSize );
+			const int x1 = screenLocation.x + (int)std::ceil( (i + 1) * CellSize ) - 1;
 			if ( x1 < 0 )
 			{
 				continue;
@@ -51,8 +53,6 @@ void Map::Draw( Graphics& gfx )
 			Cells.at( cellLocation ).Draw( *this, gfx );
 		}
 	}
-
-	const Vei2 screenLocation = ScreenLocation();
 
 	// Grid border
 	Vei2 topLeft = screenLocation;
