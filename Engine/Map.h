@@ -66,6 +66,15 @@ public:
 			return Location;
 		}
 
+		void Hover( const Map& map, Graphics& gfx ) const
+		{
+			// TODO: Make this overlay a "brightening" on the cell, no just draw a different colour
+			const Vei2 mapScreenLocation = map.ScreenLocation();
+			Vei2 topLeft = mapScreenLocation + Vei2( (int)std::ceil( (float)Location.x * map.CellSize ), (int)std::ceil( (float)Location.y * map.CellSize ) );
+			Vei2 bottomRight = mapScreenLocation + Vei2( (int)std::ceil( (float)(Location.x + 1) * map.CellSize ) - 1, (int)std::ceil( (float)(Location.y + 1) * map.CellSize ) - 1 );
+			gfx.DrawBox( topLeft, bottomRight, Colors::DarkGray );
+		}
+
 	private:
 		Color Colour = Colors::Black;
 		Vei2 Location;

@@ -54,6 +54,12 @@ void Map::Draw( Graphics& gfx )
 		}
 	}
 
+	auto cellIt = Cells.find( MouseInf.HoverGridLocation );
+	if ( cellIt != Cells.end() )
+	{
+		cellIt->second.Hover( *this, gfx );
+	}
+
 	// Grid border
 	Vei2 topLeft = screenLocation;
 	Vei2 bottomRight = topLeft + Vei2( (int)std::ceil( Width * CellSize ) - 1, (int)std::ceil( Height * CellSize ) - 1 );
@@ -92,22 +98,28 @@ void Map::DoMouseEvents( Mouse & mouse )
 			MouseInf.LMouseButtonGridLocation = Vei2( -1, -1 );
 			break;
 		case Mouse::Event::Type::Move:
-			if ( e.LeftIsPressed() )
 			{
-				Click( e.GetPos() );
-			}
+				const Vei2 mousePos = e.GetPos();
 
-			if ( e.MiddleIsPressed() )
-			{
-				const Vei2 temp = e.GetPos();
-				const Vei2 delta = temp - MouseInf.MMouseButtonLocation;
-				MouseInf.MMouseButtonLocation = temp;
-				Move( (Vec2)delta );
-			}
+				MouseInf.HoverGridLocation = ScreenToGrid( mousePos );
 
-			if ( e.RightIsPressed() )
-			{
-				Clear( e.GetPos() );
+				if ( e.LeftIsPressed() )
+				{
+					Click( mousePos );
+				}
+
+				if ( e.MiddleIsPressed() )
+				{
+					const Vei2 temp = mousePos;
+					const Vei2 delta = temp - MouseInf.MMouseButtonLocation;
+					MouseInf.MMouseButtonLocation = temp;
+					Move( (Vec2)delta );
+				}
+
+				if ( e.RightIsPressed() )
+				{
+					Clear( mousePos );
+				}
 			}
 			break;
 		case Mouse::Event::Type::MPress:
@@ -198,6 +210,11 @@ const Vei2 Map::ScreenLocation() const
 const Vei2 Map::ScreenToGrid( const Vei2& screenLocation )
 {
 	const Vec2 gridLocationF = (Vec2)screenLocation - (Vec2)Location;
+	if ( gridLocationF.x < 0.0f || gridLocationF.y < 0.0f )
+	{
+		return Vei2( -1, -1 );
+	}
+
 	const Vei2 gridLocation( (int)(gridLocationF.x / CellSize), (int)(gridLocationF.y / CellSize) );
 	return gridLocation;
 }
