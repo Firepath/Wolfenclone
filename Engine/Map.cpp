@@ -118,10 +118,8 @@ void Map::DoMouseEvents( Mouse & mouse )
 			break;
 		case Mouse::Event::Type::WheelUp:
 		case Mouse::Event::Type::WheelDown:
-		{
 			Zoom( (Vec2)e.GetPos(), meType == Mouse::Event::Type::WheelUp );
-		}
-		break;
+			break;
 		default:
 			break;
 		}
