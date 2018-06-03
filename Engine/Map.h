@@ -56,9 +56,6 @@ public:
 			}
 
 			const Vei2 mapScreenLocation = map.ScreenLocation();
-
-			//Vei2 topLeft( (int)std::ceil( map.Location.x ) + (int)std::ceil( (float)Location.x * map.CellSize ), (int)std::ceil( map.Location.y ) + (int)std::ceil( (float)Location.y * map.CellSize ) );
-			//Vei2 bottomRight( (int)std::ceil( map.Location.x ) + (int)std::ceil( (float)(Location.x + 1) * map.CellSize ) - 1, (int)std::ceil( map.Location.y ) + (int)std::ceil( (float)(Location.y + 1) * map.CellSize ) - 1 );
 			Vei2 topLeft = mapScreenLocation + Vei2( (int)std::ceil( (float)Location.x * map.CellSize ), (int)std::ceil( (float)Location.y * map.CellSize ) );
 			Vei2 bottomRight = mapScreenLocation + Vei2( (int)std::ceil( (float)(Location.x + 1) * map.CellSize ) - 1, (int)std::ceil( (float)(Location.y + 1) * map.CellSize ) - 1 );
 			gfx.DrawBox( topLeft, bottomRight, Colour );
