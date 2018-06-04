@@ -51,11 +51,11 @@ public:
 		dword = color.dword;
 		return *this;
 	}
-	bool operator==( const Color& rhs )
+	bool operator==( const Color& rhs ) const
 	{
 		return dword == rhs.dword;
 	}
-	bool operator!=( const Color& rhs )
+	bool operator!=( const Color& rhs ) const
 	{
 		return dword != rhs.dword;
 	}
