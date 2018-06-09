@@ -76,6 +76,7 @@ private:
 
 	std::unordered_map<Vei2, Cell, Vei2::Hasher> Cells;
 
+	const bool IsCellEnclosed( const Vei2& gridLocation ) const;
 	void Clear( const Vei2& screenLocation );
 	void Click( const Vei2& screenLocation );
 	void FindClosedArea( const Vei2& gridLocation );

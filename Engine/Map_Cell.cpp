@@ -8,7 +8,7 @@ Map::Cell::Cell( const Vei2& location )
 
 void Map::Cell::Clear()
 {
-	Colour = Colors::Black;
+	Fill( Colors::Black );
 }
 
 void Map::Cell::Draw( const Map& map, Graphics& gfx ) const
@@ -40,6 +40,11 @@ const bool Map::Cell::Fill( const Color colour )
 {
 	bool empty = Empty();
 	Colour = colour;
+
+	if ( IsEnclosed() && !Empty() )
+	{
+		SetEnclosed( false );
+	}
 
 	return empty;
 }

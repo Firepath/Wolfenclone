@@ -169,6 +169,21 @@ void Map::Zoom( const Vec2& zoomLocation, const bool zoomingIn )
 	Location += deltaLocation;
 }
 
+const bool Map::IsCellEnclosed( const Vei2 & gridLocation ) const
+{
+	const auto left = Cells.find( gridLocation + Vei2( -1, 0 ) );
+	const auto right = Cells.find( gridLocation + Vei2( 1, 0 ) );
+	const auto top = Cells.find( gridLocation + Vei2( 0, -1 ) );
+	const auto bottom = Cells.find( gridLocation + Vei2( 0, 1 ) );
+
+	// If all the surrounding cells are either walls or are enclosed, this cell is enclosed
+	return
+		left != Cells.end() && (left->second.IsEnclosed() || !left->second.Empty()) &&
+		right != Cells.end() && (right->second.IsEnclosed() || !right->second.Empty()) &&
+		top != Cells.end() && (top->second.IsEnclosed() || !top->second.Empty()) &&
+		bottom != Cells.end() && (bottom->second.IsEnclosed() || !bottom->second.Empty());
+}
+
 void Map::Clear( const Vei2& screenLocation )
 {
 	const Vei2 gridLocation = ScreenToGrid( screenLocation );
@@ -177,7 +192,17 @@ void Map::Clear( const Vei2& screenLocation )
 		return;
 	}
 
-	Cells.at( gridLocation ).Clear();
+	Cell& cell = Cells.at( gridLocation );
+	cell.Clear();
+
+	if ( IsCellEnclosed( gridLocation ) )
+	{
+		cell.SetEnclosed( true );
+	}
+	else
+	{
+		// Check for, and clear enclosedness on surrounding cells
+	}
 }
 
 void Map::Click( const Vei2& screenLocation )
@@ -200,10 +225,10 @@ void Map::Click( const Vei2& screenLocation )
 		if ( IsJointFormed( gridLocation ) )
 		{
 			// Fill the various potential enclosed directions
-			FindClosedArea( gridLocation - Vei2( -1, 0 ) );
-			FindClosedArea( gridLocation - Vei2( 1, 0 ) );
-			FindClosedArea( gridLocation - Vei2( 0, -1 ) );
-			FindClosedArea( gridLocation - Vei2( 0, 1 ) );
+			FindClosedArea( gridLocation + Vei2( -1, 0 ) );
+			FindClosedArea( gridLocation + Vei2( 1, 0 ) );
+			FindClosedArea( gridLocation + Vei2( 0, -1 ) );
+			FindClosedArea( gridLocation + Vei2( 0, 1 ) );
 		}
 	}
 }
