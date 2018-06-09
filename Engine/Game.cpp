@@ -39,7 +39,16 @@ void Game::Go()
 
 void Game::UpdateModel()
 {
-	Map.DoMouseEvents( wnd.mouse );
+	DoMouseEvents();
+}
+
+void Game::DoMouseEvents()
+{
+	while ( !wnd.mouse.IsEmpty() )
+	{
+		Mouse::Event e = wnd.mouse.Read();
+		Map.DoMouseEvents( e );
+	}
 }
 
 void Game::ComposeFrame()

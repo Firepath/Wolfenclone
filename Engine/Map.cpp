@@ -84,59 +84,54 @@ void Map::Draw( Graphics& gfx )
 	}
 }
 
-void Map::DoMouseEvents( Mouse & mouse )
+void Map::DoMouseEvents( Mouse::Event& me )
 {
-	while ( !mouse.IsEmpty() )
+	Mouse::Event::Type meType = me.GetType();
+
+	switch ( meType )
 	{
-		Mouse::Event e = mouse.Read();
-		Mouse::Event::Type meType = e.GetType();
+	case Mouse::Event::Type::LPress:
+		Click( me.GetPos() );
+		break;
+	case Mouse::Event::Type::LRelease:
+		MouseInf.LMouseButtonGridLocation = Vei2( -1, -1 );
+		break;
+	case Mouse::Event::Type::Move:
+	{
+		const Vei2 mousePos = me.GetPos();
 
-		switch ( meType )
+		MouseInf.HoverGridLocation = ScreenToGrid( mousePos );
+
+		if ( me.LeftIsPressed() )
 		{
-		case Mouse::Event::Type::LPress:
-			Click( e.GetPos() );
-			break;
-		case Mouse::Event::Type::LRelease:
-			MouseInf.LMouseButtonGridLocation = Vei2( -1, -1 );
-			break;
-		case Mouse::Event::Type::Move:
-			{
-				const Vei2 mousePos = e.GetPos();
-
-				MouseInf.HoverGridLocation = ScreenToGrid( mousePos );
-
-				if ( e.LeftIsPressed() )
-				{
-					Click( mousePos );
-				}
-
-				if ( e.MiddleIsPressed() )
-				{
-					const Vei2 temp = mousePos;
-					const Vei2 delta = temp - MouseInf.MMouseButtonLocation;
-					MouseInf.MMouseButtonLocation = temp;
-					Move( (Vec2)delta );
-				}
-
-				if ( e.RightIsPressed() )
-				{
-					Clear( mousePos );
-				}
-			}
-			break;
-		case Mouse::Event::Type::MPress:
-			MouseInf.MMouseButtonLocation = e.GetPos();
-			break;
-		case Mouse::Event::Type::RPress:
-			Clear( e.GetPos() );
-			break;
-		case Mouse::Event::Type::WheelUp:
-		case Mouse::Event::Type::WheelDown:
-			Zoom( (Vec2)e.GetPos(), meType == Mouse::Event::Type::WheelUp );
-			break;
-		default:
-			break;
+			Click( mousePos );
 		}
+
+		if ( me.MiddleIsPressed() )
+		{
+			const Vei2 delta = mousePos - MouseInf.MMouseButtonLocation;
+			MouseInf.MMouseButtonLocation = mousePos;
+			Move( (Vec2)delta );
+		}
+
+		if ( me.RightIsPressed() )
+		{
+			Clear( mousePos );
+		}
+	}
+	break;
+	case Mouse::Event::Type::MPress:
+		MouseInf.MMouseButtonLocation = me.GetPos();
+		break;
+	case Mouse::Event::Type::RPress:
+		Clear( me.GetPos() );
+		break;
+	case Mouse::Event::Type::WheelUp:
+	case Mouse::Event::Type::WheelDown:
+		Zoom( (Vec2)me.GetPos(), meType == Mouse::Event::Type::WheelUp );
+		break;
+	default:
+		break;
 	}
 }
 

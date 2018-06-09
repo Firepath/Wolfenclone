@@ -38,6 +38,7 @@ private:
 	void UpdateModel();
 	/********************************/
 	/*  User Functions              */
+	void DoMouseEvents();
 	/********************************/
 private:
 	MainWindow& wnd;

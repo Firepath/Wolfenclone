@@ -55,7 +55,7 @@ public:
 	Map( const int width, const int height, const Vec2& location );
 
 	void Draw( Graphics& gfx );
-	void DoMouseEvents( Mouse& mouse );
+	void DoMouseEvents( Mouse::Event& me );
 	void Move( const Vec2& delta );
 	void Zoom( const Vec2& zoomLocation, const bool zoomingIn );
 
