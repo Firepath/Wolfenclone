@@ -3,6 +3,7 @@
 #define NOMINMAX
 
 #include <unordered_map>
+#include <vector>
 
 #include "Colors.h"
 #include "Graphics.h"
@@ -26,6 +27,8 @@ public:
 	class Cell
 	{
 	public:
+		static constexpr Color CellEnclosedColour = Colors::Maroon;
+
 		Cell( const Vei2& location )
 			:
 			Location( location )
@@ -37,30 +40,37 @@ public:
 			Colour = Colors::Black;
 		}
 
-		void Click()
-		{
-			if ( Colour == Colors::Black )
-			{
-				Colour = Colors::White;
-			}
-			else
-			{
-				Colour.SetB( std::max( 0, (int)Colour.GetB() - 20 ) );
-			}
-		}
-
 		void Draw( const Map& map, Graphics& gfx )
 		{
-			if ( Colour == Colors::Black )
+			if ( NothingToDraw() )
 			{
 				return;
+			}
+
+			Color colour = Colour;
+			if ( Empty() && IsEnclosed() )
+			{
+				colour = Cell::CellEnclosedColour;
 			}
 
 			const Vei2 mapScreenLocation = map.ScreenLocation();
 			Vei2 topLeft = mapScreenLocation + Vei2( (int)std::ceil( (float)Location.x * map.CellSize ), (int)std::ceil( (float)Location.y * map.CellSize ) );
 			Vei2 bottomRight = mapScreenLocation + Vei2( (int)std::ceil( (float)(Location.x + 1) * map.CellSize ) - 1, (int)std::ceil( (float)(Location.y + 1) * map.CellSize ) - 1 );
 			
-			gfx.DrawBox( topLeft, bottomRight, Colour, PixelEffect::Copy() );
+			gfx.DrawBox( topLeft, bottomRight, colour, PixelEffect::Copy() );
+		}
+
+		const bool Empty() const
+		{
+			return Colour == Colors::Black;
+		}
+
+		bool Fill( const Color colour )
+		{
+			bool empty = Empty();
+			Colour = colour;
+
+			return empty;
 		}
 
 		const Vei2& GetLocation() const
@@ -78,9 +88,25 @@ public:
 			gfx.DrawBox( topLeft, bottomRight, Colors::MediumGray, effect );
 		}
 
+		const bool IsEnclosed() const
+		{
+			return Enclosed;
+		}
+
+		void SetEnclosed( bool enclosed )
+		{
+			Enclosed = enclosed;
+		}
+
 	private:
+		const bool NothingToDraw() const
+		{
+			return Empty() && !IsEnclosed();
+		}
+
 		Color Colour = Colors::Black;
 		Vei2 Location;
+		bool Enclosed = false;
 	};
 
 public:
@@ -113,7 +139,11 @@ private:
 
 	void Clear( const Vei2& screenLocation );
 	void Click( const Vei2& screenLocation );
-	bool IsOnGrid( const Vei2& gridLocation );
+	void FindClosedArea( const Vei2& gridLocation );
+	const bool FindClosedArea( const Vei2& gridLocation, std::vector<Vei2>& checkedLocations );
+	const bool FindOpposingWall( const Vei2& gridLocation, const int xDirection, const int yDirection ) const;
+	bool IsJointFormed( const Vei2& gridLocation ) const;
+	bool IsOnGrid( const Vei2& gridLocation ) const;
 	const Vei2 ScreenLocation() const;
-	const Vei2 ScreenToGrid( const Vei2& screenLocation );
+	const Vei2 ScreenToGrid( const Vei2& screenLocation ) const;
 };
