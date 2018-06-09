@@ -7,16 +7,16 @@ Map::Map( const int width, const int height, const Vec2& location )
 	CellSize( Map::DefaultCellSize ),
 	Width( width ),
 	Height( height ),
-	Location( location ),
-	Cells( Width * Height )
+	Location( location )
 {
+	Cells = std::make_unique<std::unordered_map<Vei2, Cell, Vei2::Hasher>>();
 	for ( int j = 0; j < Height; j++ )
 	{
 		for ( int i = 0; i < Width; i++ )
 		{
 			Vei2 l( i, j );
 			Cell c( l );
-			Cells.emplace( l, c );
+			Cells->emplace( l, c );
 		}
 	}
 }
@@ -52,12 +52,12 @@ void Map::Draw( Graphics& gfx )
 			}
 
 			const Vei2 cellLocation( i, j );
-			Cells.at( cellLocation ).Draw( *this, gfx );
+			Cells->at( cellLocation ).Draw( *this, gfx );
 		}
 	}
 
-	auto cellIt = Cells.find( MouseInf.HoverGridLocation );
-	if ( cellIt != Cells.end() )
+	auto cellIt = Cells->find( MouseInf.HoverGridLocation );
+	if ( cellIt != Cells->end() )
 	{
 		cellIt->second.Hover( *this, gfx );
 	}
@@ -177,7 +177,7 @@ void Map::Clear( const Vei2& screenLocation )
 		return;
 	}
 
-	Cell& cell = Cells.at( gridLocation );
+	Cell& cell = Cells->at( gridLocation );
 	cell.Clear();
 
 	if ( !FillClosedArea( gridLocation ) )
@@ -189,8 +189,8 @@ void Map::Clear( const Vei2& screenLocation )
 
 void Map::ClearEnclosedCell( const Vei2 & gridLocation )
 {
-	const auto cell = Cells.find( gridLocation );
-	if ( cell == Cells.end() || !cell->second.IsEnclosed() )
+	const auto cell = Cells->find( gridLocation );
+	if ( cell == Cells->end() || !cell->second.IsEnclosed() )
 	{
 		return;
 	}
@@ -223,7 +223,7 @@ void Map::Click( const Vei2& screenLocation )
 	}
 
 	MouseInf.LMouseButtonGridLocation = gridLocation;
-	if ( Cells.at( gridLocation ).Fill( Colors::White ) )
+	if ( Cells->at( gridLocation ).Fill( Colors::White ) )
 	{
 		if ( IsJointFormed( gridLocation ) )
 		{
@@ -238,32 +238,34 @@ void Map::Click( const Vei2& screenLocation )
 
 const bool Map::FillClosedArea( const Vei2& gridLocation )
 {
-	const auto cellIt = Cells.find( gridLocation );
-	if ( cellIt == Cells.end() || !cellIt->second.IsEmpty() )
+	const auto cellIt = Cells->find( gridLocation );
+	if ( cellIt == Cells->end() || !cellIt->second.IsEmpty() )
 	{
 		// Not on the grid, nothing to do
 		// Or it is a filled cell, not an empty one being enclosed
 		return false;
 	}
 
-	std::vector<Vei2> checkedLocations;
+	//std::unique_ptr<std::vector<Vei2>, std::default_delete<std::vector<Vei2>>> checkedLocations = std::make_unique<std::vector<Vei2>, std::default_delete<std::vector<Vei2>>>();
+	std::unique_ptr<std::vector<Vei2>> checkedLocations = std::make_unique<std::vector<Vei2>>();
+
 	const bool closed = FindClosedArea( gridLocation, checkedLocations );
 
 	if ( closed )
 	{
-		for ( Vei2 cell : checkedLocations )
+		for ( Vei2 cell : *(checkedLocations.get()) )
 		{
-			Cells.at( cell ).SetEnclosed( true );
+			Cells->at( cell ).SetEnclosed( true );
 		}
 	}
 
 	return closed;
 }
 
-const bool Map::FindClosedArea( const Vei2& gridLocation, std::vector<Vei2>& checkedLocations )
+const bool Map::FindClosedArea( const Vei2& gridLocation, std::unique_ptr<std::vector<Vei2>>& checkedLocations )
 {
-	const auto it = Cells.find( gridLocation );
-	if ( it == Cells.end() )
+	const auto it = Cells->find( gridLocation );
+	if ( it == Cells->end() )
 	{
 		// We've gone off the grid, not enclosed.
 		return false;
@@ -273,7 +275,7 @@ const bool Map::FindClosedArea( const Vei2& gridLocation, std::vector<Vei2>& che
 		// Checking a wall or another enclosed area (should only happen upon clearing), we've reached an end point
 		return true;
 	}
-	else if ( std::find( checkedLocations.begin(), checkedLocations.end(), gridLocation ) != checkedLocations.end() )
+	else if ( std::find( checkedLocations->begin(), checkedLocations->end(), gridLocation ) != checkedLocations->end() )
 	{
 		// Checking a location we've already checked
 		return true;
@@ -302,7 +304,7 @@ const bool Map::FindClosedArea( const Vei2& gridLocation, std::vector<Vei2>& che
 
 	// This cell is enclosed, continue checking
 
-	checkedLocations.push_back( gridLocation );
+	checkedLocations->push_back( gridLocation );
 
 	enclosed &= FindClosedArea( gridLocation - Vei2( -1, 0 ), checkedLocations );
 	if ( enclosed )
@@ -334,7 +336,7 @@ const bool Map::FindOpposingWall( const Vei2 & gridLocation, const int xDirectio
 		for ( int y = gridLocation.y + yDirection; y >= 0 && y < Height; y += yDirection )
 		{
 			const Vei2 cell( x, y );
-			if ( !Cells.at( cell ).IsEmpty() )
+			if ( !Cells->at( cell ).IsEmpty() )
 			{
 				// We found one that could create an enclosing space
 				found = true;
@@ -371,7 +373,7 @@ bool Map::IsJointFormed( const Vei2& gridLocation ) const
 		bool left = false;
 		for ( int i = startY; i <= endY; i++ )
 		{
-			if ( !Cells.at( Vei2( startX, i ) ).IsEmpty() )
+			if ( !Cells->at( Vei2( startX, i ) ).IsEmpty() )
 			{
 				left = true;
 				break;
@@ -382,7 +384,7 @@ bool Map::IsJointFormed( const Vei2& gridLocation ) const
 		{
 			for ( int i = startY; i <= endY; i++ )
 			{
-				if ( !Cells.at( Vei2( endX, i ) ).IsEmpty() )
+				if ( !Cells->at( Vei2( endX, i ) ).IsEmpty() )
 				{
 					found = true;
 					break;
@@ -398,7 +400,7 @@ bool Map::IsJointFormed( const Vei2& gridLocation ) const
 		bool top = false;
 		for ( int i = startX; i <= endX; i++ )
 		{
-			if ( !Cells.at( Vei2( i, startY ) ).IsEmpty() )
+			if ( !Cells->at( Vei2( i, startY ) ).IsEmpty() )
 			{
 				top = true;
 				break;
@@ -409,7 +411,7 @@ bool Map::IsJointFormed( const Vei2& gridLocation ) const
 		{
 			for ( int i = startX; i <= endX; i++ )
 			{
-				if ( !Cells.at( Vei2( i, endY ) ).IsEmpty() )
+				if ( !Cells->at( Vei2( i, endY ) ).IsEmpty() )
 				{
 					found = true;
 					break;

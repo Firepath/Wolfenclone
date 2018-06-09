@@ -42,15 +42,23 @@ public:
 
 	_Vec2()
 	{}
-	_Vec2( T x,T y )
+	_Vec2( T x, T y )
 		:
 		x( x ),
 		y( y )
 	{}
 	_Vec2( const _Vec2& vect )
 		:
-		_Vec2( vect.x,vect.y )
+		_Vec2( vect.x, vect.y )
 	{}
+	_Vec2( _Vec2&& other ) noexcept
+		:
+		_Vec2( other.x, other.y )
+	{
+		other.x = 0;
+		other.y = 0;
+	}
+	~_Vec2() = default;
 	template <typename T2>
 	explicit operator _Vec2<T2>() const
 	{
@@ -62,7 +70,7 @@ public:
 	}
 	explicit _Vec2( const b2Vec2& b2v )
 		:
-		_Vec2( (T)b2v.x,(T)b2v.y )
+		_Vec2( (T)b2v.x, (T)b2v.y )
 	{}
 	T		LenSq() const
 	{
@@ -87,12 +95,22 @@ public:
 	}
 	_Vec2	operator-() const
 	{
-		return _Vec2( -x,-y );
+		return _Vec2( -x, -y );
 	}
 	_Vec2&	operator=( const _Vec2 &rhs )
 	{
 		x = rhs.x;
 		y = rhs.y;
+		return *this;
+	}
+	_Vec2&	operator=( _Vec2&& other ) noexcept
+	{
+		x = other.x;
+		y = other.y;
+
+		other.x = 0;
+		other.y = 0;
+
 		return *this;
 	}
 	_Vec2&	operator+=( const _Vec2 &rhs )
