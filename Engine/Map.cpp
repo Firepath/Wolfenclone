@@ -84,7 +84,7 @@ void Map::Draw( Graphics& gfx )
 	}
 }
 
-void Map::DoMouseEvents( Mouse::Event& me )
+void Map::DoMouseEvents( const Mouse::Event& me )
 {
 	Mouse::Event::Type meType = me.GetType();
 

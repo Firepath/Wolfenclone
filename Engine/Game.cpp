@@ -24,8 +24,7 @@
 Game::Game( MainWindow& wnd )
 	:
 	wnd( wnd ),
-	gfx( wnd ),
-	Map( 180, 100, Vec2( 0.0f, 0.0f ) )
+	gfx( wnd )
 {
 }
 
@@ -46,12 +45,12 @@ void Game::DoMouseEvents()
 {
 	while ( !wnd.mouse.IsEmpty() )
 	{
-		Mouse::Event e = wnd.mouse.Read();
-		Map.DoMouseEvents( e );
+		const Mouse::Event e = wnd.mouse.Read();
+		Editor.DoMouseEvents( e );
 	}
 }
 
 void Game::ComposeFrame()
 {
-	Map.Draw( gfx );
+	Editor.Draw( gfx );
 }
