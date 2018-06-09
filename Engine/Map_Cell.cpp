@@ -55,8 +55,8 @@ void Map::Cell::Hover( const Map& map, Graphics& gfx ) const
 	Vei2 topLeft = mapScreenLocation + Vei2( (int)std::ceil( (float)Location.x * map.CellSize ), (int)std::ceil( (float)Location.y * map.CellSize ) );
 	Vei2 bottomRight = mapScreenLocation + Vei2( (int)std::ceil( (float)(Location.x + 1) * map.CellSize ) - 1, (int)std::ceil( (float)(Location.y + 1) * map.CellSize ) - 1 );
 
-	PixelEffect::Transparency effect( Colors::Magenta, 50.0f );
-	gfx.DrawBox( topLeft, bottomRight, Colors::MediumGray, effect );
+	PixelEffect::Transparency effect( Colors::Magenta, Cell::CellHoverOpacity );
+	gfx.DrawBox( topLeft, bottomRight, Cell::CellHoverHighlightColour, effect );
 }
 
 const bool Map::Cell::IsEmpty() const

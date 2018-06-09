@@ -27,6 +27,9 @@ public:
 	class Cell
 	{
 	public:
+		static constexpr Color CellHoverHighlightColour = Colors::MediumGray;
+		static constexpr float CellHoverOpacity = 50.0f;
+
 		static constexpr Color CellEnclosedColour = Colors::Maroon;
 
 		Cell( const Vei2& location );
