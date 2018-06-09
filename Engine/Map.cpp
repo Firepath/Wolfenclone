@@ -187,25 +187,52 @@ void Map::Clear( const Vei2& screenLocation )
 	}
 }
 
-void Map::ClearEnclosedCell( const Vei2 & gridLocation )
-{
-	const auto cell = Cells->find( gridLocation );
-	if ( cell == Cells->end() || !cell->second.IsEnclosed() )
-	{
-		return;
-	}
-
-	cell->second.SetEnclosed( false );
-
-	ClearEnclosedCells( gridLocation );
-}
-
 void Map::ClearEnclosedCells( const Vei2 & gridLocation )
 {
-	ClearEnclosedCell( gridLocation + Vei2( -1, 0 ) );
-	ClearEnclosedCell( gridLocation + Vei2( 1, 0 ) );
-	ClearEnclosedCell( gridLocation + Vei2( 0, -1 ) );
-	ClearEnclosedCell( gridLocation + Vei2( 0, 1 ) );
+	std::unique_ptr<std::vector<Vei2>> checked = std::make_unique<std::vector<Vei2>>(); checked->reserve( Width * Height );
+	std::unique_ptr<std::vector<Vei2>> toBeChecked = std::make_unique<std::vector<Vei2>>(); toBeChecked->reserve( Width * Height );
+	toBeChecked->emplace_back( gridLocation );
+
+	auto NeedsToBeChecked = [this]( const Vei2& location, std::unique_ptr<std::vector<Vei2>>& checked, std::unique_ptr<std::vector<Vei2>>& toBeChecked )
+	{
+		return 
+			this->IsOnGrid( location ) &&
+			Cells->at( location ).IsEnclosed() &&
+			std::find( checked->begin(), checked->end(), location ) == checked->end() && // Not already checked
+			std::find( toBeChecked->begin(), toBeChecked->end(), location ) == toBeChecked->end(); // Not already in the list to be checked
+	};
+
+	while ( toBeChecked->size() > 0 )
+	{
+		const Vei2 location = toBeChecked->back();
+		toBeChecked->pop_back();
+		Cells->at( location ).SetEnclosed( false );
+		checked->emplace_back( location );
+
+		Vei2 left = location + Vei2( -1, 0 );
+		if ( NeedsToBeChecked( left, checked, toBeChecked ) )
+		{
+			toBeChecked->emplace_back( left );
+		}
+
+		Vei2 right = location + Vei2( 1, 0 );
+		if ( NeedsToBeChecked( right, checked, toBeChecked ) )
+		{
+			toBeChecked->emplace_back( right );
+		}
+
+		Vei2 top = location + Vei2( 0, -1 );
+		if ( NeedsToBeChecked( top, checked, toBeChecked ) )
+		{
+			toBeChecked->emplace_back( top );
+		}
+
+		Vei2 bottom = location + Vei2( 0, 1 );
+		if ( NeedsToBeChecked( bottom, checked, toBeChecked ) )
+		{
+			toBeChecked->emplace_back( bottom );
+		}
+	}
 }
 
 void Map::Click( const Vei2& screenLocation )
@@ -223,9 +250,11 @@ void Map::Click( const Vei2& screenLocation )
 	}
 
 	MouseInf.LMouseButtonGridLocation = gridLocation;
-	if ( Cells->at( gridLocation ).Fill( Colors::White ) )
+	Cell& cell = Cells->at( gridLocation );
+	const bool wasEnclosed = cell.IsEnclosed();
+	if ( cell.Fill( Colors::White ) )
 	{
-		if ( IsJointFormed( gridLocation ) )
+		if ( IsJointFormed( gridLocation ) && !wasEnclosed )
 		{
 			// Fill the various potential enclosed directions
 			FillClosedArea( gridLocation + Vei2( -1, 0 ) );
@@ -238,7 +267,7 @@ void Map::Click( const Vei2& screenLocation )
 
 const bool Map::FillClosedArea( const Vei2& gridLocation )
 {
-	const auto cellIt = Cells->find( gridLocation );
+	auto cellIt = Cells->find( gridLocation );
 	if ( cellIt == Cells->end() || !cellIt->second.IsEmpty() )
 	{
 		// Not on the grid, nothing to do
@@ -246,14 +275,63 @@ const bool Map::FillClosedArea( const Vei2& gridLocation )
 		return false;
 	}
 
-	//std::unique_ptr<std::vector<Vei2>, std::default_delete<std::vector<Vei2>>> checkedLocations = std::make_unique<std::vector<Vei2>, std::default_delete<std::vector<Vei2>>>();
-	std::unique_ptr<std::vector<Vei2>> checkedLocations = std::make_unique<std::vector<Vei2>>();
+	std::unique_ptr<std::vector<Vei2>> enclosed = std::make_unique<std::vector<Vei2>>(); enclosed->reserve( Width * Height );
+	std::unique_ptr<std::vector<Vei2>> checked = std::make_unique<std::vector<Vei2>>(); checked->reserve(Width * Height);
+	std::unique_ptr<std::vector<Vei2>> toBeChecked = std::make_unique<std::vector<Vei2>>(); toBeChecked->reserve(Width * Height);
+	toBeChecked->emplace_back( cellIt->first );
 
-	const bool closed = FindClosedArea( gridLocation, checkedLocations );
+	auto NeedsToBeChecked = [this]( const Vei2& location, std::unique_ptr<std::vector<Vei2>>& checked, std::unique_ptr<std::vector<Vei2>>& toBeChecked )
+	{
+		return
+			Cells->at( location ).IsEmpty() && // Already a wall if not empty
+			std::find( checked->begin(), checked->end(), location ) == checked->end() && // Not already checked
+			std::find( toBeChecked->begin(), toBeChecked->end(), location ) == toBeChecked->end(); // Not already in the list to be checked
+	};
+
+	bool closed = true;
+	while ( toBeChecked->size() > 0 )
+	{
+		const Vei2 location = toBeChecked->back();
+		toBeChecked->pop_back();
+		if ( IsCellEnclosed( location ) ) // This MUST mean it is not on the edge of the grid at least
+		{
+			enclosed->emplace_back( location );
+			checked->emplace_back( location );
+
+			Vei2 left = location + Vei2( -1, 0 );
+			if ( NeedsToBeChecked( left, checked, toBeChecked ) )
+			{
+				toBeChecked->emplace_back( left );
+			}
+
+			Vei2 right = location + Vei2( 1, 0 );
+			if ( NeedsToBeChecked( right, checked, toBeChecked ) )
+			{
+				toBeChecked->emplace_back( right );
+			}
+
+			Vei2 top = location + Vei2( 0, -1 );
+			if ( NeedsToBeChecked( top, checked, toBeChecked ) )
+			{
+				toBeChecked->emplace_back( top );
+			}
+
+			Vei2 bottom = location + Vei2( 0, 1 );
+			if ( NeedsToBeChecked( bottom, checked, toBeChecked ) )
+			{
+				toBeChecked->emplace_back( bottom );
+			}
+		}
+		else
+		{
+			closed = false;
+			break;
+		}
+	}
 
 	if ( closed )
 	{
-		for ( Vei2 cell : *(checkedLocations.get()) )
+		for ( Vei2 cell : *(enclosed.get()) )
 		{
 			Cells->at( cell ).SetEnclosed( true );
 		}
@@ -262,68 +340,7 @@ const bool Map::FillClosedArea( const Vei2& gridLocation )
 	return closed;
 }
 
-const bool Map::FindClosedArea( const Vei2& gridLocation, std::unique_ptr<std::vector<Vei2>>& checkedLocations )
-{
-	const auto it = Cells->find( gridLocation );
-	if ( it == Cells->end() )
-	{
-		// We've gone off the grid, not enclosed.
-		return false;
-	}
-	else if ( !it->second.IsEmpty() || it->second.IsEnclosed() )
-	{
-		// Checking a wall or another enclosed area (should only happen upon clearing), we've reached an end point
-		return true;
-	}
-	else if ( std::find( checkedLocations->begin(), checkedLocations->end(), gridLocation ) != checkedLocations->end() )
-	{
-		// Checking a location we've already checked
-		return true;
-	}
-
-	// Check if this cell is enclosed in all directions
-	bool enclosed = FindOpposingWall( gridLocation, -1, 0 );
-	if ( enclosed )
-	{
-		enclosed &= FindOpposingWall( gridLocation, 1, 0 );
-		if ( enclosed )
-		{
-			enclosed &= FindOpposingWall( gridLocation, 0, -1 );
-			if ( enclosed )
-			{
-				enclosed &= FindOpposingWall( gridLocation, 0, 1 );
-			}
-		}
-	}
-
-	if ( !enclosed )
-	{
-		// Not enclosed
-		return false;
-	}
-
-	// This cell is enclosed, continue checking
-
-	checkedLocations->push_back( gridLocation );
-
-	enclosed &= FindClosedArea( gridLocation - Vei2( -1, 0 ), checkedLocations );
-	if ( enclosed )
-	{
-		enclosed &= FindClosedArea( gridLocation - Vei2( 1, 0 ), checkedLocations );
-		if ( enclosed )
-		{
-			enclosed &= FindClosedArea( gridLocation - Vei2( 0, -1 ), checkedLocations );
-			if ( enclosed )
-			{
-				enclosed &= FindClosedArea( gridLocation - Vei2( 0, 1 ), checkedLocations );
-			}
-		}
-	}
-
-	return enclosed;
-}
-
-const bool Map::FindOpposingWall( const Vei2 & gridLocation, const int xDirection, const int yDirection ) const
+const bool Map::FindWall( const Vei2 & gridLocation, const int xDirection, const int yDirection ) const
 {
 	// One of either direction must be zero and the other not zero
 	assert( xDirection != 0 && yDirection == 0 || yDirection != 0 && xDirection == 0 );
@@ -356,6 +373,25 @@ const bool Map::FindOpposingWall( const Vei2 & gridLocation, const int xDirectio
 	}
 
 	return found;
+}
+
+const bool Map::IsCellEnclosed( const Vei2 & gridLocation ) const
+{
+	bool enclosed = FindWall( gridLocation, -1, 0 );
+	if ( enclosed )
+	{
+		enclosed &= FindWall( gridLocation, 1, 0 );
+		if ( enclosed )
+		{
+			enclosed &= FindWall( gridLocation, 0, -1 );
+			if ( enclosed )
+			{
+				enclosed &= FindWall( gridLocation, 0, 1 );
+			}
+		}
+	}
+
+	return enclosed;
 }
 
 bool Map::IsJointFormed( const Vei2& gridLocation ) const

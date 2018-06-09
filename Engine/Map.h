@@ -77,12 +77,11 @@ private:
 	std::unique_ptr<std::unordered_map<Vei2, Cell, Vei2::Hasher>> Cells;
 
 	void Clear( const Vei2& screenLocation );
-	void ClearEnclosedCell( const Vei2& gridLocation );
 	void ClearEnclosedCells( const Vei2& gridLocation );
 	void Click( const Vei2& screenLocation );
 	const bool FillClosedArea( const Vei2& gridLocation );
-	const bool FindClosedArea( const Vei2& gridLocation, std::unique_ptr<std::vector<Vei2>>& checkedLocations );
-	const bool FindOpposingWall( const Vei2& gridLocation, const int xDirection, const int yDirection ) const;
+	const bool FindWall( const Vei2& gridLocation, const int xDirection, const int yDirection ) const;
+	const bool IsCellEnclosed( const Vei2& gridLocation ) const;
 	bool IsJointFormed( const Vei2& gridLocation ) const;
 	bool IsOnGrid( const Vei2& gridLocation ) const;
 	const Vei2 ScreenLocation() const;
