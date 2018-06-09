@@ -29,80 +29,19 @@ public:
 	public:
 		static constexpr Color CellEnclosedColour = Colors::Maroon;
 
-		Cell( const Vei2& location )
-			:
-			Location( location )
-		{
-		}
+		Cell( const Vei2& location );
 
-		void Clear()
-		{
-			Colour = Colors::Black;
-		}
-
-		void Draw( const Map& map, Graphics& gfx )
-		{
-			if ( NothingToDraw() )
-			{
-				return;
-			}
-
-			Color colour = Colour;
-			if ( Empty() && IsEnclosed() )
-			{
-				colour = Cell::CellEnclosedColour;
-			}
-
-			const Vei2 mapScreenLocation = map.ScreenLocation();
-			Vei2 topLeft = mapScreenLocation + Vei2( (int)std::ceil( (float)Location.x * map.CellSize ), (int)std::ceil( (float)Location.y * map.CellSize ) );
-			Vei2 bottomRight = mapScreenLocation + Vei2( (int)std::ceil( (float)(Location.x + 1) * map.CellSize ) - 1, (int)std::ceil( (float)(Location.y + 1) * map.CellSize ) - 1 );
-			
-			gfx.DrawBox( topLeft, bottomRight, colour, PixelEffect::Copy() );
-		}
-
-		const bool Empty() const
-		{
-			return Colour == Colors::Black;
-		}
-
-		bool Fill( const Color colour )
-		{
-			bool empty = Empty();
-			Colour = colour;
-
-			return empty;
-		}
-
-		const Vei2& GetLocation() const
-		{
-			return Location;
-		}
-
-		void Hover( const Map& map, Graphics& gfx ) const
-		{
-			const Vei2 mapScreenLocation = map.ScreenLocation();
-			Vei2 topLeft = mapScreenLocation + Vei2( (int)std::ceil( (float)Location.x * map.CellSize ), (int)std::ceil( (float)Location.y * map.CellSize ) );
-			Vei2 bottomRight = mapScreenLocation + Vei2( (int)std::ceil( (float)(Location.x + 1) * map.CellSize ) - 1, (int)std::ceil( (float)(Location.y + 1) * map.CellSize ) - 1 );
-
-			PixelEffect::Transparency effect( Colors::Magenta, 50.0f );
-			gfx.DrawBox( topLeft, bottomRight, Colors::MediumGray, effect );
-		}
-
-		const bool IsEnclosed() const
-		{
-			return Enclosed;
-		}
-
-		void SetEnclosed( bool enclosed )
-		{
-			Enclosed = enclosed;
-		}
+		void Clear();
+		void Draw( const Map& map, Graphics& gfx ) const;
+		const bool Empty() const;
+		const bool Fill( const Color colour );
+		const Vei2& GetLocation() const;
+		void Hover( const Map& map, Graphics& gfx ) const;
+		const bool IsEnclosed() const;
+		void SetEnclosed( bool enclosed );
 
 	private:
-		const bool NothingToDraw() const
-		{
-			return Empty() && !IsEnclosed();
-		}
+		const bool NothingToDraw() const;
 
 		Color Colour = Colors::Black;
 		Vei2 Location;
