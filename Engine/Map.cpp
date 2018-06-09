@@ -25,62 +25,13 @@ void Map::Draw( Graphics& gfx )
 {
 	const Vei2 screenLocation = ScreenLocation();
 
-	for ( int j = 0; j < Height; j++ )
-	{
-		const int y = screenLocation.y + (int)std::ceil( j * CellSize );
-		const int y1 = screenLocation.y + (int)std::ceil( (j + 1) * CellSize ) - 1;
-		if ( y1 < 0 )
-		{
-			continue;
-		}
-		else if ( y >= Graphics::ScreenHeight )
-		{
-			break;
-		}
-
-		for ( int i = 0; i < Width; i++ )
-		{
-			const int x = screenLocation.x + (int)std::ceil( i * CellSize );
-			const int x1 = screenLocation.x + (int)std::ceil( (i + 1) * CellSize ) - 1;
-			if ( x1 < 0 )
-			{
-				continue;
-			}
-			else if ( x >= Graphics::ScreenWidth )
-			{
-				break;
-			}
-
-			const Vei2 cellLocation( i, j );
-			Cells->at( cellLocation ).Draw( *this, gfx );
-		}
-	}
+	DrawCells( screenLocation, gfx );
+	DrawGrid( screenLocation, gfx );
 
 	auto cellIt = Cells->find( MouseInf.HoverGridLocation );
 	if ( cellIt != Cells->end() )
 	{
-		cellIt->second.Hover( *this, gfx );
-	}
-
-	// Grid border
-	Vei2 topLeft = screenLocation;
-	Vei2 bottomRight = topLeft + Vei2( (int)std::ceil( Width * CellSize ) - 1, (int)std::ceil( Height * CellSize ) - 1 );
-	gfx.DrawBoxBorder( topLeft, bottomRight, Map::GridBorderColour );
-
-	// Vertical grid lines
-	for ( int i = 1; i < Width; i++ )
-	{
-		Vei2 top = screenLocation + Vei2( (int)std::ceil(i * CellSize), 0 );
-		Vei2 bottom = top + Vei2( 0, (int)std::ceil( Height * CellSize ) - 1 );
-		gfx.DrawLine( top, bottom, Map::GridColour );
-	}
-
-	// Horizontal grid lines
-	for ( int j = 1; j < Height; j++ )
-	{
-		Vei2 left = screenLocation + Vei2( 0, (int)std::ceil(j * CellSize) );
-		Vei2 right = left + Vei2( (int)std::ceil( Width * CellSize ) - 1, 0 );
-		gfx.DrawLine( left, right, Map::GridColour );
+		HighlightCell( MouseInf.HoverGridLocation, gfx );
 	}
 }
 
@@ -133,6 +84,16 @@ void Map::DoMouseEvents( const Mouse::Event& me )
 	default:
 		break;
 	}
+}
+
+void Map::HighlightCell( const Vei2 gridLocation, Graphics & gfx ) const
+{
+	const Vei2 mapScreenLocation = ScreenLocation();
+	Vei2 topLeft = mapScreenLocation + Vei2( (int)std::ceil( (float)gridLocation.x * CellSize ), (int)std::ceil( (float)gridLocation.y * CellSize ) );
+	Vei2 bottomRight = mapScreenLocation + Vei2( (int)std::ceil( (float)(gridLocation.x + 1) * CellSize ) - 1, (int)std::ceil( (float)(gridLocation.y + 1) * CellSize ) - 1 );
+
+	PixelEffect::Transparency effect( Colors::Magenta, Cell::CellHoverOpacity );
+	gfx.DrawBox( topLeft, bottomRight, Cell::CellHoverHighlightColour, effect );
 }
 
 void Map::Move( const Vec2 & delta )
@@ -257,6 +218,64 @@ void Map::Click( const Vei2& screenLocation )
 			FillClosedArea( gridLocation + Vei2( 0, -1 ) );
 			FillClosedArea( gridLocation + Vei2( 0, 1 ) );
 		}
+	}
+}
+
+void Map::DrawCells( const Vei2 screenLocation, Graphics & gfx ) const
+{
+	for ( int j = 0; j < Height; j++ )
+	{
+		const int y = screenLocation.y + (int)std::ceil( j * CellSize );
+		const int y1 = screenLocation.y + (int)std::ceil( (j + 1) * CellSize ) - 1;
+		if ( y1 < 0 )
+		{
+			continue;
+		}
+		else if ( y >= Graphics::ScreenHeight )
+		{
+			break;
+		}
+
+		for ( int i = 0; i < Width; i++ )
+		{
+			const int x = screenLocation.x + (int)std::ceil( i * CellSize );
+			const int x1 = screenLocation.x + (int)std::ceil( (i + 1) * CellSize ) - 1;
+			if ( x1 < 0 )
+			{
+				continue;
+			}
+			else if ( x >= Graphics::ScreenWidth )
+			{
+				break;
+			}
+
+			const Vei2 cellLocation( i, j );
+			Cells->at( cellLocation ).Draw( *this, gfx );
+		}
+	}
+}
+
+void Map::DrawGrid( const Vei2 screenLocation, Graphics & gfx ) const
+{
+	// Grid border
+	Vei2 topLeft = screenLocation;
+	Vei2 bottomRight = topLeft + Vei2( (int)std::ceil( Width * CellSize ) - 1, (int)std::ceil( Height * CellSize ) - 1 );
+	gfx.DrawBoxBorder( topLeft, bottomRight, Map::GridBorderColour );
+
+	// Vertical grid lines
+	for ( int i = 1; i < Width; i++ )
+	{
+		Vei2 top = screenLocation + Vei2( (int)std::ceil( i * CellSize ), 0 );
+		Vei2 bottom = top + Vei2( 0, (int)std::ceil( Height * CellSize ) - 1 );
+		gfx.DrawLine( top, bottom, Map::GridColour );
+	}
+
+	// Horizontal grid lines
+	for ( int j = 1; j < Height; j++ )
+	{
+		Vei2 left = screenLocation + Vei2( 0, (int)std::ceil( j * CellSize ) );
+		Vei2 right = left + Vei2( (int)std::ceil( Width * CellSize ) - 1, 0 );
+		gfx.DrawLine( left, right, Map::GridColour );
 	}
 }
 

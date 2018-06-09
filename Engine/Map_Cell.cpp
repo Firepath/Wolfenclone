@@ -49,16 +49,6 @@ const Vei2& Map::Cell::GetLocation() const
 	return Location;
 }
 
-void Map::Cell::Hover( const Map& map, Graphics& gfx ) const
-{
-	const Vei2 mapScreenLocation = map.ScreenLocation();
-	Vei2 topLeft = mapScreenLocation + Vei2( (int)std::ceil( (float)Location.x * map.CellSize ), (int)std::ceil( (float)Location.y * map.CellSize ) );
-	Vei2 bottomRight = mapScreenLocation + Vei2( (int)std::ceil( (float)(Location.x + 1) * map.CellSize ) - 1, (int)std::ceil( (float)(Location.y + 1) * map.CellSize ) - 1 );
-
-	PixelEffect::Transparency effect( Colors::Magenta, Cell::CellHoverOpacity );
-	gfx.DrawBox( topLeft, bottomRight, Cell::CellHoverHighlightColour, effect );
-}
-
 const bool Map::Cell::IsEmpty() const
 {
 	return Colour == Colors::Black;

@@ -6,6 +6,7 @@
 #include <vector>
 
 #include "Colors.h"
+#include "EditMode.h"
 #include "Graphics.h"
 #include "Mouse.h"
 #include "PixelEffect.h"
@@ -38,7 +39,6 @@ public:
 		void Draw( const Map& map, Graphics& gfx ) const;
 		const bool Fill( const Color colour );
 		const Vei2& GetLocation() const;
-		void Hover( const Map& map, Graphics& gfx ) const;
 		const bool IsEmpty() const;
 		const bool IsEnclosed() const;
 		void SetEnclosed( bool enclosed );
@@ -56,6 +56,7 @@ public:
 
 	void Draw( Graphics& gfx );
 	void DoMouseEvents( const Mouse::Event& me );
+	void HighlightCell( const Vei2 cellLocation, Graphics& gfx ) const;
 	void Move( const Vec2& delta );
 	void Zoom( const Vec2& zoomLocation, const bool zoomingIn );
 
@@ -82,6 +83,8 @@ private:
 	void Clear( const Vei2& screenLocation );
 	void ClearEnclosedCells( const Vei2& gridLocation );
 	void Click( const Vei2& screenLocation );
+	void DrawCells( const Vei2 screenLocation, Graphics& gfx ) const;
+	void DrawGrid( const Vei2 screenLocation, Graphics& gfx ) const;
 	const bool FillClosedArea( const Vei2& gridLocation );
 	const bool FindWall( const Vei2& gridLocation, const int xDirection, const int yDirection ) const;
 	const bool IsCellEnclosed( const Vei2& gridLocation ) const;

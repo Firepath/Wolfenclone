@@ -1,5 +1,6 @@
 #pragma once
 
+#include "EditMode.h"
 #include "Graphics.h"
 #include "Map.h"
 #include "Mouse.h"
@@ -14,5 +15,7 @@ public:
 	void Draw( Graphics& gfx );
 
 private:
+	EditMode::MouseLClick MouseLClickMode = EditMode::MouseLClick::None;
+
 	Map MapGrid;
 };

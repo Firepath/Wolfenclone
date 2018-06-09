@@ -141,6 +141,7 @@
     <ClInclude Include="ChiliWin.h" />
     <ClInclude Include="Colors.h" />
     <ClInclude Include="DXErr.h" />
+    <ClInclude Include="EditMode.h" />
     <ClInclude Include="Editor.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="Graphics.h" />
