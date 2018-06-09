@@ -169,21 +169,6 @@ void Map::Zoom( const Vec2& zoomLocation, const bool zoomingIn )
 	Location += deltaLocation;
 }
 
-const bool Map::IsCellEnclosed( const Vei2 & gridLocation ) const
-{
-	const auto left = Cells.find( gridLocation + Vei2( -1, 0 ) );
-	const auto right = Cells.find( gridLocation + Vei2( 1, 0 ) );
-	const auto top = Cells.find( gridLocation + Vei2( 0, -1 ) );
-	const auto bottom = Cells.find( gridLocation + Vei2( 0, 1 ) );
-
-	// If all the surrounding cells are either walls or are enclosed, this cell is enclosed
-	return
-		left != Cells.end() && (left->second.IsEnclosed() || !left->second.Empty()) &&
-		right != Cells.end() && (right->second.IsEnclosed() || !right->second.Empty()) &&
-		top != Cells.end() && (top->second.IsEnclosed() || !top->second.Empty()) &&
-		bottom != Cells.end() && (bottom->second.IsEnclosed() || !bottom->second.Empty());
-}
-
 void Map::Clear( const Vei2& screenLocation )
 {
 	const Vei2 gridLocation = ScreenToGrid( screenLocation );
@@ -195,14 +180,32 @@ void Map::Clear( const Vei2& screenLocation )
 	Cell& cell = Cells.at( gridLocation );
 	cell.Clear();
 
-	if ( IsCellEnclosed( gridLocation ) )
-	{
-		cell.SetEnclosed( true );
-	}
-	else
+	if ( !FillClosedArea( gridLocation ) )
 	{
 		// Check for, and clear enclosedness on surrounding cells
+		ClearEnclosedCells( gridLocation );
 	}
+}
+
+void Map::ClearEnclosedCell( const Vei2 & gridLocation )
+{
+	const auto cell = Cells.find( gridLocation );
+	if ( cell == Cells.end() || !cell->second.IsEnclosed() )
+	{
+		return;
+	}
+
+	cell->second.SetEnclosed( false );
+
+	ClearEnclosedCells( gridLocation );
+}
+
+void Map::ClearEnclosedCells( const Vei2 & gridLocation )
+{
+	ClearEnclosedCell( gridLocation + Vei2( -1, 0 ) );
+	ClearEnclosedCell( gridLocation + Vei2( 1, 0 ) );
+	ClearEnclosedCell( gridLocation + Vei2( 0, -1 ) );
+	ClearEnclosedCell( gridLocation + Vei2( 0, 1 ) );
 }
 
 void Map::Click( const Vei2& screenLocation )
@@ -225,22 +228,22 @@ void Map::Click( const Vei2& screenLocation )
 		if ( IsJointFormed( gridLocation ) )
 		{
 			// Fill the various potential enclosed directions
-			FindClosedArea( gridLocation + Vei2( -1, 0 ) );
-			FindClosedArea( gridLocation + Vei2( 1, 0 ) );
-			FindClosedArea( gridLocation + Vei2( 0, -1 ) );
-			FindClosedArea( gridLocation + Vei2( 0, 1 ) );
+			FillClosedArea( gridLocation + Vei2( -1, 0 ) );
+			FillClosedArea( gridLocation + Vei2( 1, 0 ) );
+			FillClosedArea( gridLocation + Vei2( 0, -1 ) );
+			FillClosedArea( gridLocation + Vei2( 0, 1 ) );
 		}
 	}
 }
 
-void Map::FindClosedArea( const Vei2& gridLocation )
+const bool Map::FillClosedArea( const Vei2& gridLocation )
 {
 	const auto cellIt = Cells.find( gridLocation );
-	if ( cellIt == Cells.end() || !cellIt->second.Empty() )
+	if ( cellIt == Cells.end() || !cellIt->second.IsEmpty() )
 	{
 		// Not on the grid, nothing to do
 		// Or it is a filled cell, not an empty one being enclosed
-		return;
+		return false;
 	}
 
 	std::vector<Vei2> checkedLocations;
@@ -253,20 +256,21 @@ void Map::FindClosedArea( const Vei2& gridLocation )
 			Cells.at( cell ).SetEnclosed( true );
 		}
 	}
+
+	return closed;
 }
 
 const bool Map::FindClosedArea( const Vei2& gridLocation, std::vector<Vei2>& checkedLocations )
 {
-	//const std::unordered_map<Vei2, Map::Cell, Vei2::Hasher>::iterator it = Cells.find( gridLocation );
 	const auto it = Cells.find( gridLocation );
 	if ( it == Cells.end() )
 	{
 		// We've gone off the grid, not enclosed.
 		return false;
 	}
-	else if ( !it->second.Empty() )
+	else if ( !it->second.IsEmpty() || it->second.IsEnclosed() )
 	{
-		// Checking a wall, we've reached an end point
+		// Checking a wall or another enclosed area (should only happen upon clearing), we've reached an end point
 		return true;
 	}
 	else if ( std::find( checkedLocations.begin(), checkedLocations.end(), gridLocation ) != checkedLocations.end() )
@@ -330,7 +334,7 @@ const bool Map::FindOpposingWall( const Vei2 & gridLocation, const int xDirectio
 		for ( int y = gridLocation.y + yDirection; y >= 0 && y < Height; y += yDirection )
 		{
 			const Vei2 cell( x, y );
-			if ( !Cells.at( cell ).Empty() )
+			if ( !Cells.at( cell ).IsEmpty() )
 			{
 				// We found one that could create an enclosing space
 				found = true;
@@ -354,10 +358,10 @@ const bool Map::FindOpposingWall( const Vei2 & gridLocation, const int xDirectio
 
 bool Map::IsJointFormed( const Vei2& gridLocation ) const
 {
-	const int startX = std::max( 0, std::min( Width, gridLocation.x - 1 ) );
-	const int startY = std::max( 0, std::min( Height, gridLocation.y - 1 ) );
-	const int endX = std::max( 0, std::min( Width, gridLocation.x + 1 ) );
-	const int endY = std::max( 0, std::min( Height, gridLocation.y + 1 ) );
+	const int startX = std::max( 0, std::min( Width - 1, gridLocation.x - 1 ) );
+	const int startY = std::max( 0, std::min( Height - 1, gridLocation.y - 1 ) );
+	const int endX = std::max( 0, std::min( Width - 1, gridLocation.x + 1 ) );
+	const int endY = std::max( 0, std::min( Height - 1, gridLocation.y + 1 ) );
 
 	bool found = false;
 
@@ -367,7 +371,7 @@ bool Map::IsJointFormed( const Vei2& gridLocation ) const
 		bool left = false;
 		for ( int i = startY; i <= endY; i++ )
 		{
-			if ( !Cells.at( Vei2( startX, i ) ).Empty() )
+			if ( !Cells.at( Vei2( startX, i ) ).IsEmpty() )
 			{
 				left = true;
 				break;
@@ -378,7 +382,7 @@ bool Map::IsJointFormed( const Vei2& gridLocation ) const
 		{
 			for ( int i = startY; i <= endY; i++ )
 			{
-				if ( !Cells.at( Vei2( endX, i ) ).Empty() )
+				if ( !Cells.at( Vei2( endX, i ) ).IsEmpty() )
 				{
 					found = true;
 					break;
@@ -394,7 +398,7 @@ bool Map::IsJointFormed( const Vei2& gridLocation ) const
 		bool top = false;
 		for ( int i = startX; i <= endX; i++ )
 		{
-			if ( !Cells.at( Vei2( i, startY ) ).Empty() )
+			if ( !Cells.at( Vei2( i, startY ) ).IsEmpty() )
 			{
 				top = true;
 				break;
@@ -405,7 +409,7 @@ bool Map::IsJointFormed( const Vei2& gridLocation ) const
 		{
 			for ( int i = startX; i <= endX; i++ )
 			{
-				if ( !Cells.at( Vei2( i, endY ) ).Empty() )
+				if ( !Cells.at( Vei2( i, endY ) ).IsEmpty() )
 				{
 					found = true;
 					break;

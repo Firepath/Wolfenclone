@@ -19,7 +19,7 @@ void Map::Cell::Draw( const Map& map, Graphics& gfx ) const
 	}
 
 	Color colour = Colour;
-	if ( Empty() && IsEnclosed() )
+	if ( IsEmpty() && IsEnclosed() )
 	{
 		colour = Cell::CellEnclosedColour;
 	}
@@ -31,17 +31,12 @@ void Map::Cell::Draw( const Map& map, Graphics& gfx ) const
 	gfx.DrawBox( topLeft, bottomRight, colour, PixelEffect::Copy() );
 }
 
-const bool Map::Cell::Empty() const
-{
-	return Colour == Colors::Black;
-}
-
 const bool Map::Cell::Fill( const Color colour )
 {
-	bool empty = Empty();
+	bool empty = IsEmpty();
 	Colour = colour;
 
-	if ( IsEnclosed() && !Empty() )
+	if ( IsEnclosed() && !IsEmpty() )
 	{
 		SetEnclosed( false );
 	}
@@ -64,6 +59,11 @@ void Map::Cell::Hover( const Map& map, Graphics& gfx ) const
 	gfx.DrawBox( topLeft, bottomRight, Colors::MediumGray, effect );
 }
 
+const bool Map::Cell::IsEmpty() const
+{
+	return Colour == Colors::Black;
+}
+
 const bool Map::Cell::IsEnclosed() const
 {
 	return Enclosed;
@@ -76,5 +76,5 @@ void Map::Cell::SetEnclosed( bool enclosed )
 
 const bool Map::Cell::NothingToDraw() const
 {
-	return Empty() && !IsEnclosed();
+	return IsEmpty() && !IsEnclosed();
 }
