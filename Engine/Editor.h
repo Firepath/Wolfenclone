@@ -27,15 +27,23 @@ public:
 	void Draw( Graphics& gfx );
 
 private:
+	static constexpr Color InactiveModeHoverColour = Colors::MediumGray;
+	static constexpr Color InsertModeHoverColour = Colors::Green;
+	static constexpr Color SelectModeHoverColour = Colors::Yellow;
 	static constexpr float CellHoverOpacity = 50.0f;
 
 	void CycleMouseLClickMode();
+	void DisableSelectionMode();
+	void EnableSelectionMode();
 	const Color GetCellHoverHighlightColour() const;
+	const EditMode::MouseLClick GetMouseLClickMode() const;
 	void MouseLPress( const Vei2& screenLocation );
+	void MouseRPress( const Vei2& screenLocation );
 
 	EditMode::MouseLClick MouseLClickMode = EditMode::MouseLClick::None;
 
 	MouseInfo MouseInf;
+	bool SelectionMode = false;
 
 	Map MapGrid;
 };

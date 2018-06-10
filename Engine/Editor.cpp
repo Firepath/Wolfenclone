@@ -13,6 +13,9 @@ void Editor::DoKeyboardEvents( const Keyboard::Event & ke )
 	{
 		switch ( c )
 		{
+		case VK_SHIFT:
+			EnableSelectionMode();
+			break;
 		case VK_TAB:
 			CycleMouseLClickMode();
 		default:
@@ -21,6 +24,14 @@ void Editor::DoKeyboardEvents( const Keyboard::Event & ke )
 	}
 	else if ( ke.IsRelease() )
 	{
+		switch ( c )
+		{
+		case VK_SHIFT:
+			DisableSelectionMode();
+			break;
+		default:
+			break;
+		}
 	}
 }
 
@@ -56,7 +67,7 @@ void Editor::DoMouseEvents( const Mouse::Event & me )
 
 		if ( me.RightIsPressed() )
 		{
-			MapGrid.ClearCell( MapGrid.ScreenToGrid( mousePos ) );
+			MouseRPress( mousePos );
 		}
 	}
 	break;
@@ -64,7 +75,7 @@ void Editor::DoMouseEvents( const Mouse::Event & me )
 		MouseInf.MMouseButtonLocation = me.GetPos();
 		break;
 	case Mouse::Event::Type::RPress:
-		MapGrid.ClearCell( MapGrid.ScreenToGrid( me.GetPos() ) );
+		MouseRPress( me.GetPos() );
 		break;
 	case Mouse::Event::Type::WheelUp:
 	case Mouse::Event::Type::WheelDown:
@@ -87,26 +98,52 @@ void Editor::Draw( Graphics & gfx )
 
 void Editor::CycleMouseLClickMode()
 {
+	if ( SelectionMode )
+	{
+		// Don't cycle through while we're in forced selection mode, or the user could get confused.
+		return;
+	}
+
 	MouseLClickMode = (EditMode::MouseLClick)(((int)MouseLClickMode + 1) % (int)EditMode::MouseLClick::EnumOptionsCount);
+}
+
+void Editor::DisableSelectionMode()
+{
+	SelectionMode = false;
+}
+
+void Editor::EnableSelectionMode()
+{
+	SelectionMode = true;
 }
 
 const Color Editor::GetCellHoverHighlightColour() const
 {
-	Color colour = Colors::MediumGray;
+	Color colour = Editor::InactiveModeHoverColour;
 
-	switch ( MouseLClickMode )
+	switch ( GetMouseLClickMode() )
 	{
 	case EditMode::MouseLClick::Insert:
-		colour = Colors::Green;
+		colour = Editor::InsertModeHoverColour;
 		break;
 	case EditMode::MouseLClick::Select:
-		colour = Colors::Yellow;
+		colour = Editor::SelectModeHoverColour;
 		break;
 	default:
 		break;
 	}
 
 	return colour;
+}
+
+const EditMode::MouseLClick Editor::GetMouseLClickMode() const
+{
+	if ( SelectionMode ) // Forced / overriding selection mode
+	{
+		return EditMode::MouseLClick::Select;
+	}
+
+	return MouseLClickMode;
 }
 
 void Editor::MouseLPress( const Vei2& screenLocation )
@@ -125,8 +162,13 @@ void Editor::MouseLPress( const Vei2& screenLocation )
 
 	MouseInf.LMouseButtonGridLocation = gridLocation;
 
-	if ( MouseLClickMode == EditMode::MouseLClick::Insert )
+	if ( GetMouseLClickMode() == EditMode::MouseLClick::Insert )
 	{
 		MapGrid.Fill( gridLocation, Colors::White );
 	}
+}
+
+void Editor::MouseRPress( const Vei2 & screenLocation )
+{
+	MapGrid.ClearCell( MapGrid.ScreenToGrid( screenLocation ) );
 }
