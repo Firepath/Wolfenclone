@@ -99,7 +99,7 @@ void Map::HighlightCell( const Vei2& gridLocation, const Color highlightColour, 
 
 	if ( drawBorder )
 	{
-		gfx.DrawBoxBorder( rect, highlightColour, effect );
+		gfx.DrawBoxBorder( rect, highlightColour, effect, std::max( 2, (int)(ZoomLevel / 2.0f) ) );
 	}
 }
 

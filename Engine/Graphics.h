@@ -160,26 +160,46 @@ public:
 	}
 
 	template <typename E>
-	void DrawBoxBorder( Vei2 topLeft, Vei2 bottomRight, Color colour, E effect )
+	void DrawBoxBorder( Vei2 topLeft, Vei2 bottomRight, Color colour, E effect, const int thickness = 1 )
 	{
-		DrawBoxBorder( RectI( topLeft, bottomRight ), colour, effect );
+		DrawBoxBorder( RectI( topLeft, bottomRight ), colour, effect, thickness );
 	}
 
 	template <typename E>
-	void DrawBoxBorder( const RectI& rect, Color colour, E effect )
+	void DrawBoxBorder( const RectI& rect, Color colour, E effect, const int thickness = 1 )
 	{
 		assert( rect.right >= rect.left );
 		assert( rect.bottom >= rect.top );
 
-		Vei2 topLeft( rect.left, rect.top );
-		Vei2 topRight( rect.right, rect.top );
-		Vei2 bottomLeft( rect.left, rect.bottom );
-		Vei2 bottomRight( rect.right, rect.bottom );
+		for ( int i = 0; i < thickness; i++ )
+		{
+			Vei2 topLeft( rect.left + i, rect.top + i );
+			Vei2 topRight( rect.right - i, rect.top + i );
+			Vei2 bottomLeft( rect.left + i, rect.bottom - i );
+			Vei2 bottomRight( rect.right - i, rect.bottom - i );
 
-		DrawLine( topLeft, topRight, colour, effect );
-		DrawLine( topLeft, bottomLeft, colour, effect );
-		DrawLine( topRight, bottomRight, colour, effect );
-		DrawLine( bottomLeft, bottomRight, colour, effect );
+			if ( topLeft.x > bottomRight.x )
+			{
+				break;
+			}
+
+			DrawLine( topLeft, topRight, colour, effect );
+
+			if ( topLeft.y > bottomRight.y )
+			{
+				break;
+			}
+
+			DrawLine( bottomLeft, bottomRight, colour, effect );
+
+			if ( topLeft.y + 1 > bottomRight.y - 1 )
+			{
+				break;
+			}
+
+			DrawLine( topLeft + Vei2( 0, 1 ), bottomLeft + Vei2( 0, -1 ), colour, effect );
+			DrawLine( topRight + Vei2( 0, 1 ), bottomRight + Vei2( 0, -1 ), colour, effect );
+		}
 	}
 
 	template<typename E>
