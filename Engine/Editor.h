@@ -1,5 +1,7 @@
 #pragma once
 
+#define NOMINMAX
+
 #include <vector>
 
 #include "EditMode.h"
@@ -17,6 +19,7 @@ public:
 		// In Grid Coordinates
 		Vei2 HoverGridLocation = Vei2( -1, -1 );
 		Vei2 LMouseButtonGridLocation = Vei2( -1, -1 );
+		Vei2 LMouseButtonGridLocationAtLPress = Vei2( -1, -1 );
 
 		// In Screen Coordinates
 		Vei2 MMouseButtonLocation = Vei2( -1, -1 );
@@ -39,15 +42,18 @@ private:
 	void EnableSelectionMode();
 	const Color GetCellHoverHighlightColour() const;
 	const EditMode::MouseLClick GetMouseLClickMode() const;
+	const EditMode::Selection GetSelectionMode() const;
 	void MouseLPress( const Vei2& screenLocation );
 	void MouseLRelease();
 	void MouseRPress( const Vei2& screenLocation );
 	void SelectCell( const Vei2& gridLocation );
+	void ToggleSelectionMode();
 
 	EditMode::MouseLClick MouseLClickMode = EditMode::MouseLClick::None;
+	EditMode::Selection SelectionMode = EditMode::Selection::Rectangle;
 
 	MouseInfo MouseInf;
-	bool SelectionMode = false;
+	bool SelectionModeOverride = false;
 	std::vector<Vei2> SelectedCells;
 
 	Map MapGrid;

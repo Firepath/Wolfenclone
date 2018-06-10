@@ -14,8 +14,11 @@ void Editor::DoKeyboardEvents( const Keyboard::Event & ke )
 	{
 		switch ( c )
 		{
-		case VK_SHIFT:
+		case VK_CONTROL:
 			EnableSelectionMode();
+			break;
+		case VK_SHIFT:
+			ToggleSelectionMode();
 			break;
 		case VK_TAB:
 			CycleMouseLClickMode();
@@ -27,8 +30,11 @@ void Editor::DoKeyboardEvents( const Keyboard::Event & ke )
 	{
 		switch ( c )
 		{
-		case VK_SHIFT:
+		case VK_CONTROL:
 			DisableSelectionMode();
+			break;
+		case VK_SHIFT:
+			ToggleSelectionMode();
 			break;
 		default:
 			break;
@@ -104,7 +110,7 @@ void Editor::Draw( Graphics & gfx )
 
 void Editor::CycleMouseLClickMode()
 {
-	if ( SelectionMode )
+	if ( SelectionModeOverride )
 	{
 		// Don't cycle through while we're in forced selection mode, or the user could get confused.
 		return;
@@ -115,12 +121,12 @@ void Editor::CycleMouseLClickMode()
 
 void Editor::DisableSelectionMode()
 {
-	SelectionMode = false;
+	SelectionModeOverride = false;
 }
 
 void Editor::EnableSelectionMode()
 {
-	SelectionMode = true;
+	SelectionModeOverride = true;
 }
 
 const Color Editor::GetCellHoverHighlightColour() const
@@ -144,12 +150,17 @@ const Color Editor::GetCellHoverHighlightColour() const
 
 const EditMode::MouseLClick Editor::GetMouseLClickMode() const
 {
-	if ( SelectionMode ) // Forced / overriding selection mode
+	if ( SelectionModeOverride ) // Forced / overriding selection mode
 	{
 		return EditMode::MouseLClick::Select;
 	}
 
 	return MouseLClickMode;
+}
+
+const EditMode::Selection Editor::GetSelectionMode() const
+{
+	return SelectionMode;
 }
 
 void Editor::MouseLPress( const Vei2& screenLocation )
@@ -168,6 +179,12 @@ void Editor::MouseLPress( const Vei2& screenLocation )
 
 	MouseInf.LMouseButtonGridLocation = gridLocation;
 
+	if ( !MapGrid.IsOnGrid( MouseInf.LMouseButtonGridLocationAtLPress ) )
+	{
+		// Set this location only when first pressing the left mouse button down (start press location)
+		MouseInf.LMouseButtonGridLocationAtLPress = gridLocation;
+	}
+
 	switch ( GetMouseLClickMode() )
 	{
 	case EditMode::MouseLClick::Insert:
@@ -184,6 +201,7 @@ void Editor::MouseLPress( const Vei2& screenLocation )
 void Editor::MouseLRelease()
 {
 	MouseInf.LMouseButtonGridLocation = Vei2( -1, -1 );
+	MouseInf.LMouseButtonGridLocationAtLPress = Vei2( -1, -1 );
 	SelectedCells.clear();
 }
 
@@ -194,11 +212,54 @@ void Editor::MouseRPress( const Vei2 & screenLocation )
 
 void Editor::SelectCell( const Vei2& gridLocation )
 {
-	if ( !MapGrid.IsOnGrid( gridLocation ) ||
-		VectorExtension::Contains( SelectedCells, gridLocation ) )
+	if ( !MapGrid.IsOnGrid( gridLocation ) )
 	{
 		return;
 	}
 
-	SelectedCells.push_back( gridLocation );
+	switch ( GetSelectionMode() )
+	{
+	case EditMode::Selection::Rectangle:
+	{
+		Vei2 startLocation = MouseInf.LMouseButtonGridLocationAtLPress;
+		if ( !MapGrid.IsOnGrid( startLocation ) )
+		{
+			return;
+		}
+
+		Vei2 topLeft( std::min( startLocation.x, gridLocation.x ), std::min( startLocation.y, gridLocation.y ) );
+		Vei2 bottomRight( std::max( startLocation.x, gridLocation.x ), std::max( startLocation.y, gridLocation.y ) );
+
+		SelectedCells.clear();
+
+		for ( int x = topLeft.x; x <= bottomRight.x; x++ )
+		{
+			for ( int y = topLeft.y; y <= bottomRight.y; y++ )
+			{
+				SelectedCells.push_back( Vei2( x, y ) );
+			}
+		}
+	}
+		break;
+	case EditMode::Selection::Single:
+		if ( !VectorExtension::Contains( SelectedCells, gridLocation ) )
+		{
+			SelectedCells.push_back( gridLocation );
+		}
+		break;
+	default:
+		break;
+	}
+}
+
+void Editor::ToggleSelectionMode()
+{
+	if ( SelectionMode == EditMode::Selection::Rectangle )
+	{
+		SelectionMode = EditMode::Selection::Single;
+	}
+	else
+	{
+		SelectionMode = EditMode::Selection::Rectangle;
+	}
 }

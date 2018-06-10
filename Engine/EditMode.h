@@ -9,4 +9,10 @@ namespace EditMode
 		Insert,
 		EnumOptionsCount // This is the size of the enum, don't add things after it
 	};
+
+	enum class Selection
+	{
+		Rectangle,
+		Single
+	};
 }
