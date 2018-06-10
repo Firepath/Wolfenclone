@@ -21,72 +21,55 @@ Map::Map( const int width, const int height, const Vec2& location )
 	}
 }
 
+void Map::ClearCell( const Vei2& gridLocation )
+{
+	if ( !IsOnGrid( gridLocation ) )
+	{
+		return;
+	}
+
+	Cell& cell = GetCell( gridLocation );
+	cell.Clear();
+
+	if ( !FillClosedArea( gridLocation ) )
+	{
+		// Check for, and clear enclosedness on surrounding cells
+		ClearEnclosedCells( gridLocation );
+	}
+}
+
 void Map::Draw( Graphics& gfx )
 {
 	const Vei2 screenLocation = ScreenLocation();
 
 	DrawCells( screenLocation, gfx );
 	DrawGrid( screenLocation, gfx );
-
-	auto cellIt = Cells->find( MouseInf.HoverGridLocation );
-	if ( cellIt != Cells->end() )
-	{
-		HighlightCell( MouseInf.HoverGridLocation, gfx );
-	}
 }
 
-void Map::DoMouseEvents( const Mouse::Event& me )
+void Map::Fill( const Vei2 & gridLocation, const Color colour )
 {
-	Mouse::Event::Type meType = me.GetType();
-
-	switch ( meType )
+	Cell& cell = GetCell( gridLocation );
+	const bool wasEnclosed = cell.IsEnclosed();
+	if ( cell.Fill( Colors::White ) )
 	{
-	case Mouse::Event::Type::LPress:
-		Click( me.GetPos() );
-		break;
-	case Mouse::Event::Type::LRelease:
-		MouseInf.LMouseButtonGridLocation = Vei2( -1, -1 );
-		break;
-	case Mouse::Event::Type::Move:
-	{
-		const Vei2 mousePos = me.GetPos();
-
-		MouseInf.HoverGridLocation = ScreenToGrid( mousePos );
-
-		if ( me.LeftIsPressed() )
+		if ( IsJointFormed( gridLocation ) && !wasEnclosed )
 		{
-			Click( mousePos );
+			// Fill the various potential enclosed directions
+			FillClosedArea( gridLocation + Vei2( -1, 0 ) );
+			FillClosedArea( gridLocation + Vei2( 1, 0 ) );
+			FillClosedArea( gridLocation + Vei2( 0, -1 ) );
+			FillClosedArea( gridLocation + Vei2( 0, 1 ) );
 		}
-
-		if ( me.MiddleIsPressed() )
-		{
-			const Vei2 delta = mousePos - MouseInf.MMouseButtonLocation;
-			MouseInf.MMouseButtonLocation = mousePos;
-			Move( (Vec2)delta );
-		}
-
-		if ( me.RightIsPressed() )
-		{
-			Clear( mousePos );
-		}
-	}
-	break;
-	case Mouse::Event::Type::MPress:
-		MouseInf.MMouseButtonLocation = me.GetPos();
-		break;
-	case Mouse::Event::Type::RPress:
-		Clear( me.GetPos() );
-		break;
-	case Mouse::Event::Type::WheelUp:
-	case Mouse::Event::Type::WheelDown:
-		Zoom( (Vec2)me.GetPos(), meType == Mouse::Event::Type::WheelUp );
-		break;
-	default:
-		break;
 	}
 }
 
-void Map::HighlightCell( const Vei2 gridLocation, Graphics & gfx ) const
+Map::Cell& Map::GetCell( const Vei2 & gridLocation ) const
+{
+	assert( IsOnGrid( gridLocation ) );
+	return Cells->at( gridLocation );
+}
+
+void Map::HighlightCell( const Vei2& gridLocation, Graphics & gfx ) const
 {
 	const Vei2 mapScreenLocation = ScreenLocation();
 	Vei2 topLeft = mapScreenLocation + Vei2( (int)std::ceil( (float)gridLocation.x * CellSize ), (int)std::ceil( (float)gridLocation.y * CellSize ) );
@@ -96,9 +79,27 @@ void Map::HighlightCell( const Vei2 gridLocation, Graphics & gfx ) const
 	gfx.DrawBox( topLeft, bottomRight, Cell::CellHoverHighlightColour, effect );
 }
 
+bool Map::IsOnGrid( const Vei2& gridLocation ) const
+{
+	return gridLocation.x >= 0 && gridLocation.y >= 0 &&
+		gridLocation.x < Width && gridLocation.y < Height;
+}
+
 void Map::Move( const Vec2 & delta )
 {
 	Location += delta;
+}
+
+const Vei2 Map::ScreenToGrid( const Vei2& screenLocation ) const
+{
+	const Vec2 gridLocationF = (Vec2)screenLocation - (Vec2)Location;
+	if ( gridLocationF.x < 0.0f || gridLocationF.y < 0.0f )
+	{
+		return Vei2( -1, -1 );
+	}
+
+	const Vei2 gridLocation( (int)(gridLocationF.x / CellSize), (int)(gridLocationF.y / CellSize) );
+	return gridLocation;
 }
 
 void Map::Zoom( const Vec2& zoomLocation, const bool zoomingIn )
@@ -125,24 +126,6 @@ void Map::Zoom( const Vec2& zoomLocation, const bool zoomingIn )
 	Location += deltaLocation;
 }
 
-void Map::Clear( const Vei2& screenLocation )
-{
-	const Vei2 gridLocation = ScreenToGrid( screenLocation );
-	if ( !IsOnGrid( gridLocation ) )
-	{
-		return;
-	}
-
-	Cell& cell = Cells->at( gridLocation );
-	cell.Clear();
-
-	if ( !FillClosedArea( gridLocation ) )
-	{
-		// Check for, and clear enclosedness on surrounding cells
-		ClearEnclosedCells( gridLocation );
-	}
-}
-
 void Map::ClearEnclosedCells( const Vei2 & gridLocation )
 {
 	std::unique_ptr<std::vector<Vei2>> checked = std::make_unique<std::vector<Vei2>>(); checked->reserve( Width * Height );
@@ -153,7 +136,7 @@ void Map::ClearEnclosedCells( const Vei2 & gridLocation )
 	{
 		return 
 			this->IsOnGrid( location ) &&
-			Cells->at( location ).IsEnclosed() &&
+			this->GetCell( location ).IsEnclosed() &&
 			std::find( checked->begin(), checked->end(), location ) == checked->end() && // Not already checked
 			std::find( toBeChecked->begin(), toBeChecked->end(), location ) == toBeChecked->end(); // Not already in the list to be checked
 	};
@@ -162,7 +145,7 @@ void Map::ClearEnclosedCells( const Vei2 & gridLocation )
 	{
 		const Vei2 location = toBeChecked->back();
 		toBeChecked->pop_back();
-		Cells->at( location ).SetEnclosed( false );
+		GetCell( location ).SetEnclosed( false );
 		checked->emplace_back( location );
 
 		Vei2 left = location + Vei2( -1, 0 );
@@ -187,36 +170,6 @@ void Map::ClearEnclosedCells( const Vei2 & gridLocation )
 		if ( NeedsToBeChecked( bottom, checked, toBeChecked ) )
 		{
 			toBeChecked->emplace_back( bottom );
-		}
-	}
-}
-
-void Map::Click( const Vei2& screenLocation )
-{
-	const Vei2 gridLocation = ScreenToGrid( screenLocation );
-	if ( !IsOnGrid( gridLocation ) )
-	{
-		return;
-	}
-
-	if ( gridLocation == MouseInf.LMouseButtonGridLocation )
-	{
-		// Don't want to be automatically clicking the same thing more than once
-		return;
-	}
-
-	MouseInf.LMouseButtonGridLocation = gridLocation;
-	Cell& cell = Cells->at( gridLocation );
-	const bool wasEnclosed = cell.IsEnclosed();
-	if ( cell.Fill( Colors::White ) )
-	{
-		if ( IsJointFormed( gridLocation ) && !wasEnclosed )
-		{
-			// Fill the various potential enclosed directions
-			FillClosedArea( gridLocation + Vei2( -1, 0 ) );
-			FillClosedArea( gridLocation + Vei2( 1, 0 ) );
-			FillClosedArea( gridLocation + Vei2( 0, -1 ) );
-			FillClosedArea( gridLocation + Vei2( 0, 1 ) );
 		}
 	}
 }
@@ -250,7 +203,7 @@ void Map::DrawCells( const Vei2 screenLocation, Graphics & gfx ) const
 			}
 
 			const Vei2 cellLocation( i, j );
-			Cells->at( cellLocation ).Draw( *this, gfx );
+			GetCell( cellLocation ).Draw( *this, gfx );
 		}
 	}
 }
@@ -297,7 +250,7 @@ const bool Map::FillClosedArea( const Vei2& gridLocation )
 	auto NeedsToBeChecked = [this]( const Vei2& location, std::unique_ptr<std::vector<Vei2>>& checked, std::unique_ptr<std::vector<Vei2>>& toBeChecked )
 	{
 		return
-			Cells->at( location ).IsEmpty() && // Already a wall if not empty
+			GetCell( location ).IsEmpty() && // Already a wall if not empty
 			std::find( checked->begin(), checked->end(), location ) == checked->end() && // Not already checked
 			std::find( toBeChecked->begin(), toBeChecked->end(), location ) == toBeChecked->end(); // Not already in the list to be checked
 	};
@@ -347,7 +300,7 @@ const bool Map::FillClosedArea( const Vei2& gridLocation )
 	{
 		for ( Vei2 cell : *(enclosed.get()) )
 		{
-			Cells->at( cell ).SetEnclosed( true );
+			GetCell( cell ).SetEnclosed( true );
 		}
 	}
 
@@ -367,7 +320,7 @@ const bool Map::FindWall( const Vei2 & gridLocation, const int xDirection, const
 		for ( int y = gridLocation.y + yDirection; y >= 0 && y < Height; y += yDirection )
 		{
 			const Vei2 cell( x, y );
-			if ( !Cells->at( cell ).IsEmpty() )
+			if ( !GetCell( cell ).IsEmpty() )
 			{
 				// We found one that could create an enclosing space
 				found = true;
@@ -423,7 +376,7 @@ bool Map::IsJointFormed( const Vei2& gridLocation ) const
 		bool left = false;
 		for ( int i = startY; i <= endY; i++ )
 		{
-			if ( !Cells->at( Vei2( startX, i ) ).IsEmpty() )
+			if ( !GetCell( Vei2( startX, i ) ).IsEmpty() )
 			{
 				left = true;
 				break;
@@ -434,7 +387,7 @@ bool Map::IsJointFormed( const Vei2& gridLocation ) const
 		{
 			for ( int i = startY; i <= endY; i++ )
 			{
-				if ( !Cells->at( Vei2( endX, i ) ).IsEmpty() )
+				if ( !GetCell( Vei2( endX, i ) ).IsEmpty() )
 				{
 					found = true;
 					break;
@@ -450,7 +403,7 @@ bool Map::IsJointFormed( const Vei2& gridLocation ) const
 		bool top = false;
 		for ( int i = startX; i <= endX; i++ )
 		{
-			if ( !Cells->at( Vei2( i, startY ) ).IsEmpty() )
+			if ( !GetCell( Vei2( i, startY ) ).IsEmpty() )
 			{
 				top = true;
 				break;
@@ -461,7 +414,7 @@ bool Map::IsJointFormed( const Vei2& gridLocation ) const
 		{
 			for ( int i = startX; i <= endX; i++ )
 			{
-				if ( !Cells->at( Vei2( i, endY ) ).IsEmpty() )
+				if ( !GetCell( Vei2( i, endY ) ).IsEmpty() )
 				{
 					found = true;
 					break;
@@ -475,25 +428,7 @@ bool Map::IsJointFormed( const Vei2& gridLocation ) const
 	return found;
 }
 
-bool Map::IsOnGrid( const Vei2& gridLocation ) const
-{
-	return gridLocation.x >= 0 && gridLocation.y >= 0 &&
-		gridLocation.x < Width && gridLocation.y < Height;
-}
-
 const Vei2 Map::ScreenLocation() const
 {
 	return Vei2( (int)std::ceil( Location.x ), (int)std::ceil( Location.y ) );
-}
-
-const Vei2 Map::ScreenToGrid( const Vei2& screenLocation ) const
-{
-	const Vec2 gridLocationF = (Vec2)screenLocation - (Vec2)Location;
-	if ( gridLocationF.x < 0.0f || gridLocationF.y < 0.0f )
-	{
-		return Vei2( -1, -1 );
-	}
-
-	const Vei2 gridLocation( (int)(gridLocationF.x / CellSize), (int)(gridLocationF.y / CellSize) );
-	return gridLocation;
 }

@@ -15,16 +15,6 @@
 class Map
 {
 public:
-	struct MouseInfo
-	{
-		// In Grid Coordinates
-		Vei2 HoverGridLocation = Vei2( -1, -1 );
-		Vei2 LMouseButtonGridLocation = Vei2( -1, -1 );
-
-		// In Screen Coordinates
-		Vei2 MMouseButtonLocation = Vei2( -1, -1 );
-	};
-
 	class Cell
 	{
 	public:
@@ -54,10 +44,14 @@ public:
 public:
 	Map( const int width, const int height, const Vec2& location );
 
+	void ClearCell( const Vei2& gridLocation );
 	void Draw( Graphics& gfx );
-	void DoMouseEvents( const Mouse::Event& me );
-	void HighlightCell( const Vei2 cellLocation, Graphics& gfx ) const;
+	void Fill( const Vei2& gridLocation, const Color colour );
+	Cell& GetCell( const Vei2& gridLocation ) const;
+	void HighlightCell( const Vei2& gridLocation, Graphics& gfx ) const;
+	bool IsOnGrid( const Vei2& gridLocation ) const;
 	void Move( const Vec2& delta );
+	const Vei2 ScreenToGrid( const Vei2& screenLocation ) const;
 	void Zoom( const Vec2& zoomLocation, const bool zoomingIn );
 
 private:
@@ -70,8 +64,6 @@ private:
 	static constexpr float DefaultCellSize = 8.0f;
 	static constexpr float MinimumCellSize = 2.0f;
 
-	MouseInfo MouseInf;
-
 	float ZoomLevel = 1.0f;
 	float CellSize;
 	const int Width;
@@ -80,16 +72,12 @@ private:
 
 	std::unique_ptr<std::unordered_map<Vei2, Cell, Vei2::Hasher>> Cells;
 
-	void Clear( const Vei2& screenLocation );
 	void ClearEnclosedCells( const Vei2& gridLocation );
-	void Click( const Vei2& screenLocation );
 	void DrawCells( const Vei2 screenLocation, Graphics& gfx ) const;
 	void DrawGrid( const Vei2 screenLocation, Graphics& gfx ) const;
 	const bool FillClosedArea( const Vei2& gridLocation );
 	const bool FindWall( const Vei2& gridLocation, const int xDirection, const int yDirection ) const;
 	const bool IsCellEnclosed( const Vei2& gridLocation ) const;
 	bool IsJointFormed( const Vei2& gridLocation ) const;
-	bool IsOnGrid( const Vei2& gridLocation ) const;
 	const Vei2 ScreenLocation() const;
-	const Vei2 ScreenToGrid( const Vei2& screenLocation ) const;
 };
