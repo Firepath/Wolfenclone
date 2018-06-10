@@ -10,6 +10,7 @@
 #include "Graphics.h"
 #include "Mouse.h"
 #include "PixelEffect.h"
+#include "Surface.h"
 #include "Vec2.h"
 
 class Map
@@ -25,6 +26,7 @@ public:
 		void Clear();
 		void Draw( const Map& map, Graphics& gfx ) const;
 		const bool Fill( const Color colour );
+		const bool Fill( Surface* const surface );
 		const Vei2& GetLocation() const;
 		const bool IsEmpty() const;
 		const bool IsEnclosed() const;
@@ -34,6 +36,7 @@ public:
 		const bool NothingToDraw() const;
 
 		Color Colour = Colors::Black;
+		Surface* Surf = nullptr;
 		Vei2 Location;
 		bool Enclosed = false;
 	};

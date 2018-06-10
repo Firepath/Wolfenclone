@@ -8,6 +8,7 @@ Map::Cell::Cell( const Vei2& location )
 
 void Map::Cell::Clear()
 {
+	Surf = nullptr;
 	Fill( Colors::Black );
 }
 
@@ -18,23 +19,43 @@ void Map::Cell::Draw( const Map& map, Graphics& gfx ) const
 		return;
 	}
 
-	Color colour = Colour;
-	if ( IsEmpty() && IsEnclosed() )
+	if ( Surf != nullptr )
 	{
-		colour = Cell::CellEnclosedColour;
+		//gfx.DrawSprite(
 	}
+	else
+	{
+		Color colour = Colour;
+		if ( IsEmpty() && IsEnclosed() )
+		{
+			colour = Cell::CellEnclosedColour;
+		}
 
-	const Vei2 mapScreenLocation = map.ScreenLocation();
-	Vei2 topLeft = mapScreenLocation + Vei2( (int)std::ceil( (float)Location.x * map.CellSize ), (int)std::ceil( (float)Location.y * map.CellSize ) );
-	Vei2 bottomRight = mapScreenLocation + Vei2( (int)std::ceil( (float)(Location.x + 1) * map.CellSize ) - 1, (int)std::ceil( (float)(Location.y + 1) * map.CellSize ) - 1 );
+		const Vei2 mapScreenLocation = map.ScreenLocation();
+		Vei2 topLeft = mapScreenLocation + Vei2( (int)std::ceil( (float)Location.x * map.CellSize ), (int)std::ceil( (float)Location.y * map.CellSize ) );
+		Vei2 bottomRight = mapScreenLocation + Vei2( (int)std::ceil( (float)(Location.x + 1) * map.CellSize ) - 1, (int)std::ceil( (float)(Location.y + 1) * map.CellSize ) - 1 );
 
-	gfx.DrawBox( topLeft, bottomRight, colour, PixelEffect::Copy() );
+		gfx.DrawBox( topLeft, bottomRight, colour, PixelEffect::Copy() );
+	}
 }
 
 const bool Map::Cell::Fill( const Color colour )
 {
 	bool empty = IsEmpty();
 	Colour = colour;
+
+	if ( IsEnclosed() && !IsEmpty() )
+	{
+		SetEnclosed( false );
+	}
+
+	return empty;
+}
+
+const bool Map::Cell::Fill( Surface* const surface )
+{
+	bool empty = IsEmpty();
+	Surf = surface;
 
 	if ( IsEnclosed() && !IsEmpty() )
 	{
@@ -51,7 +72,7 @@ const Vei2& Map::Cell::GetLocation() const
 
 const bool Map::Cell::IsEmpty() const
 {
-	return Colour == Colors::Black;
+	return Colour == Colors::Black && Surf == nullptr;
 }
 
 const bool Map::Cell::IsEnclosed() const

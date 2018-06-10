@@ -113,40 +113,86 @@ public:
 	template<typename E>
 	void DrawSprite( int x, int y, RectI sourceRect, const RectI& clippingRect, const Surface& surface, E effect )
 	{
+		DrawSprite( RectI( x, x + sourceRect.GetWidth(), y, y + sourceRect.GetHeight() ), sourceRect, clippingRect, surface, effect );
+	}
+
+	template<typename E>
+	void DrawSprite( RectI destinationRect, RectI sourceRect, const RectI& clippingRect, const Surface& surface, E effect )
+	{
 		assert( sourceRect.left >= 0 );
 		assert( sourceRect.right <= surface.GetWidth() );
 		assert( sourceRect.top >= 0 );
 		assert( sourceRect.bottom <= surface.GetHeight() );
 
-		if ( x < clippingRect.left )
+		const RectI originalDestination = destinationRect;
+		const float scaleX = (float)destinationRect.GetWidth() / (float)surface.GetWidth();
+		const float scaleInvX = 1.0f / scaleX;
+		const float scaleY = (float)destinationRect.GetHeight() / (float)surface.GetHeight();
+		const float scaleInvY = 1.0f / scaleY;
+
+		if ( destinationRect.left < clippingRect.left )
 		{
-			sourceRect.left += clippingRect.left - x;
-			x = clippingRect.left;
+			//sourceRect.left += clippingRect.left - destinationRect.left;
+			destinationRect.left = clippingRect.left;
 		}
 
-		if ( y < clippingRect.top )
+		if ( destinationRect.right > clippingRect.right )
 		{
-			sourceRect.top += clippingRect.top - y;
-			y = clippingRect.top;
+			//sourceRect.top += clippingRect.top - destinationRect.top;
+			destinationRect.right = clippingRect.right;
 		}
 
-		if ( x + sourceRect.GetWidth() > clippingRect.right )
+		if ( destinationRect.top < clippingRect.top )
 		{
-			sourceRect.right -= x + sourceRect.GetWidth() - clippingRect.right;
+			destinationRect.top = clippingRect.top;
 		}
 
-		if ( y + sourceRect.GetHeight() > clippingRect.bottom )
+		if ( destinationRect.bottom > clippingRect.bottom )
 		{
-			sourceRect.bottom -= y + sourceRect.GetHeight() - clippingRect.bottom;
+			destinationRect.bottom = clippingRect.bottom;
 		}
 
-		for ( int sx = sourceRect.left; sx < sourceRect.right; sx++ )
+		for ( int dx = destinationRect.left; dx < destinationRect.right; dx++ )
 		{
-			for ( int sy = sourceRect.top; sy < sourceRect.bottom; sy++ )
+			int sx = (int)std::floor( scaleInvX * (dx - originalDestination.left) );
+			for ( int dy = destinationRect.top; dy < destinationRect.bottom; dy++ )
 			{
-				effect( surface.GetPixel( sx, sy ), x + sx - sourceRect.left, y + sy - sourceRect.top, *this );
+				int sy = (int)std::floor( scaleInvY * (dy - originalDestination.top) );
+
+				//effect( surface.GetPixel( sx, sy ), destinationRect.left + sx - sourceRect.left, destinationRect.top + sy - sourceRect.top, *this );
+				effect( surface.GetPixel( sx, sy ), destinationRect.left + dx - originalDestination.left, destinationRect.top + dy - originalDestination.top, *this );
 			}
 		}
+
+		//if ( destinationRect.left < clippingRect.left )
+		//{
+		//	sourceRect.left += clippingRect.left - destinationRect.left;
+		//	destinationRect.left = clippingRect.left;
+		//}
+
+		//if ( destinationRect.top < clippingRect.top )
+		//{
+		//	sourceRect.top += clippingRect.top - destinationRect.top;
+		//	destinationRect.top = clippingRect.top;
+		//}
+
+		//if ( destinationRect.left + sourceRect.GetWidth() > clippingRect.right )
+		//{
+		//	sourceRect.right -= destinationRect.left + sourceRect.GetWidth() - clippingRect.right;
+		//}
+
+		//if ( destinationRect.top + sourceRect.GetHeight() > clippingRect.bottom )
+		//{
+		//	sourceRect.bottom -= destinationRect.top + sourceRect.GetHeight() - clippingRect.bottom;
+		//}
+
+		//for ( int sx = sourceRect.left; sx < sourceRect.right; sx++ )
+		//{
+		//	for ( int sy = sourceRect.top; sy < sourceRect.bottom; sy++ )
+		//	{
+		//		effect( surface.GetPixel( sx, sy ), destinationRect.left + sx - sourceRect.left, destinationRect.top + sy - sourceRect.top, *this );
+		//	}
+		//}
 	}
 
 	~Graphics();

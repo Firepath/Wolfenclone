@@ -9,6 +9,7 @@
 #include "Keyboard.h"
 #include "Map.h"
 #include "Mouse.h"
+#include "Surface.h"
 #include "Vec2.h"
 
 class Editor
@@ -51,6 +52,8 @@ private:
 	void MouseLRelease();
 	void MouseRPress( const Vei2& screenLocation );
 	void SelectCell( const Vei2& gridLocation );
+
+	Surface GreyWallSurface = Surface( "Textures\\greystone.bmp" );
 
 	EditMode::MouseLClick MouseLClickMode = EditMode::MouseLClick::None;
 	EditMode::Selection SelectionMode = EditMode::Selection::Rectangle;
