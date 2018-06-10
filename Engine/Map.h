@@ -47,6 +47,7 @@ public:
 	void ClearCell( const Vei2& gridLocation );
 	void Draw( Graphics& gfx );
 	void Fill( const Vei2& gridLocation, const Color colour );
+	void Fill( const Vei2& gridLocation, Surface* const surface );
 	Cell& GetCell( const Vei2& gridLocation ) const;
 	void HighlightCell( const Vei2& gridLocation, const Color highlightColour, const float highlightOpacity, Graphics& gfx ) const;
 	bool IsOnGrid( const Vei2& gridLocation ) const;
@@ -55,9 +56,9 @@ public:
 	void Zoom( const Vec2& zoomLocation, const bool zoomingIn );
 
 private:
-	static constexpr float MaximumZoomLevel = 10.0f;
+	static constexpr float MaximumZoomLevel = 40.0f;
 	static constexpr float MinimumZoomLevel = 1.0f / MaximumZoomLevel;
-	static constexpr float ZoomFactor = 1.25;
+	static constexpr float ZoomFactor = 1.25f;
 	static constexpr float ZoomFactorInverse = 1.0f / ZoomFactor;
 	static constexpr Color GridBorderColour = Colors::Gray;
 	static constexpr Color GridColour = Colors::DarkGray;
@@ -75,6 +76,7 @@ private:
 	void ClearEnclosedCells( const Vei2& gridLocation );
 	void DrawCells( const Vei2 screenLocation, Graphics& gfx ) const;
 	void DrawGrid( const Vei2 screenLocation, Graphics& gfx ) const;
+	void CheckForClosingArea( const Vei2& gridLocation, const bool wasEnclosed );
 	const bool FillClosedArea( const Vei2& gridLocation );
 	const bool FindWall( const Vei2& gridLocation, const int xDirection, const int yDirection ) const;
 	const bool IsCellEnclosed( const Vei2& gridLocation ) const;

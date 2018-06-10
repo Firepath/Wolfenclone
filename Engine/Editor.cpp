@@ -245,7 +245,7 @@ void Editor::MouseLPress( const Vei2& screenLocation )
 	switch ( GetMouseLClickMode() )
 	{
 	case EditMode::MouseLClick::Insert:
-		MapGrid.Fill( gridLocation, Colors::White );
+		MapGrid.Fill( gridLocation, &GreyWallSurface );
 		break;
 	case EditMode::MouseLClick::Select:
 		SelectCell( gridLocation );

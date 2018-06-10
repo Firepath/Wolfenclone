@@ -51,16 +51,19 @@ void Map::Fill( const Vei2 & gridLocation, const Color colour )
 {
 	Cell& cell = GetCell( gridLocation );
 	const bool wasEnclosed = cell.IsEnclosed();
-	if ( cell.Fill( Colors::White ) )
+	if ( cell.Fill( colour ) )
 	{
-		if ( IsJointFormed( gridLocation ) && !wasEnclosed )
-		{
-			// Fill the various potential enclosed directions
-			FillClosedArea( gridLocation + Vei2( -1, 0 ) );
-			FillClosedArea( gridLocation + Vei2( 1, 0 ) );
-			FillClosedArea( gridLocation + Vei2( 0, -1 ) );
-			FillClosedArea( gridLocation + Vei2( 0, 1 ) );
-		}
+		CheckForClosingArea( gridLocation, wasEnclosed );
+	}
+}
+
+void Map::Fill( const Vei2 & gridLocation, Surface * const surface )
+{
+	Cell& cell = GetCell( gridLocation );
+	const bool wasEnclosed = cell.IsEnclosed();
+	if ( cell.Fill( surface ) )
+	{
+		CheckForClosingArea( gridLocation, wasEnclosed );
 	}
 }
 
@@ -230,6 +233,18 @@ void Map::DrawGrid( const Vei2 screenLocation, Graphics & gfx ) const
 		Vei2 left = screenLocation + Vei2( 0, (int)std::ceil( j * CellSize ) );
 		Vei2 right = left + Vei2( (int)std::ceil( Width * CellSize ) - 1, 0 );
 		gfx.DrawLine( left, right, Map::GridColour );
+	}
+}
+
+void Map::CheckForClosingArea( const Vei2 & gridLocation, const bool wasEnclosed )
+{
+	if ( IsJointFormed( gridLocation ) && !wasEnclosed )
+	{
+		// Fill the various potential enclosed directions
+		FillClosedArea( gridLocation + Vei2( -1, 0 ) );
+		FillClosedArea( gridLocation + Vei2( 1, 0 ) );
+		FillClosedArea( gridLocation + Vei2( 0, -1 ) );
+		FillClosedArea( gridLocation + Vei2( 0, 1 ) );
 	}
 }
 
