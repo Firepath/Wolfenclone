@@ -69,14 +69,14 @@ Map::Cell& Map::GetCell( const Vei2 & gridLocation ) const
 	return Cells->at( gridLocation );
 }
 
-void Map::HighlightCell( const Vei2& gridLocation, Graphics & gfx ) const
+void Map::HighlightCell( const Vei2& gridLocation, const Color highlightColour, const float highlightOpacity, Graphics & gfx ) const
 {
 	const Vei2 mapScreenLocation = ScreenLocation();
 	Vei2 topLeft = mapScreenLocation + Vei2( (int)std::ceil( (float)gridLocation.x * CellSize ), (int)std::ceil( (float)gridLocation.y * CellSize ) );
 	Vei2 bottomRight = mapScreenLocation + Vei2( (int)std::ceil( (float)(gridLocation.x + 1) * CellSize ) - 1, (int)std::ceil( (float)(gridLocation.y + 1) * CellSize ) - 1 );
 
-	PixelEffect::Transparency effect( Colors::Magenta, Cell::CellHoverOpacity );
-	gfx.DrawBox( topLeft, bottomRight, Cell::CellHoverHighlightColour, effect );
+	PixelEffect::Transparency effect( Colors::Magenta, highlightOpacity );
+	gfx.DrawBox( topLeft, bottomRight, highlightColour, effect );
 }
 
 bool Map::IsOnGrid( const Vei2& gridLocation ) const

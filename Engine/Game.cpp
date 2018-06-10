@@ -38,7 +38,17 @@ void Game::Go()
 
 void Game::UpdateModel()
 {
+	DoKeyboardEvents();
 	DoMouseEvents();
+}
+
+void Game::DoKeyboardEvents()
+{
+	while ( !wnd.kbd.KeyIsEmpty() )
+	{
+		const Keyboard::Event e = wnd.kbd.ReadKey();
+		Editor.DoKeyboardEvents( e );
+	}
 }
 
 void Game::DoMouseEvents()

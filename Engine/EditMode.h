@@ -6,6 +6,7 @@ namespace EditMode
 	{
 		None,
 		Select,
-		Insert
+		Insert,
+		EnumOptionsCount // This is the size of the enum, don't add things after it
 	};
 }

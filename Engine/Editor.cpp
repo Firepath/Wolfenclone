@@ -6,6 +6,24 @@ Editor::Editor()
 {
 }
 
+void Editor::DoKeyboardEvents( const Keyboard::Event & ke )
+{
+	const char c = ke.GetCode();
+	if ( ke.IsPress() )
+	{
+		switch ( c )
+		{
+		case VK_TAB:
+			CycleMouseLClickMode();
+		default:
+			break;
+		}
+	}
+	else if ( ke.IsRelease() )
+	{
+	}
+}
+
 void Editor::DoMouseEvents( const Mouse::Event & me )
 {
 	Mouse::Event::Type meType = me.GetType();
@@ -63,8 +81,32 @@ void Editor::Draw( Graphics & gfx )
 
 	if ( MapGrid.IsOnGrid( MouseInf.HoverGridLocation ) )
 	{
-		MapGrid.HighlightCell( MouseInf.HoverGridLocation, gfx );
+		MapGrid.HighlightCell( MouseInf.HoverGridLocation, GetCellHoverHighlightColour(), Editor::CellHoverOpacity, gfx );
 	}
+}
+
+void Editor::CycleMouseLClickMode()
+{
+	MouseLClickMode = (EditMode::MouseLClick)(((int)MouseLClickMode + 1) % (int)EditMode::MouseLClick::EnumOptionsCount);
+}
+
+const Color Editor::GetCellHoverHighlightColour() const
+{
+	Color colour = Colors::MediumGray;
+
+	switch ( MouseLClickMode )
+	{
+	case EditMode::MouseLClick::Insert:
+		colour = Colors::Green;
+		break;
+	case EditMode::MouseLClick::Select:
+		colour = Colors::Yellow;
+		break;
+	default:
+		break;
+	}
+
+	return colour;
 }
 
 void Editor::MouseLPress( const Vei2& screenLocation )
@@ -83,5 +125,8 @@ void Editor::MouseLPress( const Vei2& screenLocation )
 
 	MouseInf.LMouseButtonGridLocation = gridLocation;
 
-	MapGrid.Fill( gridLocation, Colors::White );
+	if ( MouseLClickMode == EditMode::MouseLClick::Insert )
+	{
+		MapGrid.Fill( gridLocation, Colors::White );
+	}
 }

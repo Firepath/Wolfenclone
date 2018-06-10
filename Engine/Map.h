@@ -18,9 +18,6 @@ public:
 	class Cell
 	{
 	public:
-		static constexpr Color CellHoverHighlightColour = Colors::MediumGray;
-		static constexpr float CellHoverOpacity = 50.0f;
-
 		static constexpr Color CellEnclosedColour = Colors::Maroon;
 
 		Cell( const Vei2& location );
@@ -48,7 +45,7 @@ public:
 	void Draw( Graphics& gfx );
 	void Fill( const Vei2& gridLocation, const Color colour );
 	Cell& GetCell( const Vei2& gridLocation ) const;
-	void HighlightCell( const Vei2& gridLocation, Graphics& gfx ) const;
+	void HighlightCell( const Vei2& gridLocation, const Color highlightColour, const float highlightOpacity, Graphics& gfx ) const;
 	bool IsOnGrid( const Vei2& gridLocation ) const;
 	void Move( const Vec2& delta );
 	const Vei2 ScreenToGrid( const Vei2& screenLocation ) const;
