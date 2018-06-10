@@ -25,6 +25,7 @@
 #include "Graphics.h"
 
 #include "Editor.h"
+#include "Surface.h"
 
 class Game
 {
@@ -47,5 +48,6 @@ private:
 	/********************************/
 	/*  User Variables              */
 	Editor Editor;
+	Surface greyWall = Surface( "Textures\\greystone.bmp" );
 	/********************************/
 };

@@ -24,6 +24,8 @@
 #include "ChiliException.h"
 #include "Colors.h"
 
+#include "Rect.h"
+#include "Surface.h"
 #include "Vec2.h"
 
 class Graphics
@@ -40,6 +42,18 @@ public:
 	private:
 		HRESULT hr;
 	};
+
+	class FileException : public ChiliException
+	{
+	public:
+		FileException( const std::wstring& note, const std::exception& exception, const wchar_t* file, unsigned int line );
+		std::wstring GetErrorName() const;
+		std::wstring GetErrorDescription() const;
+		virtual std::wstring GetFullMessage() const override;
+		virtual std::wstring GetExceptionType() const override;
+	private:
+		const std::exception ex;
+	}; 
 private:
 	// vertex format for the framebuffer fullscreen textured quad
 	struct FSQVertex
@@ -83,6 +97,58 @@ public:
 	}
 
 	void DrawBoxBorder( Vei2 topLeft, Vei2 bottomRight, Color colour );
+
+	template<typename E>
+	void DrawSprite( const int x, const int y, const Surface& surface, E effect )
+	{
+		DrawSprite( x, y, surface.GetRect(), surface, effect );
+	}
+
+	template<typename E>
+	void DrawSprite( const int x, const int y, const RectI& sourceRect, const Surface& surface, E effect )
+	{
+		DrawSprite( x, y, sourceRect, GetScreenRect(), surface, effect );
+	}
+
+	template<typename E>
+	void DrawSprite( int x, int y, RectI sourceRect, const RectI& clippingRect, const Surface& surface, E effect )
+	{
+		assert( sourceRect.left >= 0 );
+		assert( sourceRect.right <= surface.GetWidth() );
+		assert( sourceRect.top >= 0 );
+		assert( sourceRect.bottom <= surface.GetHeight() );
+
+		if ( x < clippingRect.left )
+		{
+			sourceRect.left += clippingRect.left - x;
+			x = clippingRect.left;
+		}
+
+		if ( y < clippingRect.top )
+		{
+			sourceRect.top += clippingRect.top - y;
+			y = clippingRect.top;
+		}
+
+		if ( x + sourceRect.GetWidth() > clippingRect.right )
+		{
+			sourceRect.right -= x + sourceRect.GetWidth() - clippingRect.right;
+		}
+
+		if ( y + sourceRect.GetHeight() > clippingRect.bottom )
+		{
+			sourceRect.bottom -= y + sourceRect.GetHeight() - clippingRect.bottom;
+		}
+
+		for ( int sx = sourceRect.left; sx < sourceRect.right; sx++ )
+		{
+			for ( int sy = sourceRect.top; sy < sourceRect.bottom; sy++ )
+			{
+				effect( surface.GetPixel( sx, sy ), x + sx - sourceRect.left, y + sy - sourceRect.top, *this );
+			}
+		}
+	}
+
 	~Graphics();
 private:
 	Microsoft::WRL::ComPtr<IDXGISwapChain>				pSwapChain;
@@ -101,4 +167,5 @@ private:
 public:
 	static constexpr int ScreenWidth = 1440;
 	static constexpr int ScreenHeight = 800;
+	static RectI GetScreenRect();
 };

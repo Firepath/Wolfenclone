@@ -26,6 +26,7 @@
 #include <string>
 #include <array>
 
+#include <codecvt>
 #include <limits>
 
 // Ignore the intellisense error "cannot open source file" for .shh files.
@@ -254,6 +255,11 @@ Graphics::~Graphics()
 	if( pImmediateContext ) pImmediateContext->ClearState();
 }
 
+RectI Graphics::GetScreenRect()
+{
+	return RectI( 0, Graphics::ScreenWidth, 0, Graphics::ScreenHeight );
+}
+
 void Graphics::EndFrame()
 {
 	HRESULT hr;
@@ -440,4 +446,46 @@ std::wstring Graphics::Exception::GetErrorDescription() const
 std::wstring Graphics::Exception::GetExceptionType() const
 {
 	return L"Chili Graphics Exception";
+}
+
+//////////////////////////////////////////////////
+//           Graphics File Exception
+Graphics::FileException::FileException( const std::wstring& note, const std::exception& exception, const wchar_t* file, unsigned int line )
+	:
+	ChiliException( file, line, note ),
+	ex( exception )
+{}
+
+std::wstring Graphics::FileException::GetFullMessage() const
+{
+	const std::wstring empty = L"";
+	const std::wstring errorName = GetErrorName();
+	const std::wstring errorDesc = GetErrorDescription();
+	const std::wstring& note = GetNote();
+	const std::wstring location = GetLocation();
+	return    (!errorName.empty() ? std::wstring( L"Error: " ) + errorName + L"\n"
+		: empty)
+		+ (!errorDesc.empty() ? std::wstring( L"Description: " ) + errorDesc + L"\n"
+			: empty)
+		+ (!note.empty() ? std::wstring( L"Note: " ) + note + L"\n"
+			: empty)
+		+ (!location.empty() ? std::wstring( L"Location: " ) + location
+			: empty);
+}
+
+std::wstring Graphics::FileException::GetErrorName() const
+{
+	return L"Graphics File Error";
+}
+
+std::wstring Graphics::FileException::GetErrorDescription() const
+{
+	std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
+	std::wstring wideDescription; wideDescription += converter.from_bytes( ex.what() );
+	return wideDescription.data();
+}
+
+std::wstring Graphics::FileException::GetExceptionType() const
+{
+	return L"Chili Graphics File Exception";
 }

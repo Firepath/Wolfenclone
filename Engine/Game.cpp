@@ -20,6 +20,7 @@
  ******************************************************************************************/
 #include "MainWindow.h"
 #include "Game.h"
+#include "SpriteEffect.h"
 
 Game::Game( MainWindow& wnd )
 	:
@@ -63,4 +64,6 @@ void Game::DoMouseEvents()
 void Game::ComposeFrame()
 {
 	Editor.Draw( gfx );
+
+	gfx.DrawSprite( 100, 100, greyWall, SpriteEffect::Copy() );
 }

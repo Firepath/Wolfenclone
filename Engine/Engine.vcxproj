@@ -143,6 +143,9 @@
     <ClInclude Include="DXErr.h" />
     <ClInclude Include="EditMode.h" />
     <ClInclude Include="Editor.h" />
+    <ClInclude Include="Rect.h" />
+    <ClInclude Include="SpriteEffect.h" />
+    <ClInclude Include="Surface.h" />
     <ClInclude Include="VectorExtensions.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="Graphics.h" />
@@ -165,6 +168,7 @@
     <ClCompile Include="Map.cpp" />
     <ClCompile Include="Map_Cell.cpp" />
     <ClCompile Include="Mouse.cpp" />
+    <ClCompile Include="Surface.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="FramebufferPS.hlsl">
