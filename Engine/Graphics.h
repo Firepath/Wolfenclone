@@ -251,9 +251,9 @@ public:
 			destinationRect.left = clippingRect.left;
 		}
 
-		if ( destinationRect.right > clippingRect.right )
+		if ( destinationRect.right >= clippingRect.right )
 		{
-			destinationRect.right = clippingRect.right;
+			destinationRect.right = clippingRect.right - 1;
 		}
 
 		if ( destinationRect.top < clippingRect.top )
@@ -261,19 +261,19 @@ public:
 			destinationRect.top = clippingRect.top;
 		}
 
-		if ( destinationRect.bottom > clippingRect.bottom )
+		if ( destinationRect.bottom >= clippingRect.bottom )
 		{
-			destinationRect.bottom = clippingRect.bottom;
+			destinationRect.bottom = clippingRect.bottom - 1;
 		}
 
-		for ( int dx = destinationRect.left; dx < destinationRect.right; dx++ )
+		for ( int dx = destinationRect.left; dx <= destinationRect.right; dx++ )
 		{
-			int sx = (int)std::floor( scaleInvX * (dx - originalDestination.left) );
-			for ( int dy = destinationRect.top; dy < destinationRect.bottom; dy++ )
+			int sx = std::min( sourceRect.GetWidth() - 1, (int)std::floor( scaleInvX * (dx - originalDestination.left) ) );
+			for ( int dy = destinationRect.top; dy <= destinationRect.bottom; dy++ )
 			{
-				int sy = (int)std::floor( scaleInvY * (dy - originalDestination.top) );
+				int sy = std::min( sourceRect.GetHeight() - 1, (int)std::floor( scaleInvY * (dy - originalDestination.top) ) );
 
-				effect( surface.GetPixel( sx, sy ), destinationRect.left + dx - destinationRect.left, destinationRect.top + dy - destinationRect.top, *this );
+				effect( surface.GetPixel( sx, sy ), dx, dy, *this );
 			}
 		}
 	}
