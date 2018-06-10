@@ -43,8 +43,17 @@ void Map::Draw( Graphics& gfx )
 {
 	const Vei2 screenLocation = ScreenLocation();
 
+	if ( !DrawGridOverCells )
+	{
+		DrawGrid( screenLocation, gfx );
+	}
+
 	DrawCells( screenLocation, gfx );
-	DrawGrid( screenLocation, gfx );
+
+	if ( DrawGridOverCells )
+	{
+		DrawGrid( screenLocation, gfx );
+	}
 }
 
 void Map::Fill( const Vei2 & gridLocation, const Color colour )
@@ -104,6 +113,11 @@ const Vei2 Map::ScreenToGrid( const Vei2& screenLocation ) const
 
 	const Vei2 gridLocation( (int)(gridLocationF.x / CellSize), (int)(gridLocationF.y / CellSize) );
 	return gridLocation;
+}
+
+void Map::ToggleGridDrawing()
+{
+	DrawGridOverCells = !DrawGridOverCells;
 }
 
 void Map::Zoom( const Vec2& zoomLocation, const bool zoomingIn )

@@ -53,6 +53,7 @@ public:
 	bool IsOnGrid( const Vei2& gridLocation ) const;
 	void Move( const Vec2& delta );
 	const Vei2 ScreenToGrid( const Vei2& screenLocation ) const;
+	void ToggleGridDrawing();
 	void Zoom( const Vec2& zoomLocation, const bool zoomingIn );
 
 private:
@@ -65,12 +66,6 @@ private:
 	static constexpr float DefaultCellSize = 8.0f;
 	static constexpr float MinimumCellSize = 2.0f;
 
-	float ZoomLevel = 1.0f;
-	float CellSize;
-	const int Width;
-	const int Height;
-	Vec2 Location;
-
 	std::unique_ptr<std::unordered_map<Vei2, Cell, Vei2::Hasher>> Cells;
 
 	void ClearEnclosedCells( const Vei2& gridLocation );
@@ -82,4 +77,11 @@ private:
 	const bool IsCellEnclosed( const Vei2& gridLocation ) const;
 	bool IsJointFormed( const Vei2& gridLocation ) const;
 	const Vei2 ScreenLocation() const;
+
+	float ZoomLevel = 1.0f;
+	float CellSize;
+	bool DrawGridOverCells = false;
+	const int Width;
+	const int Height;
+	Vec2 Location;
 };

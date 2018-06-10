@@ -9,16 +9,24 @@ Editor::Editor()
 
 void Editor::DoKeyboardEvents( const Keyboard::Event & ke )
 {
-	const char c = ke.GetCode();
+	const unsigned char c = ke.GetCode();
 	if ( ke.IsPress() )
 	{
 		switch ( c )
 		{
+		case '`':
+		case '~':
+			MapGrid.ToggleGridDrawing();
+			break;
+		case VK_BACK:
 		case VK_DELETE:
 			ClearSelectedCells();
 			break;
 		case VK_CONTROL:
 			EnableSingleSelectionMode();
+			break;
+		case VK_ESCAPE:
+			SelectedCells.clear();
 			break;
 		case VK_SHIFT:
 			EnableSelectionMode();
@@ -171,6 +179,12 @@ void Editor::EnableSingleSelectionMode()
 
 void Editor::EnableSelectionMode()
 {
+	if ( MapGrid.IsOnGrid( MouseInf.LMouseButtonGridLocationAtLPress ) )
+	{
+		// Already have left mouse button down, only do toggling beforehand
+		return;
+	}
+
 	if ( MouseLClickMode == EditMode::MouseLClick::Select ) // Already in select mode, this can toggle appending
 	{
 		AppendSelection = true;
