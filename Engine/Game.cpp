@@ -65,8 +65,10 @@ void Game::ComposeFrame()
 {
 	Editor.Draw( gfx );
 
-	//gfx.DrawSprite( 100, 100, greyWall.GetRect(), greyWall, SpriteEffect::Copy() );
-	gfx.DrawSprite( RectI( 100, 228, 100, 228 ), greyWall.GetRect(), Graphics::GetScreenRect(), greyWall, SpriteEffect::Copy() );
-	gfx.DrawSprite( RectI( 100, 164, 100, 164 ), greyWall.GetRect(), Graphics::GetScreenRect(), greyWall, SpriteEffect::Copy() );
+	//gfx.DrawSprite( RectI( 100, 228, 100, 228 ), greyWall.GetRect(), Graphics::GetScreenRect(), greyWall, SpriteEffect::Copy() );
+	//gfx.DrawSprite( RectI( 100, 164, 100, 164 ), greyWall.GetRect(), Graphics::GetScreenRect(), greyWall, SpriteEffect::Copy() );
+	//gfx.DrawSprite( RectI( 100, 132, 100, 132 ), greyWall.GetRect(), Graphics::GetScreenRect(), greyWall, SpriteEffect::Copy() );
+	gfx.DrawSprite( RectI( 100, 228, 100, 228 ), greyWall, SpriteEffect::Copy() );
+	gfx.DrawSprite( RectI( 100, 164, 100, 164 ), greyWall.GetRect(), greyWall, SpriteEffect::Copy() );
 	gfx.DrawSprite( RectI( 100, 132, 100, 132 ), greyWall.GetRect(), Graphics::GetScreenRect(), greyWall, SpriteEffect::Copy() );
 }

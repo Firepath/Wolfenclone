@@ -105,9 +105,21 @@ public:
 	}
 
 	template<typename E>
+	void DrawSprite( RectI destinationRect, const Surface& surface, E effect )
+	{
+		DrawSprite( destinationRect, surface.GetRect(), surface, effect );
+	}
+
+	template<typename E>
 	void DrawSprite( const int x, const int y, const RectI& sourceRect, const Surface& surface, E effect )
 	{
 		DrawSprite( x, y, sourceRect, GetScreenRect(), surface, effect );
+	}
+
+	template<typename E>
+	void DrawSprite( RectI destinationRect, const RectI& sourceRect, const Surface& surface, E effect )
+	{
+		DrawSprite( destinationRect, sourceRect, GetScreenRect(), surface, effect );
 	}
 
 	template<typename E>
@@ -132,13 +144,11 @@ public:
 
 		if ( destinationRect.left < clippingRect.left )
 		{
-			//sourceRect.left += clippingRect.left - destinationRect.left;
 			destinationRect.left = clippingRect.left;
 		}
 
 		if ( destinationRect.right > clippingRect.right )
 		{
-			//sourceRect.top += clippingRect.top - destinationRect.top;
 			destinationRect.right = clippingRect.right;
 		}
 
@@ -159,40 +169,9 @@ public:
 			{
 				int sy = (int)std::floor( scaleInvY * (dy - originalDestination.top) );
 
-				//effect( surface.GetPixel( sx, sy ), destinationRect.left + sx - sourceRect.left, destinationRect.top + sy - sourceRect.top, *this );
-				effect( surface.GetPixel( sx, sy ), destinationRect.left + dx - originalDestination.left, destinationRect.top + dy - originalDestination.top, *this );
+				effect( surface.GetPixel( sx, sy ), destinationRect.left + dx - destinationRect.left, destinationRect.top + dy - destinationRect.top, *this );
 			}
 		}
-
-		//if ( destinationRect.left < clippingRect.left )
-		//{
-		//	sourceRect.left += clippingRect.left - destinationRect.left;
-		//	destinationRect.left = clippingRect.left;
-		//}
-
-		//if ( destinationRect.top < clippingRect.top )
-		//{
-		//	sourceRect.top += clippingRect.top - destinationRect.top;
-		//	destinationRect.top = clippingRect.top;
-		//}
-
-		//if ( destinationRect.left + sourceRect.GetWidth() > clippingRect.right )
-		//{
-		//	sourceRect.right -= destinationRect.left + sourceRect.GetWidth() - clippingRect.right;
-		//}
-
-		//if ( destinationRect.top + sourceRect.GetHeight() > clippingRect.bottom )
-		//{
-		//	sourceRect.bottom -= destinationRect.top + sourceRect.GetHeight() - clippingRect.bottom;
-		//}
-
-		//for ( int sx = sourceRect.left; sx < sourceRect.right; sx++ )
-		//{
-		//	for ( int sy = sourceRect.top; sy < sourceRect.bottom; sy++ )
-		//	{
-		//		effect( surface.GetPixel( sx, sy ), destinationRect.left + sx - sourceRect.left, destinationRect.top + sy - sourceRect.top, *this );
-		//	}
-		//}
 	}
 
 	~Graphics();
