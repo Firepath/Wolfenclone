@@ -49,6 +49,9 @@ public:
 	void Fill( const Vei2& gridLocation, const Color colour );
 	void Fill( const Vei2& gridLocation, Surface* const surface );
 	Cell& GetCell( const Vei2& gridLocation ) const;
+	const int GetCellBorderThickness() const;
+	const float GetCellSize() const;
+	const Vei2 GetScreenLocation() const;
 	const Vei2 GetSize() const;
 	void HighlightCell( const Vei2& gridLocation, const Color highlightColour, const float highlightOpacity, const bool drawBorder, Graphics& gfx ) const;
 	bool IsOnGrid( const Vei2& gridLocation ) const;
@@ -77,7 +80,6 @@ private:
 	const bool FindWall( const Vei2& gridLocation, const int xDirection, const int yDirection ) const;
 	const bool IsCellEnclosed( const Vei2& gridLocation ) const;
 	bool IsJointFormed( const Vei2& gridLocation ) const;
-	const Vei2 ScreenLocation() const;
 
 	float ZoomLevel = 1.0f;
 	float CellSize;

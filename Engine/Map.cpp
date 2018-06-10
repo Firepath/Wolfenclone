@@ -41,7 +41,7 @@ void Map::ClearCell( const Vei2& gridLocation )
 
 void Map::Draw( Graphics& gfx )
 {
-	const Vei2 screenLocation = ScreenLocation();
+	const Vei2 screenLocation = GetScreenLocation();
 
 	if ( !DrawGridOverCells )
 	{
@@ -82,6 +82,21 @@ Map::Cell& Map::GetCell( const Vei2 & gridLocation ) const
 	return Cells->at( gridLocation );
 }
 
+const int Map::GetCellBorderThickness() const
+{
+	return std::max( 2, (int)(ZoomLevel / 2.0f) );
+}
+
+const float Map::GetCellSize() const
+{
+	return CellSize;
+}
+
+const Vei2 Map::GetScreenLocation() const
+{
+	return Vei2( (int)std::ceil( Location.x ), (int)std::ceil( Location.y ) );
+}
+
 const Vei2 Map::GetSize() const
 {
 	return Vei2( Width, Height );
@@ -89,7 +104,7 @@ const Vei2 Map::GetSize() const
 
 void Map::HighlightCell( const Vei2& gridLocation, const Color highlightColour, const float highlightOpacity, const bool drawBorder, Graphics & gfx ) const
 {
-	const Vei2 mapScreenLocation = ScreenLocation();
+	const Vei2 mapScreenLocation = GetScreenLocation();
 	const Vei2 topLeft = mapScreenLocation + Vei2( (int)std::ceil( (float)gridLocation.x * CellSize ), (int)std::ceil( (float)gridLocation.y * CellSize ) );
 	const Vei2 bottomRight = mapScreenLocation + Vei2( (int)std::ceil( (float)(gridLocation.x + 1) * CellSize ) - 1, (int)std::ceil( (float)(gridLocation.y + 1) * CellSize ) - 1 );
 	const RectI rect( topLeft, bottomRight );
@@ -99,7 +114,7 @@ void Map::HighlightCell( const Vei2& gridLocation, const Color highlightColour, 
 
 	if ( drawBorder )
 	{
-		gfx.DrawBoxBorder( rect, highlightColour, effect, std::max( 2, (int)(ZoomLevel / 2.0f) ) );
+		gfx.DrawBoxBorder( rect, highlightColour, effect, GetCellBorderThickness() );
 	}
 }
 
@@ -242,7 +257,7 @@ void Map::DrawGrid( const Vei2 screenLocation, Graphics & gfx ) const
 	// Grid border
 	Vei2 topLeft = screenLocation;
 	Vei2 bottomRight = topLeft + Vei2( (int)std::ceil( Width * CellSize ) - 1, (int)std::ceil( Height * CellSize ) - 1 );
-	gfx.DrawBoxBorder( RectI( topLeft, bottomRight ), Map::GridBorderColour, PixelEffect::Copy() );
+	gfx.DrawBoxBorder( RectI( topLeft, bottomRight ), Map::GridBorderColour, PixelEffect::Copy(), GetCellBorderThickness() );
 
 	// Vertical grid lines
 	for ( int i = 1; i < Width; i++ )
@@ -467,9 +482,4 @@ bool Map::IsJointFormed( const Vei2& gridLocation ) const
 	// Otherwise, no NEW joint created by filling this grid location.
 
 	return found;
-}
-
-const Vei2 Map::ScreenLocation() const
-{
-	return Vei2( (int)std::ceil( Location.x ), (int)std::ceil( Location.y ) );
 }

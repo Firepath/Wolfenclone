@@ -128,10 +128,14 @@ void Editor::Draw( Graphics & gfx )
 		if ( gridLocation.y > bottomRight.y ) { bottomRight.y = gridLocation.y; }
 	}
 
-	//if ( MapGrid.IsOnGrid( topLeft ) && MapGrid.IsOnGrid( bottomRight ) )
-	//{
-	//	gfx.DrawBoxBorder( RectI( topLeft * MapGrid.cells, bottomRight ), Editor::SelectModeHoverColour, PixelEffect::Transparency( Colors::Magenta, Editor::CellHoverOpacity ) );
-	//}
+	if ( MapGrid.IsOnGrid( topLeft ) && MapGrid.IsOnGrid( bottomRight ) )
+	{
+		const float cellSize = MapGrid.GetCellSize();
+		const Vei2 gridLocation = MapGrid.GetScreenLocation();
+		topLeft = (Vei2)((Vec2)topLeft * cellSize) + gridLocation;
+		bottomRight = (Vei2)((Vec2)(bottomRight + Vei2( 1, 1 )) * cellSize) + gridLocation;
+		gfx.DrawBoxBorder( RectI( topLeft, bottomRight ), Editor::SelectModeHoverColour, PixelEffect::Transparency( Colors::Magenta, Editor::CellHoverOpacity ), MapGrid.GetCellBorderThickness() );
+	}
 
 	if ( MapGrid.IsOnGrid( MouseInf.HoverGridLocation ) )
 	{

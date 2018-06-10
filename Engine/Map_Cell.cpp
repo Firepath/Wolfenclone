@@ -20,7 +20,7 @@ void Map::Cell::Draw( const Map& map, Graphics& gfx ) const
 		return;
 	}
 
-	const Vei2 mapScreenLocation = map.ScreenLocation();
+	const Vei2 mapScreenLocation = map.GetScreenLocation();
 	Vei2 topLeft = mapScreenLocation + Vei2( (int)std::ceil( (float)Location.x * map.CellSize ), (int)std::ceil( (float)Location.y * map.CellSize ) );
 	Vei2 bottomRight = mapScreenLocation + Vei2( (int)std::ceil( (float)(Location.x + 1) * map.CellSize ) - 1, (int)std::ceil( (float)(Location.y + 1) * map.CellSize ) - 1 );
 
