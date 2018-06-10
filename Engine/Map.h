@@ -49,7 +49,8 @@ public:
 	void Fill( const Vei2& gridLocation, const Color colour );
 	void Fill( const Vei2& gridLocation, Surface* const surface );
 	Cell& GetCell( const Vei2& gridLocation ) const;
-	void HighlightCell( const Vei2& gridLocation, const Color highlightColour, const float highlightOpacity, Graphics& gfx ) const;
+	const Vei2 GetSize() const;
+	void HighlightCell( const Vei2& gridLocation, const Color highlightColour, const float highlightOpacity, const bool drawBorder, Graphics& gfx ) const;
 	bool IsOnGrid( const Vei2& gridLocation ) const;
 	void Move( const Vec2& delta );
 	const Vei2 ScreenToGrid( const Vei2& screenLocation ) const;

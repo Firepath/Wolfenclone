@@ -110,20 +110,32 @@ void Editor::Draw( Graphics & gfx )
 
 	for ( Vei2 gridLocation : SelectedCells )
 	{
-		MapGrid.HighlightCell( gridLocation, Editor::SelectModeHoverColour, Editor::CellHoverOpacity, gfx );
+		MapGrid.HighlightCell( gridLocation, Editor::SelectModeHoverColour, Editor::CellHoverOpacity, true, gfx );
 	}
 
+	Vei2 topLeft = MapGrid.GetSize();
+	Vei2 bottomRight( -1, -1 );
 	for ( Vei2 gridLocation : TemporarySelectedCells )
 	{
 		if ( !VectorExtension::Contains( SelectedCells, gridLocation ) ) // Already drawn (above)
 		{
-			MapGrid.HighlightCell( gridLocation, Editor::SelectModeHoverColour, Editor::CellHoverOpacity, gfx );
+			MapGrid.HighlightCell( gridLocation, Editor::SelectModeHoverColour, Editor::CellHoverOpacity, false, gfx );
 		}
+
+		if ( gridLocation.x < topLeft.x ) { topLeft.x = gridLocation.x; }
+		if ( gridLocation.y < topLeft.y ) { topLeft.y = gridLocation.y; }
+		if ( gridLocation.x > bottomRight.x ) { bottomRight.x = gridLocation.x; }
+		if ( gridLocation.y > bottomRight.y ) { bottomRight.y = gridLocation.y; }
 	}
+
+	//if ( MapGrid.IsOnGrid( topLeft ) && MapGrid.IsOnGrid( bottomRight ) )
+	//{
+	//	gfx.DrawBoxBorder( RectI( topLeft * MapGrid.cells, bottomRight ), Editor::SelectModeHoverColour, PixelEffect::Transparency( Colors::Magenta, Editor::CellHoverOpacity ) );
+	//}
 
 	if ( MapGrid.IsOnGrid( MouseInf.HoverGridLocation ) )
 	{
-		MapGrid.HighlightCell( MouseInf.HoverGridLocation, GetCellHoverHighlightColour(), Editor::CellHoverOpacity, gfx );
+		MapGrid.HighlightCell( MouseInf.HoverGridLocation, GetCellHoverHighlightColour(), Editor::CellHoverOpacity, true, gfx );
 	}
 }
 

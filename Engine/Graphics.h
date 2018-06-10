@@ -73,30 +73,114 @@ public:
 		PutPixel( x,y,{ unsigned char( r ),unsigned char( g ),unsigned char( b ) } );
 	}
 	void PutPixel( int x,int y,Color c );
-	void DrawLine( Vei2 p1, Vei2 p2, Color colour );
+
+	template <typename E>
+	void DrawLine( Vei2 p1, Vei2 p2, Color colour, E effect )
+	{
+		if ( p1.x > p2.x )
+		{
+			std::swap( p1, p2 );
+		}
+
+		float m = std::numeric_limits<float>::max();
+		if ( p1.x != p2.x )
+		{
+			m = ((float)(p2.y - p1.y)) / (float)(p2.x - p1.x);
+		}
+
+		if ( abs( m ) > 1.0f )
+		{
+			if ( p1.y > p2.y )
+			{
+				std::swap( p1, p2 );
+			}
+
+			m = 0.0f;
+			if ( p2.y != p1.y )
+			{
+				m = ((float)(p2.x - p1.x)) / (float)(p2.y - p1.y);
+			}
+
+			float c = p1.x - m * p1.y;
+
+			int startY = std::max( p1.y, 0 );
+			int endY = std::min( p2.y, Graphics::ScreenHeight - 1 );
+
+			int y = startY;
+			float x = m * startY + c;
+			while ( (int)x >= 0 && (int)x < Graphics::ScreenWidth && y <= endY )
+			{
+				effect( colour, (int)x, y, *this );
+				x += m;
+				y++;
+			}
+		}
+		else
+		{
+			float c = p1.y - m * p1.x;
+
+			int startX = std::max( p1.x, 0 );
+			int endX = std::min( p2.x, Graphics::ScreenWidth - 1 );
+
+			int x = startX;
+			float y = m * startX + c;
+			while ( (int)y >= 0 && (int)y < Graphics::ScreenHeight && x <= endX )
+			{
+				effect( colour, x, (int)y, *this );
+				y += m;
+				x++;
+			}
+		}
+	}
 
 	template <typename E>
 	void DrawBox( Vei2 topLeft, Vei2 bottomRight, Color colour, E effect )
 	{
-		assert( bottomRight.x >= topLeft.x );
-		assert( bottomRight.y >= topLeft.y );
+		DrawBox( RectI( topLeft, bottomRight ), colour, effect );
+	}
 
-		int left = std::max( topLeft.x, 0 );
-		int right = std::min( bottomRight.x, ScreenWidth - 1 );
-		int top = std::max( topLeft.y, 0 );
-		int bottom = std::min( bottomRight.y, ScreenHeight - 1 );
+	template <typename E>
+	void DrawBox( const RectI& rect, Color colour, E effect )
+	{
+		assert( rect.right >= rect.left );
+		assert( rect.bottom >= rect.top );
+
+		int left = std::max( rect.left, 0 );
+		int right = std::min( rect.right, ScreenWidth - 1 );
+		int top = std::max( rect.top, 0 );
+		int bottom = std::min( rect.bottom, ScreenHeight - 1 );
 
 		for ( int j = top; j <= bottom; j++ )
 		{
 			for ( int i = left; i <= right; i++ )
 			{
 				effect( colour, i, j, *this );
-				//PutPixel( i, j, colour );
 			}
 		}
 	}
 
-	void DrawBoxBorder( Vei2 topLeft, Vei2 bottomRight, Color colour );
+	template <typename E>
+	void DrawBoxBorder( Vei2 topLeft, Vei2 bottomRight, Color colour, E effect )
+	{
+		DrawBoxBorder( RectI( topLeft, bottomRight ), colour, effect );
+	}
+
+	template <typename E>
+	void DrawBoxBorder( const RectI& rect, Color colour, E effect )
+	{
+		assert( rect.right >= rect.left );
+		assert( rect.bottom >= rect.top );
+
+		Vei2 topLeft( rect.left, rect.top );
+		Vei2 topRight( rect.right, rect.top );
+		Vei2 bottomLeft( rect.left, rect.bottom );
+		Vei2 bottomRight( rect.right, rect.bottom );
+
+		DrawLine( topLeft, topRight, colour, effect );
+		DrawLine( topLeft, bottomLeft, colour, effect );
+		DrawLine( topRight, bottomRight, colour, effect );
+		DrawLine( bottomLeft, bottomRight, colour, effect );
+	}
 
 	template<typename E>
 	void DrawSprite( const int x, const int y, const Surface& surface, E effect )
