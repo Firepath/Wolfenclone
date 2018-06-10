@@ -37,6 +37,8 @@ private:
 	static constexpr Color SelectModeHoverColour = Colors::Yellow;
 	static constexpr float CellHoverOpacity = 50.0f;
 
+	void ClearSelectedCells();
+	void ClearCell( const Vei2& gridLocation );
 	void CycleMouseLClickMode();
 	void DisableSingleSelectionMode();
 	void DisableSelectionMode();

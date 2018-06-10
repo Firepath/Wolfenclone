@@ -14,6 +14,9 @@ void Editor::DoKeyboardEvents( const Keyboard::Event & ke )
 	{
 		switch ( c )
 		{
+		case VK_DELETE:
+			ClearSelectedCells();
+			break;
 		case VK_CONTROL:
 			EnableSingleSelectionMode();
 			break;
@@ -114,6 +117,25 @@ void Editor::Draw( Graphics & gfx )
 	{
 		MapGrid.HighlightCell( MouseInf.HoverGridLocation, GetCellHoverHighlightColour(), Editor::CellHoverOpacity, gfx );
 	}
+}
+
+void Editor::ClearSelectedCells()
+{
+	for ( Vei2 gridLocation : SelectedCells )
+	{
+		MapGrid.ClearCell( gridLocation );
+	}
+
+	auto newEnd = std::remove_if( SelectedCells.begin(), SelectedCells.end(), [this]( Vei2 gridLocation ) { return MapGrid.GetCell( gridLocation ).IsEmpty(); } );
+	SelectedCells.erase( newEnd, SelectedCells.end() );
+}
+
+void Editor::ClearCell( const Vei2 & gridLocation )
+{
+	MapGrid.ClearCell( gridLocation );
+
+	auto newEnd = std::remove_if( SelectedCells.begin(), SelectedCells.end(), [this]( Vei2 gridLocation ) { return MapGrid.GetCell( gridLocation ).IsEmpty(); } );
+	SelectedCells.erase( newEnd, SelectedCells.end() );
 }
 
 void Editor::CycleMouseLClickMode()
@@ -256,10 +278,9 @@ void Editor::MouseLRelease()
 
 void Editor::MouseRPress( const Vei2 & screenLocation )
 {
-	const Vei2 gridLocation = MapGrid.ScreenToGrid( screenLocation );
-	MapGrid.ClearCell( gridLocation );
+	ClearCell( MapGrid.ScreenToGrid( screenLocation ) );
 
-	auto newEnd = std::remove_if( SelectedCells.begin(), SelectedCells.end(), [&gridLocation]( Vei2 selectedLocation ) { return gridLocation == selectedLocation; } );
+	auto newEnd = std::remove_if( SelectedCells.begin(), SelectedCells.end(), [this]( Vei2 gridLocation ) { return MapGrid.GetCell( gridLocation ).IsEmpty(); } );
 	SelectedCells.erase( newEnd, SelectedCells.end() );
 }
 
