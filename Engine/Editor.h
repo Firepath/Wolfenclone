@@ -38,7 +38,9 @@ private:
 	static constexpr float CellHoverOpacity = 50.0f;
 
 	void CycleMouseLClickMode();
+	void DisableSingleSelectionMode();
 	void DisableSelectionMode();
+	void EnableSingleSelectionMode();
 	void EnableSelectionMode();
 	const Color GetCellHoverHighlightColour() const;
 	const EditMode::MouseLClick GetMouseLClickMode() const;
@@ -47,14 +49,15 @@ private:
 	void MouseLRelease();
 	void MouseRPress( const Vei2& screenLocation );
 	void SelectCell( const Vei2& gridLocation );
-	void ToggleSelectionMode();
 
 	EditMode::MouseLClick MouseLClickMode = EditMode::MouseLClick::None;
 	EditMode::Selection SelectionMode = EditMode::Selection::Rectangle;
 
 	MouseInfo MouseInf;
 	bool SelectionModeOverride = false;
+	bool AppendSelection = false;
 	std::vector<Vei2> SelectedCells;
+	std::vector<Vei2> TemporarySelectedCells;
 
 	Map MapGrid;
 };

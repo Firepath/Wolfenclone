@@ -15,10 +15,10 @@ void Editor::DoKeyboardEvents( const Keyboard::Event & ke )
 		switch ( c )
 		{
 		case VK_CONTROL:
-			EnableSelectionMode();
+			EnableSingleSelectionMode();
 			break;
 		case VK_SHIFT:
-			ToggleSelectionMode();
+			EnableSelectionMode();
 			break;
 		case VK_TAB:
 			CycleMouseLClickMode();
@@ -31,10 +31,10 @@ void Editor::DoKeyboardEvents( const Keyboard::Event & ke )
 		switch ( c )
 		{
 		case VK_CONTROL:
-			DisableSelectionMode();
+			DisableSingleSelectionMode();
 			break;
 		case VK_SHIFT:
-			ToggleSelectionMode();
+			DisableSelectionMode();
 			break;
 		default:
 			break;
@@ -102,6 +102,14 @@ void Editor::Draw( Graphics & gfx )
 		MapGrid.HighlightCell( gridLocation, Editor::SelectModeHoverColour, Editor::CellHoverOpacity, gfx );
 	}
 
+	for ( Vei2 gridLocation : TemporarySelectedCells )
+	{
+		if ( !VectorExtension::Contains( SelectedCells, gridLocation ) ) // Already drawn (above)
+		{
+			MapGrid.HighlightCell( gridLocation, Editor::SelectModeHoverColour, Editor::CellHoverOpacity, gfx );
+		}
+	}
+
 	if ( MapGrid.IsOnGrid( MouseInf.HoverGridLocation ) )
 	{
 		MapGrid.HighlightCell( MouseInf.HoverGridLocation, GetCellHoverHighlightColour(), Editor::CellHoverOpacity, gfx );
@@ -119,14 +127,36 @@ void Editor::CycleMouseLClickMode()
 	MouseLClickMode = (EditMode::MouseLClick)(((int)MouseLClickMode + 1) % (int)EditMode::MouseLClick::EnumOptionsCount);
 }
 
+void Editor::DisableSingleSelectionMode()
+{
+	SelectionMode = EditMode::Selection::Rectangle;
+}
+
 void Editor::DisableSelectionMode()
 {
+	if ( MouseLClickMode == EditMode::MouseLClick::Select ) // Already in select mode, this can toggle appending
+	{
+		AppendSelection = false;
+	}
+
 	SelectionModeOverride = false;
+}
+
+void Editor::EnableSingleSelectionMode()
+{
+	SelectionMode = EditMode::Selection::Single;
 }
 
 void Editor::EnableSelectionMode()
 {
-	SelectionModeOverride = true;
+	if ( MouseLClickMode == EditMode::MouseLClick::Select ) // Already in select mode, this can toggle appending
+	{
+		AppendSelection = true;
+	}
+	else
+	{
+		SelectionModeOverride = true;
+	}
 }
 
 const Color Editor::GetCellHoverHighlightColour() const
@@ -183,6 +213,11 @@ void Editor::MouseLPress( const Vei2& screenLocation )
 	{
 		// Set this location only when first pressing the left mouse button down (start press location)
 		MouseInf.LMouseButtonGridLocationAtLPress = gridLocation;
+
+		if ( !AppendSelection )
+		{
+			SelectedCells.clear();
+		}
 	}
 
 	switch ( GetMouseLClickMode() )
@@ -202,12 +237,30 @@ void Editor::MouseLRelease()
 {
 	MouseInf.LMouseButtonGridLocation = Vei2( -1, -1 );
 	MouseInf.LMouseButtonGridLocationAtLPress = Vei2( -1, -1 );
-	SelectedCells.clear();
+
+	// Move temporary selection into "permanent" selection
+	for ( Vei2 location : TemporarySelectedCells )
+	{
+		if ( !VectorExtension::Contains( SelectedCells, location ) )
+		{
+			SelectedCells.push_back( location );
+		}
+	}
+
+	// remove from the selection list any cells that are empty
+	auto newEnd = std::remove_if( SelectedCells.begin(), SelectedCells.end(), [this]( Vei2 gridLocation ) { return MapGrid.GetCell( gridLocation ).IsEmpty(); } );
+	SelectedCells.erase( newEnd, SelectedCells.end() );
+
+	TemporarySelectedCells.clear();
 }
 
 void Editor::MouseRPress( const Vei2 & screenLocation )
 {
-	MapGrid.ClearCell( MapGrid.ScreenToGrid( screenLocation ) );
+	const Vei2 gridLocation = MapGrid.ScreenToGrid( screenLocation );
+	MapGrid.ClearCell( gridLocation );
+
+	auto newEnd = std::remove_if( SelectedCells.begin(), SelectedCells.end(), [&gridLocation]( Vei2 selectedLocation ) { return gridLocation == selectedLocation; } );
+	SelectedCells.erase( newEnd, SelectedCells.end() );
 }
 
 void Editor::SelectCell( const Vei2& gridLocation )
@@ -227,39 +280,29 @@ void Editor::SelectCell( const Vei2& gridLocation )
 			return;
 		}
 
+		TemporarySelectedCells.clear();
+
 		Vei2 topLeft( std::min( startLocation.x, gridLocation.x ), std::min( startLocation.y, gridLocation.y ) );
 		Vei2 bottomRight( std::max( startLocation.x, gridLocation.x ), std::max( startLocation.y, gridLocation.y ) );
 
-		SelectedCells.clear();
+		TemporarySelectedCells.reserve( (bottomRight.x - topLeft.x) * (bottomRight.y - topLeft.y) );
 
 		for ( int x = topLeft.x; x <= bottomRight.x; x++ )
 		{
 			for ( int y = topLeft.y; y <= bottomRight.y; y++ )
 			{
-				SelectedCells.push_back( Vei2( x, y ) );
+				TemporarySelectedCells.push_back( Vei2( x, y ) );
 			}
 		}
 	}
 		break;
 	case EditMode::Selection::Single:
-		if ( !VectorExtension::Contains( SelectedCells, gridLocation ) )
+		if ( !VectorExtension::Contains( TemporarySelectedCells, gridLocation ) )
 		{
-			SelectedCells.push_back( gridLocation );
+			TemporarySelectedCells.push_back( gridLocation );
 		}
 		break;
 	default:
 		break;
-	}
-}
-
-void Editor::ToggleSelectionMode()
-{
-	if ( SelectionMode == EditMode::Selection::Rectangle )
-	{
-		SelectionMode = EditMode::Selection::Single;
-	}
-	else
-	{
-		SelectionMode = EditMode::Selection::Rectangle;
 	}
 }
