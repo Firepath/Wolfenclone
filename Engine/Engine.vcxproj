@@ -143,6 +143,7 @@
     <ClInclude Include="DXErr.h" />
     <ClInclude Include="EditMode.h" />
     <ClInclude Include="Editor.h" />
+    <ClInclude Include="VectorExtensions.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="Graphics.h" />
     <ClInclude Include="Keyboard.h" />

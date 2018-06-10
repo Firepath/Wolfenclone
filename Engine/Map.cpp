@@ -1,6 +1,7 @@
 #include <algorithm>
 
 #include "Map.h"
+#include "VectorExtensions.h"
 
 Map::Map( const int width, const int height, const Vec2& location )
 	:
@@ -137,8 +138,8 @@ void Map::ClearEnclosedCells( const Vei2 & gridLocation )
 		return 
 			this->IsOnGrid( location ) &&
 			this->GetCell( location ).IsEnclosed() &&
-			std::find( checked->begin(), checked->end(), location ) == checked->end() && // Not already checked
-			std::find( toBeChecked->begin(), toBeChecked->end(), location ) == toBeChecked->end(); // Not already in the list to be checked
+			!VectorExtension::Contains( checked, location ) && // Not already checked
+			!VectorExtension::Contains( toBeChecked, location ); // Not already in the list to be checked
 	};
 
 	while ( toBeChecked->size() > 0 )
@@ -251,8 +252,8 @@ const bool Map::FillClosedArea( const Vei2& gridLocation )
 	{
 		return
 			GetCell( location ).IsEmpty() && // Already a wall if not empty
-			std::find( checked->begin(), checked->end(), location ) == checked->end() && // Not already checked
-			std::find( toBeChecked->begin(), toBeChecked->end(), location ) == toBeChecked->end(); // Not already in the list to be checked
+			!VectorExtension::Contains( checked, location ) && // Not already checked
+			!VectorExtension::Contains( toBeChecked, location ); // Not already in the list to be checked
 	};
 
 	bool closed = true;

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <vector>
+
 #include "EditMode.h"
 #include "Graphics.h"
 #include "Keyboard.h"
@@ -38,12 +40,15 @@ private:
 	const Color GetCellHoverHighlightColour() const;
 	const EditMode::MouseLClick GetMouseLClickMode() const;
 	void MouseLPress( const Vei2& screenLocation );
+	void MouseLRelease();
 	void MouseRPress( const Vei2& screenLocation );
+	void SelectCell( const Vei2& gridLocation );
 
 	EditMode::MouseLClick MouseLClickMode = EditMode::MouseLClick::None;
 
 	MouseInfo MouseInf;
 	bool SelectionMode = false;
+	std::vector<Vei2> SelectedCells;
 
 	Map MapGrid;
 };

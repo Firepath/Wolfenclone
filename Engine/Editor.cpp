@@ -1,4 +1,5 @@
 #include "Editor.h"
+#include "VectorExtensions.h"
 
 Editor::Editor()
 	:
@@ -45,7 +46,7 @@ void Editor::DoMouseEvents( const Mouse::Event & me )
 		MouseLPress( me.GetPos() );
 		break;
 	case Mouse::Event::Type::LRelease:
-		MouseInf.LMouseButtonGridLocation = Vei2( -1, -1 );
+		MouseLRelease();
 		break;
 	case Mouse::Event::Type::Move:
 	{
@@ -89,6 +90,11 @@ void Editor::DoMouseEvents( const Mouse::Event & me )
 void Editor::Draw( Graphics & gfx )
 {
 	MapGrid.Draw( gfx );
+
+	for ( Vei2 gridLocation : SelectedCells )
+	{
+		MapGrid.HighlightCell( gridLocation, Editor::SelectModeHoverColour, Editor::CellHoverOpacity, gfx );
+	}
 
 	if ( MapGrid.IsOnGrid( MouseInf.HoverGridLocation ) )
 	{
@@ -162,13 +168,37 @@ void Editor::MouseLPress( const Vei2& screenLocation )
 
 	MouseInf.LMouseButtonGridLocation = gridLocation;
 
-	if ( GetMouseLClickMode() == EditMode::MouseLClick::Insert )
+	switch ( GetMouseLClickMode() )
 	{
+	case EditMode::MouseLClick::Insert:
 		MapGrid.Fill( gridLocation, Colors::White );
+		break;
+	case EditMode::MouseLClick::Select:
+		SelectCell( gridLocation );
+		break;
+	default:
+		break;
 	}
+}
+
+void Editor::MouseLRelease()
+{
+	MouseInf.LMouseButtonGridLocation = Vei2( -1, -1 );
+	SelectedCells.clear();
 }
 
 void Editor::MouseRPress( const Vei2 & screenLocation )
 {
 	MapGrid.ClearCell( MapGrid.ScreenToGrid( screenLocation ) );
+}
+
+void Editor::SelectCell( const Vei2& gridLocation )
+{
+	if ( !MapGrid.IsOnGrid( gridLocation ) ||
+		VectorExtension::Contains( SelectedCells, gridLocation ) )
+	{
+		return;
+	}
+
+	SelectedCells.push_back( gridLocation );
 }
