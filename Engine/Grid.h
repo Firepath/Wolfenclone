@@ -13,7 +13,7 @@
 #include "Surface.h"
 #include "Vec2.h"
 
-class Map
+class Grid
 {
 public:
 	class Cell
@@ -24,7 +24,7 @@ public:
 		Cell( const Vei2& location );
 
 		void Clear();
-		void Draw( const Map& map, Graphics& gfx ) const;
+		void Draw( const Grid& map, Graphics& gfx ) const;
 		const bool Fill( const Color colour );
 		const bool Fill( Surface* const surface );
 		const Vei2& GetLocation() const;
@@ -42,7 +42,7 @@ public:
 	};
 
 public:
-	Map( const int width, const int height, const Vec2& location );
+	Grid( const int width, const int height, const Vec2& location );
 
 	void ClearSelectedCells();
 	void DeleteCell( const Vei2& gridLocation );

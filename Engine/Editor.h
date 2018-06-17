@@ -7,7 +7,7 @@
 #include "EditConstants.h"
 #include "Graphics.h"
 #include "Keyboard.h"
-#include "Map.h"
+#include "Grid.h"
 #include "Mouse.h"
 #include "Surface.h"
 #include "Vec2.h"
@@ -55,5 +55,5 @@ private:
 	bool SelectionModeOverride = false;
 	bool AppendSelection = false;
 
-	Map MapGrid;
+	Grid MapGrid;
 };

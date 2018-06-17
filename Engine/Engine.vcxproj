@@ -151,7 +151,7 @@
     <ClInclude Include="Graphics.h" />
     <ClInclude Include="Keyboard.h" />
     <ClInclude Include="MainWindow.h" />
-    <ClInclude Include="Map.h" />
+    <ClInclude Include="Grid.h" />
     <ClInclude Include="Mouse.h" />
     <ClInclude Include="PixelEffect.h" />
     <ClInclude Include="Resource.h" />
@@ -165,8 +165,8 @@
     <ClCompile Include="Keyboard.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="MainWindow.cpp" />
-    <ClCompile Include="Map.cpp" />
-    <ClCompile Include="Map_Cell.cpp" />
+    <ClCompile Include="Grid.cpp" />
+    <ClCompile Include="Grid_Cell.cpp" />
     <ClCompile Include="Mouse.cpp" />
     <ClCompile Include="Surface.cpp" />
   </ItemGroup>

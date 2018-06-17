@@ -1,19 +1,19 @@
-#include "Map.h"
+#include "Grid.h"
 #include "SpriteEffect.h"
 
-Map::Cell::Cell( const Vei2& location )
+Grid::Cell::Cell( const Vei2& location )
 	:
 	Location( location )
 {
 }
 
-void Map::Cell::Clear()
+void Grid::Cell::Clear()
 {
 	Surf = nullptr;
 	Fill( Colors::Black );
 }
 
-void Map::Cell::Draw( const Map& map, Graphics& gfx ) const
+void Grid::Cell::Draw( const Grid& map, Graphics& gfx ) const
 {
 	if ( NothingToDraw() )
 	{
@@ -40,7 +40,7 @@ void Map::Cell::Draw( const Map& map, Graphics& gfx ) const
 	}
 }
 
-const bool Map::Cell::Fill( const Color colour )
+const bool Grid::Cell::Fill( const Color colour )
 {
 	bool empty = IsEmpty();
 	Colour = colour;
@@ -53,7 +53,7 @@ const bool Map::Cell::Fill( const Color colour )
 	return empty;
 }
 
-const bool Map::Cell::Fill( Surface* const surface )
+const bool Grid::Cell::Fill( Surface* const surface )
 {
 	bool empty = IsEmpty();
 	Surf = surface;
@@ -66,27 +66,27 @@ const bool Map::Cell::Fill( Surface* const surface )
 	return empty;
 }
 
-const Vei2& Map::Cell::GetLocation() const
+const Vei2& Grid::Cell::GetLocation() const
 {
 	return Location;
 }
 
-const bool Map::Cell::IsEmpty() const
+const bool Grid::Cell::IsEmpty() const
 {
 	return Colour == Colors::Black && Surf == nullptr;
 }
 
-const bool Map::Cell::IsEnclosed() const
+const bool Grid::Cell::IsEnclosed() const
 {
 	return Enclosed;
 }
 
-void Map::Cell::SetEnclosed( bool enclosed )
+void Grid::Cell::SetEnclosed( bool enclosed )
 {
 	Enclosed = enclosed;
 }
 
-const bool Map::Cell::NothingToDraw() const
+const bool Grid::Cell::NothingToDraw() const
 {
 	return IsEmpty() && !IsEnclosed();
 }

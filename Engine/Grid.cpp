@@ -1,11 +1,11 @@
 #include <algorithm>
 
-#include "Map.h"
+#include "Grid.h"
 #include "VectorExtensions.h"
 
-Map::Map( const int width, const int height, const Vec2& location )
+Grid::Grid( const int width, const int height, const Vec2& location )
 	:
-	CellSize( Map::DefaultCellSize ),
+	CellSize( Grid::DefaultCellSize ),
 	Width( width ),
 	Height( height ),
 	Location( location )
@@ -22,12 +22,12 @@ Map::Map( const int width, const int height, const Vec2& location )
 	}
 }
 
-void Map::ClearSelectedCells()
+void Grid::ClearSelectedCells()
 {
 	SelectedCells.clear();
 }
 
-void Map::DeleteCell( const Vei2& gridLocation )
+void Grid::DeleteCell( const Vei2& gridLocation )
 {
 	if ( !IsOnGrid( gridLocation ) )
 	{
@@ -51,7 +51,7 @@ void Map::DeleteCell( const Vei2& gridLocation )
 	SelectedCells.erase( newEnd, SelectedCells.end() );
 }
 
-void Map::DeleteSelectedCells()
+void Grid::DeleteSelectedCells()
 {
 	while ( SelectedCells.size() > 0 )
 	{
@@ -59,7 +59,7 @@ void Map::DeleteSelectedCells()
 	}
 }
 
-void Map::Draw( Graphics& gfx )
+void Grid::Draw( Graphics& gfx )
 {
 	const Vei2 screenLocation = GetScreenLocation();
 
@@ -78,7 +78,7 @@ void Map::Draw( Graphics& gfx )
 	HighlightSelectedCells( gfx );
 }
 
-void Map::Fill( const Vei2 & gridLocation, const Color colour )
+void Grid::Fill( const Vei2 & gridLocation, const Color colour )
 {
 	Cell& cell = GetCell( gridLocation );
 	const bool wasEnclosed = cell.IsEnclosed();
@@ -88,7 +88,7 @@ void Map::Fill( const Vei2 & gridLocation, const Color colour )
 	}
 }
 
-void Map::Fill( const Vei2 & gridLocation, Surface * const surface )
+void Grid::Fill( const Vei2 & gridLocation, Surface * const surface )
 {
 	Cell& cell = GetCell( gridLocation );
 	const bool wasEnclosed = cell.IsEnclosed();
@@ -98,13 +98,13 @@ void Map::Fill( const Vei2 & gridLocation, Surface * const surface )
 	}
 }
 
-Map::Cell& Map::GetCell( const Vei2 & gridLocation ) const
+Grid::Cell& Grid::GetCell( const Vei2 & gridLocation ) const
 {
 	assert( IsOnGrid( gridLocation ) );
 	return Cells->at( gridLocation );
 }
 
-void Map::HighlightCell( const Vei2& gridLocation, const Color highlightColour, const float highlightOpacity, const bool drawBorder, Graphics & gfx ) const
+void Grid::HighlightCell( const Vei2& gridLocation, const Color highlightColour, const float highlightOpacity, const bool drawBorder, Graphics & gfx ) const
 {
 	const Vei2 mapScreenLocation = GetScreenLocation();
 	const Vei2 topLeft = mapScreenLocation + Vei2( (int)std::ceil( (float)gridLocation.x * CellSize ), (int)std::ceil( (float)gridLocation.y * CellSize ) );
@@ -120,18 +120,18 @@ void Map::HighlightCell( const Vei2& gridLocation, const Color highlightColour, 
 	}
 }
 
-bool Map::IsOnGrid( const Vei2& gridLocation ) const
+bool Grid::IsOnGrid( const Vei2& gridLocation ) const
 {
 	return gridLocation.x >= 0 && gridLocation.y >= 0 &&
 		gridLocation.x < Width && gridLocation.y < Height;
 }
 
-void Map::Move( const Vec2 & delta )
+void Grid::Move( const Vec2 & delta )
 {
 	Location += delta;
 }
 
-const Vei2 Map::ScreenToGrid( const Vei2& screenLocation ) const
+const Vei2 Grid::ScreenToGrid( const Vei2& screenLocation ) const
 {
 	const Vec2 gridLocationF = (Vec2)screenLocation - (Vec2)Location;
 	if ( gridLocationF.x < 0.0f || gridLocationF.y < 0.0f )
@@ -143,7 +143,7 @@ const Vei2 Map::ScreenToGrid( const Vei2& screenLocation ) const
 	return gridLocation;
 }
 
-void Map::SetTemporarySelectedToSelected()
+void Grid::SetTemporarySelectedToSelected()
 {
 	// Move temporary selection into "permanent" selection
 	for ( Vei2 location : TemporarySelectedCells )
@@ -161,7 +161,7 @@ void Map::SetTemporarySelectedToSelected()
 	TemporarySelectedCells.clear();
 }
 
-void Map::TemporarySelectCell( const Vei2 & gridLocation )
+void Grid::TemporarySelectCell( const Vei2 & gridLocation )
 {
 	if ( !VectorExtension::Contains( TemporarySelectedCells, gridLocation ) )
 	{
@@ -169,7 +169,7 @@ void Map::TemporarySelectCell( const Vei2 & gridLocation )
 	}
 }
 
-void Map::TemporarySelectCellsInRectangle( const RectI & rect )
+void Grid::TemporarySelectCellsInRectangle( const RectI & rect )
 {
 	TemporarySelectedCells.clear();
 
@@ -184,16 +184,16 @@ void Map::TemporarySelectCellsInRectangle( const RectI & rect )
 	}
 }
 
-void Map::ToggleGridDrawing()
+void Grid::ToggleGridDrawing()
 {
 	DrawGridOverCells = !DrawGridOverCells;
 }
 
-void Map::Zoom( const Vec2& zoomLocation, const bool zoomingIn )
+void Grid::Zoom( const Vec2& zoomLocation, const bool zoomingIn )
 {
-	float zoomLevel = ZoomLevel * (zoomingIn ? Map::ZoomFactor : Map::ZoomFactorInverse);
-	zoomLevel = std::max( std::min( zoomLevel, Map::MaximumZoomLevel ), Map::MinimumZoomLevel );
-	const float newCellSize = std::max( Map::DefaultCellSize * zoomLevel, Map::MinimumCellSize );
+	float zoomLevel = ZoomLevel * (zoomingIn ? Grid::ZoomFactor : Grid::ZoomFactorInverse);
+	zoomLevel = std::max( std::min( zoomLevel, Grid::MaximumZoomLevel ), Grid::MinimumZoomLevel );
+	const float newCellSize = std::max( Grid::DefaultCellSize * zoomLevel, Grid::MinimumCellSize );
 
 	if ( newCellSize == CellSize )
 	{
@@ -213,7 +213,7 @@ void Map::Zoom( const Vec2& zoomLocation, const bool zoomingIn )
 	Location += deltaLocation;
 }
 
-const bool Map::IsCellAlreadyEnclosed( const Vei2 & gridLocation ) const
+const bool Grid::IsCellAlreadyEnclosed( const Vei2 & gridLocation ) const
 {
 	const Vei2 left( gridLocation + Vei2( -1, 0 ) );
 	const Vei2 right( gridLocation + Vei2( 1, 0 ) );
@@ -227,7 +227,7 @@ const bool Map::IsCellAlreadyEnclosed( const Vei2 & gridLocation ) const
 		IsOnGrid( bottom ) && (GetCell( bottom ).IsEnclosed() || !GetCell( bottom ).IsEmpty());
 }
 
-void Map::ClearEnclosedCells( const Vei2 & gridLocation )
+void Grid::ClearEnclosedCells( const Vei2 & gridLocation )
 {
 	std::unique_ptr<std::vector<Vei2>> checked = std::make_unique<std::vector<Vei2>>(); checked->reserve( Width * Height );
 	std::unique_ptr<std::vector<Vei2>> toBeChecked = std::make_unique<std::vector<Vei2>>(); toBeChecked->reserve( Width * Height );
@@ -275,7 +275,7 @@ void Map::ClearEnclosedCells( const Vei2 & gridLocation )
 	}
 }
 
-void Map::DrawCells( const Vei2 screenLocation, Graphics & gfx ) const
+void Grid::DrawCells( const Vei2 screenLocation, Graphics & gfx ) const
 {
 	for ( int j = 0; j < Height; j++ )
 	{
@@ -309,19 +309,19 @@ void Map::DrawCells( const Vei2 screenLocation, Graphics & gfx ) const
 	}
 }
 
-void Map::DrawGrid( const Vei2 screenLocation, Graphics & gfx ) const
+void Grid::DrawGrid( const Vei2 screenLocation, Graphics & gfx ) const
 {
 	// Grid border
 	Vei2 topLeft = screenLocation;
 	Vei2 bottomRight = topLeft + Vei2( (int)std::ceil( Width * CellSize ) - 1, (int)std::ceil( Height * CellSize ) - 1 );
-	gfx.DrawBoxBorder( RectI( topLeft, bottomRight ), Map::GridBorderColour, PixelEffect::Copy(), GetCellBorderThickness() );
+	gfx.DrawBoxBorder( RectI( topLeft, bottomRight ), Grid::GridBorderColour, PixelEffect::Copy(), GetCellBorderThickness() );
 
 	// Vertical grid lines
 	for ( int i = 1; i < Width; i++ )
 	{
 		Vei2 top = screenLocation + Vei2( (int)std::ceil( i * CellSize ), 0 );
 		Vei2 bottom = top + Vei2( 0, (int)std::ceil( Height * CellSize ) - 1 );
-		gfx.DrawLine( top, bottom, Map::GridColour, PixelEffect::Copy() );
+		gfx.DrawLine( top, bottom, Grid::GridColour, PixelEffect::Copy() );
 	}
 
 	// Horizontal grid lines
@@ -329,11 +329,11 @@ void Map::DrawGrid( const Vei2 screenLocation, Graphics & gfx ) const
 	{
 		Vei2 left = screenLocation + Vei2( 0, (int)std::ceil( j * CellSize ) );
 		Vei2 right = left + Vei2( (int)std::ceil( Width * CellSize ) - 1, 0 );
-		gfx.DrawLine( left, right, Map::GridColour, PixelEffect::Copy() );
+		gfx.DrawLine( left, right, Grid::GridColour, PixelEffect::Copy() );
 	}
 }
 
-void Map::CheckForClosingArea( const Vei2 & gridLocation, const bool wasEnclosed )
+void Grid::CheckForClosingArea( const Vei2 & gridLocation, const bool wasEnclosed )
 {
 	if ( IsJointFormed( gridLocation ) && !wasEnclosed )
 	{
@@ -345,7 +345,7 @@ void Map::CheckForClosingArea( const Vei2 & gridLocation, const bool wasEnclosed
 	}
 }
 
-const bool Map::FillClosedArea( const Vei2& gridLocation )
+const bool Grid::FillClosedArea( const Vei2& gridLocation )
 {
 	auto cellIt = Cells->find( gridLocation );
 	if ( cellIt == Cells->end() || !cellIt->second.IsEmpty() )
@@ -420,7 +420,7 @@ const bool Map::FillClosedArea( const Vei2& gridLocation )
 	return closed;
 }
 
-const bool Map::FindWall( const Vei2 & gridLocation, const int xDirection, const int yDirection ) const
+const bool Grid::FindWall( const Vei2 & gridLocation, const int xDirection, const int yDirection ) const
 {
 	// One of either direction must be zero and the other not zero
 	assert( xDirection != 0 && yDirection == 0 || yDirection != 0 && xDirection == 0 );
@@ -455,22 +455,22 @@ const bool Map::FindWall( const Vei2 & gridLocation, const int xDirection, const
 	return found;
 }
 
-const int Map::GetCellBorderThickness() const
+const int Grid::GetCellBorderThickness() const
 {
 	return std::max( 2, (int)(ZoomLevel / 2.0f) );
 }
 
-const Vei2 Map::GetScreenLocation() const
+const Vei2 Grid::GetScreenLocation() const
 {
 	return Vei2( (int)std::ceil( Location.x ), (int)std::ceil( Location.y ) );
 }
 
-const Vei2 Map::GetSize() const
+const Vei2 Grid::GetSize() const
 {
 	return Vei2( Width, Height );
 }
 
-void Map::HighlightSelectedCells( Graphics& gfx ) const
+void Grid::HighlightSelectedCells( Graphics& gfx ) const
 {
 	for ( Vei2 gridLocation : SelectedCells )
 	{
@@ -501,7 +501,7 @@ void Map::HighlightSelectedCells( Graphics& gfx ) const
 	}
 }
 
-const bool Map::IsCellEnclosed( const Vei2 & gridLocation ) const
+const bool Grid::IsCellEnclosed( const Vei2 & gridLocation ) const
 {
 	bool enclosed = FindWall( gridLocation, -1, 0 );
 	if ( enclosed )
@@ -520,7 +520,7 @@ const bool Map::IsCellEnclosed( const Vei2 & gridLocation ) const
 	return enclosed;
 }
 
-bool Map::IsJointFormed( const Vei2& gridLocation ) const
+bool Grid::IsJointFormed( const Vei2& gridLocation ) const
 {
 	const int startX = std::max( 0, std::min( Width - 1, gridLocation.x - 1 ) );
 	const int startY = std::max( 0, std::min( Height - 1, gridLocation.y - 1 ) );
