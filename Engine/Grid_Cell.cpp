@@ -33,7 +33,7 @@ void Grid::Cell::Draw( const Grid& map, Graphics& gfx ) const
 		Color colour = Colour;
 		if ( IsEmpty() && IsEnclosed() )
 		{
-			colour = Cell::CellEnclosedColour;
+			colour = EditConstants::CellConstants::CellEnclosedColour;
 		}
 
 		gfx.DrawBox( topLeft, bottomRight, colour, PixelEffect::Copy() );

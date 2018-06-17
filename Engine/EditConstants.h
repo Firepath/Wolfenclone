@@ -4,6 +4,13 @@
 
 namespace EditConstants
 {
+	class CellConstants
+	{
+	public:
+		static constexpr Color CellEnclosedColour = Colors::Maroon;
+		static constexpr Color CellEnclosedPlayableAreaColour = Colors::DarkBlue;
+	};
+
 	class CellSelection
 	{
 	public:
