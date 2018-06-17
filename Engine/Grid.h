@@ -20,21 +20,12 @@ public:
 	class Cell
 	{
 	public:
-		Cell( const Vei2& location );
+		Cell( const Vei2& location, Surface* const surface );
 
-		void Clear();
 		void Draw( const Grid& map, Graphics& gfx ) const;
-		const bool Fill( const Color colour );
-		const bool Fill( Surface* const surface );
 		const Vei2& GetLocation() const;
-		const bool IsEmpty() const;
-		const bool IsEnclosed() const;
-		void SetEnclosed( bool enclosed );
 
 	private:
-		const bool NothingToDraw() const;
-
-		Color Colour = Colors::Black;
 		Surface* Surf = nullptr;
 		Vei2 Location;
 		bool Enclosed = false;
@@ -70,10 +61,14 @@ private:
 	static constexpr float DefaultCellSize = 8.0f;
 	static constexpr float MinimumCellSize = 2.0f;
 
+	const bool CheckIfCellIsEnclosed( const Vei2& gridLocation ) const;
 	void ClearEnclosedCells( const Vei2& gridLocation );
-	void DrawCells( const Vei2 screenLocation, Graphics& gfx ) const;
+	void DrawCells( const Vei2& screenLocation, Graphics& gfx ) const;
+	void DrawEnclosedCells( const Vei2& screenLocation, Graphics& gfx ) const;
+	void DrawEnclosedCell( const Vei2& screenLocation, const Vei2& gridLocation, Graphics& gfx ) const;
 	void DrawGrid( const Vei2 screenLocation, Graphics& gfx ) const;
 	void EraseCell( const Vei2& gridLocation );
+	void EraseEnclosedCell( const Vei2& gridLocation );
 	void CheckForClosingArea( const Vei2& gridLocation, const bool wasEnclosed );
 	const bool FillClosedArea( const Vei2& gridLocation );
 	const bool FindWall( const Vei2& gridLocation, const int xDirection, const int yDirection ) const;
@@ -92,7 +87,9 @@ private:
 	const int Width;
 	const int Height;
 	Vec2 Location;
+
 	std::unique_ptr<std::unordered_map<Vei2, Cell, Vei2::Hasher>> Cells;
+	std::unique_ptr<std::unordered_map<Vei2, bool, Vei2::Hasher>> EnclosedCells;
 	std::vector<Vei2> SelectedCells;
 	std::vector<Vei2> TemporarySelectedCells;
 };
