@@ -63,9 +63,6 @@
     <ClInclude Include="Editor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="EditMode.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="VectorExtensions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -76,6 +73,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SpriteEffect.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="EditConstants.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

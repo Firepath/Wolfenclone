@@ -6,7 +6,7 @@
 #include <vector>
 
 #include "Colors.h"
-#include "EditMode.h"
+#include "EditConstants.h"
 #include "Graphics.h"
 #include "Mouse.h"
 #include "PixelEffect.h"
@@ -44,19 +44,20 @@ public:
 public:
 	Map( const int width, const int height, const Vec2& location );
 
-	void ClearCell( const Vei2& gridLocation );
+	void ClearSelectedCells();
+	void DeleteCell( const Vei2& gridLocation );
+	void DeleteSelectedCells();
 	void Draw( Graphics& gfx );
 	void Fill( const Vei2& gridLocation, const Color colour );
 	void Fill( const Vei2& gridLocation, Surface* const surface );
 	Cell& GetCell( const Vei2& gridLocation ) const;
-	const int GetCellBorderThickness() const;
-	const float GetCellSize() const;
-	const Vei2 GetScreenLocation() const;
-	const Vei2 GetSize() const;
 	void HighlightCell( const Vei2& gridLocation, const Color highlightColour, const float highlightOpacity, const bool drawBorder, Graphics& gfx ) const;
 	bool IsOnGrid( const Vei2& gridLocation ) const;
 	void Move( const Vec2& delta );
 	const Vei2 ScreenToGrid( const Vei2& screenLocation ) const;
+	void SetTemporarySelectedToSelected();
+	void TemporarySelectCell( const Vei2& gridLocation );
+	void TemporarySelectCellsInRectangle( const RectI& rect );
 	void ToggleGridDrawing();
 	void Zoom( const Vec2& zoomLocation, const bool zoomingIn );
 
@@ -72,12 +73,17 @@ private:
 
 	std::unique_ptr<std::unordered_map<Vei2, Cell, Vei2::Hasher>> Cells;
 
+	const bool IsCellAlreadyEnclosed( const Vei2& gridLocation ) const;
 	void ClearEnclosedCells( const Vei2& gridLocation );
 	void DrawCells( const Vei2 screenLocation, Graphics& gfx ) const;
 	void DrawGrid( const Vei2 screenLocation, Graphics& gfx ) const;
 	void CheckForClosingArea( const Vei2& gridLocation, const bool wasEnclosed );
 	const bool FillClosedArea( const Vei2& gridLocation );
 	const bool FindWall( const Vei2& gridLocation, const int xDirection, const int yDirection ) const;
+	const int GetCellBorderThickness() const;
+	const Vei2 GetScreenLocation() const;
+	const Vei2 GetSize() const;
+	void HighlightSelectedCells( Graphics& gfx ) const;
 	const bool IsCellEnclosed( const Vei2& gridLocation ) const;
 	bool IsJointFormed( const Vei2& gridLocation ) const;
 
@@ -87,4 +93,6 @@ private:
 	const int Width;
 	const int Height;
 	Vec2 Location;
+	std::vector<Vei2> SelectedCells;
+	std::vector<Vei2> TemporarySelectedCells;
 };

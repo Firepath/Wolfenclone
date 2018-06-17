@@ -22,7 +22,12 @@ Map::Map( const int width, const int height, const Vec2& location )
 	}
 }
 
-void Map::ClearCell( const Vei2& gridLocation )
+void Map::ClearSelectedCells()
+{
+	SelectedCells.clear();
+}
+
+void Map::DeleteCell( const Vei2& gridLocation )
 {
 	if ( !IsOnGrid( gridLocation ) )
 	{
@@ -32,10 +37,25 @@ void Map::ClearCell( const Vei2& gridLocation )
 	Cell& cell = GetCell( gridLocation );
 	cell.Clear();
 
-	if ( !FillClosedArea( gridLocation ) )
+	if ( IsCellAlreadyEnclosed( gridLocation ) )
+	{
+		GetCell( gridLocation ).SetEnclosed( true );
+	}
+	else
 	{
 		// Check for, and clear enclosedness on surrounding cells
 		ClearEnclosedCells( gridLocation );
+	}
+
+	auto newEnd = std::remove_if( SelectedCells.begin(), SelectedCells.end(), [this]( Vei2 gridLocation ) { return GetCell( gridLocation ).IsEmpty(); } );
+	SelectedCells.erase( newEnd, SelectedCells.end() );
+}
+
+void Map::DeleteSelectedCells()
+{
+	while ( SelectedCells.size() > 0 )
+	{
+		DeleteCell( SelectedCells.back() );
 	}
 }
 
@@ -54,6 +74,8 @@ void Map::Draw( Graphics& gfx )
 	{
 		DrawGrid( screenLocation, gfx );
 	}
+
+	HighlightSelectedCells( gfx );
 }
 
 void Map::Fill( const Vei2 & gridLocation, const Color colour )
@@ -80,26 +102,6 @@ Map::Cell& Map::GetCell( const Vei2 & gridLocation ) const
 {
 	assert( IsOnGrid( gridLocation ) );
 	return Cells->at( gridLocation );
-}
-
-const int Map::GetCellBorderThickness() const
-{
-	return std::max( 2, (int)(ZoomLevel / 2.0f) );
-}
-
-const float Map::GetCellSize() const
-{
-	return CellSize;
-}
-
-const Vei2 Map::GetScreenLocation() const
-{
-	return Vei2( (int)std::ceil( Location.x ), (int)std::ceil( Location.y ) );
-}
-
-const Vei2 Map::GetSize() const
-{
-	return Vei2( Width, Height );
 }
 
 void Map::HighlightCell( const Vei2& gridLocation, const Color highlightColour, const float highlightOpacity, const bool drawBorder, Graphics & gfx ) const
@@ -141,6 +143,47 @@ const Vei2 Map::ScreenToGrid( const Vei2& screenLocation ) const
 	return gridLocation;
 }
 
+void Map::SetTemporarySelectedToSelected()
+{
+	// Move temporary selection into "permanent" selection
+	for ( Vei2 location : TemporarySelectedCells )
+	{
+		if ( !VectorExtension::Contains( SelectedCells, location ) )
+		{
+			SelectedCells.push_back( location );
+		}
+	}
+
+	// remove from the selection list any cells that are empty
+	auto newEnd = std::remove_if( SelectedCells.begin(), SelectedCells.end(), [this]( Vei2 gridLocation ) { return GetCell( gridLocation ).IsEmpty(); } );
+	SelectedCells.erase( newEnd, SelectedCells.end() );
+
+	TemporarySelectedCells.clear();
+}
+
+void Map::TemporarySelectCell( const Vei2 & gridLocation )
+{
+	if ( !VectorExtension::Contains( TemporarySelectedCells, gridLocation ) )
+	{
+		TemporarySelectedCells.push_back( gridLocation );
+	}
+}
+
+void Map::TemporarySelectCellsInRectangle( const RectI & rect )
+{
+	TemporarySelectedCells.clear();
+
+	TemporarySelectedCells.reserve( rect.GetWidth() * rect.GetHeight() );
+
+	for ( int x = rect.left; x <= rect.right; x++ )
+	{
+		for ( int y = rect.top; y <= rect.bottom; y++ )
+		{
+			TemporarySelectedCells.push_back( Vei2( x, y ) );
+		}
+	}
+}
+
 void Map::ToggleGridDrawing()
 {
 	DrawGridOverCells = !DrawGridOverCells;
@@ -168,6 +211,20 @@ void Map::Zoom( const Vec2& zoomLocation, const bool zoomingIn )
 	ZoomLevel = zoomLevel;
 	CellSize = newCellSize;
 	Location += deltaLocation;
+}
+
+const bool Map::IsCellAlreadyEnclosed( const Vei2 & gridLocation ) const
+{
+	const Vei2 left( gridLocation + Vei2( -1, 0 ) );
+	const Vei2 right( gridLocation + Vei2( 1, 0 ) );
+	const Vei2 top( gridLocation + Vei2( 0, -1 ) );
+	const Vei2 bottom( gridLocation + Vei2( 0, 1 ) );
+
+	return
+		IsOnGrid( left ) && (GetCell( left ).IsEnclosed() || !GetCell( left ).IsEmpty()) &&
+		IsOnGrid( right ) && (GetCell( right ).IsEnclosed() || !GetCell( right ).IsEmpty()) &&
+		IsOnGrid( top ) && (GetCell( top ).IsEnclosed() || !GetCell( top ).IsEmpty()) &&
+		IsOnGrid( bottom ) && (GetCell( bottom ).IsEnclosed() || !GetCell( bottom ).IsEmpty());
 }
 
 void Map::ClearEnclosedCells( const Vei2 & gridLocation )
@@ -396,6 +453,52 @@ const bool Map::FindWall( const Vei2 & gridLocation, const int xDirection, const
 	}
 
 	return found;
+}
+
+const int Map::GetCellBorderThickness() const
+{
+	return std::max( 2, (int)(ZoomLevel / 2.0f) );
+}
+
+const Vei2 Map::GetScreenLocation() const
+{
+	return Vei2( (int)std::ceil( Location.x ), (int)std::ceil( Location.y ) );
+}
+
+const Vei2 Map::GetSize() const
+{
+	return Vei2( Width, Height );
+}
+
+void Map::HighlightSelectedCells( Graphics& gfx ) const
+{
+	for ( Vei2 gridLocation : SelectedCells )
+	{
+		HighlightCell( gridLocation, EditConstants::CellSelection::SelectModeHoverColour, EditConstants::CellSelection::CellHoverOpacity, true, gfx );
+	}
+
+	Vei2 topLeft = GetSize();
+	Vei2 bottomRight( -1, -1 );
+	for ( Vei2 gridLocation : TemporarySelectedCells )
+	{
+		if ( !VectorExtension::Contains( SelectedCells, gridLocation ) ) // Already drawn (above)
+		{
+			HighlightCell( gridLocation, EditConstants::CellSelection::SelectModeHoverColour, EditConstants::CellSelection::CellHoverOpacity, false, gfx );
+		}
+
+		if ( gridLocation.x < topLeft.x ) { topLeft.x = gridLocation.x; }
+		if ( gridLocation.y < topLeft.y ) { topLeft.y = gridLocation.y; }
+		if ( gridLocation.x > bottomRight.x ) { bottomRight.x = gridLocation.x; }
+		if ( gridLocation.y > bottomRight.y ) { bottomRight.y = gridLocation.y; }
+	}
+
+	if ( IsOnGrid( topLeft ) && IsOnGrid( bottomRight ) )
+	{
+		const Vei2 gridLocation = GetScreenLocation();
+		topLeft = (Vei2)((Vec2)topLeft * CellSize) + gridLocation;
+		bottomRight = (Vei2)((Vec2)(bottomRight + Vei2( 1, 1 )) * CellSize) + gridLocation;
+		gfx.DrawBoxBorder( RectI( topLeft, bottomRight ), EditConstants::CellSelection::SelectModeHoverColour, PixelEffect::Transparency( Colors::Magenta, EditConstants::CellSelection::CellHoverOpacity ), GetCellBorderThickness() );
+	}
 }
 
 const bool Map::IsCellEnclosed( const Vei2 & gridLocation ) const
