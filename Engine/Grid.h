@@ -8,6 +8,7 @@
 #include "Colors.h"
 #include "EditConstants.h"
 #include "Graphics.h"
+#include "MapFixture.h"
 #include "Mouse.h"
 #include "PixelEffect.h"
 #include "Surface.h"
@@ -19,8 +20,6 @@ public:
 	class Cell
 	{
 	public:
-		static constexpr Color CellEnclosedColour = Colors::Maroon;
-
 		Cell( const Vei2& location );
 
 		void Clear();
@@ -71,12 +70,10 @@ private:
 	static constexpr float DefaultCellSize = 8.0f;
 	static constexpr float MinimumCellSize = 2.0f;
 
-	std::unique_ptr<std::unordered_map<Vei2, Cell, Vei2::Hasher>> Cells;
-
-	const bool IsCellAlreadyEnclosed( const Vei2& gridLocation ) const;
 	void ClearEnclosedCells( const Vei2& gridLocation );
 	void DrawCells( const Vei2 screenLocation, Graphics& gfx ) const;
 	void DrawGrid( const Vei2 screenLocation, Graphics& gfx ) const;
+	void EraseCell( const Vei2& gridLocation );
 	void CheckForClosingArea( const Vei2& gridLocation, const bool wasEnclosed );
 	const bool FillClosedArea( const Vei2& gridLocation );
 	const bool FindWall( const Vei2& gridLocation, const int xDirection, const int yDirection ) const;
@@ -84,7 +81,9 @@ private:
 	const Vei2 GetScreenLocation() const;
 	const Vei2 GetSize() const;
 	void HighlightSelectedCells( Graphics& gfx ) const;
+	const bool IsCellAlreadyEnclosed( const Vei2& gridLocation ) const;
 	const bool IsCellEnclosed( const Vei2& gridLocation ) const;
+	const bool IsCellOccupied( const Vei2& gridLocation ) const;
 	bool IsJointFormed( const Vei2& gridLocation ) const;
 
 	float ZoomLevel = 1.0f;
@@ -93,6 +92,7 @@ private:
 	const int Width;
 	const int Height;
 	Vec2 Location;
+	std::unique_ptr<std::unordered_map<Vei2, Cell, Vei2::Hasher>> Cells;
 	std::vector<Vei2> SelectedCells;
 	std::vector<Vei2> TemporarySelectedCells;
 };

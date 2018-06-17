@@ -143,6 +143,7 @@
     <ClInclude Include="DXErr.h" />
     <ClInclude Include="EditConstants.h" />
     <ClInclude Include="Editor.h" />
+    <ClInclude Include="MapFixture.h" />
     <ClInclude Include="Rect.h" />
     <ClInclude Include="SpriteEffect.h" />
     <ClInclude Include="Surface.h" />
@@ -156,6 +157,7 @@
     <ClInclude Include="PixelEffect.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="Vec2.h" />
+    <ClInclude Include="Wall.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DXErr.cpp" />
@@ -169,6 +171,7 @@
     <ClCompile Include="Grid_Cell.cpp" />
     <ClCompile Include="Mouse.cpp" />
     <ClCompile Include="Surface.cpp" />
+    <ClCompile Include="Wall.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="FramebufferPS.hlsl">
