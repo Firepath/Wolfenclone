@@ -23,6 +23,7 @@
 #define NOMINMAX
 
 #include <algorithm>
+#include <assert.h>
 #include <d3d11.h>
 #include <wrl.h>
 #include "ChiliException.h"
@@ -163,6 +164,20 @@ public:
 		}
 	}
 
+	template <typename E>
+	void DrawBorderedBox( Vei2 topLeft, Vei2 bottomRight, Color boxColour, Color borderColour, E effect, const int thickness = 1 )
+	{
+		DrawBorderedBox( RectI( topLeft, bottomRight ), boxColour, borderColour, effect, thickness );
+	}
+
+	template <typename E>
+	void DrawBorderedBox( const RectI& rect, Color boxColour, Color borderColour, E effect, const int thickness = 1 )
+	{
+		const RectI boxRect = rect.GetExpanded( -thickness );
+		DrawBox( boxRect, boxColour, effect );
+		DrawBoxBorder( rect, borderColour, effect, thickness );
+	}
+	
 	template <typename E>
 	void DrawBoxBorder( Vei2 topLeft, Vei2 bottomRight, Color colour, E effect, const int thickness = 1 )
 	{
