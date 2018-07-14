@@ -2,6 +2,7 @@
 
 #define NOMINMAX
 
+#include <assert.h>
 #include <unordered_map>
 #include <vector>
 

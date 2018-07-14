@@ -19,6 +19,10 @@
 *	along with The Chili DirectX Framework.  If not, see <http://www.gnu.org/licenses/>.  *
 ******************************************************************************************/
 #pragma once
+
+#define NOMINMAX
+
+#include <algorithm>
 #include <d3d11.h>
 #include <wrl.h>
 #include "ChiliException.h"

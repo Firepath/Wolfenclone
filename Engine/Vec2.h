@@ -20,8 +20,9 @@
 ******************************************************************************************/
 #pragma once
 
+#include <functional>
+
 #include "ChiliMath.h"
-#include <Box2D\Box2D.h>
 
 template <typename T>
 class _Vec2
@@ -64,14 +65,6 @@ public:
 	{
 		return{ (T2)x,(T2)y };
 	}
-	explicit operator b2Vec2() const
-	{
-		return{ x,y };
-	}
-	explicit _Vec2( const b2Vec2& b2v )
-		:
-		_Vec2( (T)b2v.x, (T)b2v.y )
-	{}
 	T		LenSq() const
 	{
 		return sq( *this );
