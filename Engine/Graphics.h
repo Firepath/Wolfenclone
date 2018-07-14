@@ -147,13 +147,25 @@ public:
 	template <typename E>
 	void DrawBox( const RectI& rect, Color colour, E effect )
 	{
+		DrawBox( rect, Graphics::GetScreenClippingRect(), colour, effect );
+	}
+
+
+	template <typename E>
+	void DrawBox( const RectI& rect, const RectI& clippingRect, Color colour, E effect )
+	{
 		assert( rect.right >= rect.left );
 		assert( rect.bottom >= rect.top );
 
-		int left = std::max( rect.left, 0 );
-		int right = std::min( rect.right, ScreenWidth - 1 );
-		int top = std::max( rect.top, 0 );
-		int bottom = std::min( rect.bottom, ScreenHeight - 1 );
+		assert( clippingRect.left >= 0 );
+		assert( clippingRect.right < Graphics::ScreenWidth );
+		assert( clippingRect.top >= 0 );
+		assert( clippingRect.bottom < Graphics::ScreenHeight );
+
+		int left = std::max( rect.left, clippingRect.left );
+		int right = std::min( rect.right, clippingRect.right );
+		int top = std::max( rect.top, clippingRect.top );
+		int bottom = std::min( rect.bottom, clippingRect.bottom );
 
 		for ( int j = top; j <= bottom; j++ )
 		{
@@ -177,47 +189,71 @@ public:
 		DrawBox( boxRect, boxColour, effect );
 		DrawBoxBorder( rect, borderColour, effect, thickness );
 	}
-	
+
 	template <typename E>
-	void DrawBoxBorder( Vei2 topLeft, Vei2 bottomRight, Color colour, E effect, const int thickness = 1 )
+	void DrawBorderedBox( const RectI& boxRect, const RectI& borderRect, Color boxColour, Color borderColour, E effect )
 	{
-		DrawBoxBorder( RectI( topLeft, bottomRight ), colour, effect, thickness );
+		DrawBox( boxRect, boxColour, effect );
+		DrawBoxBorder( borderRect, boxRect, borderColour, effect );
 	}
 
 	template <typename E>
-	void DrawBoxBorder( const RectI& rect, Color colour, E effect, const int thickness = 1 )
+	void DrawBoxBorder( Vei2 topLeft, Vei2 bottomRight, Color colour, E effect, const int thickness = 1 )
 	{
-		assert( rect.right >= rect.left );
-		assert( rect.bottom >= rect.top );
+		const RectI borderRect( topLeft, bottomRight );
+		DrawBoxBorder( borderRect, colour, effect );
+	}
 
-		for ( int i = 0; i < thickness; i++ )
+	template <typename E>
+	void DrawBoxBorder( const RectI& borderRect, Color colour, E effect, const int thickness = 1 )
+	{
+		const RectI boxRect = borderRect.GetExpanded( -thickness );
+		DrawBoxBorder( borderRect, boxRect, colour, effect );
+	}
+
+	template <typename E>
+	void DrawBoxBorder( const RectI& borderRect, const RectI& boxRect, Color colour, E effect )
+	{
+		DrawBoxBorder( borderRect, boxRect, Graphics::GetScreenClippingRect(), colour, effect );
+	}
+
+	template <typename E>
+	void DrawBoxBorder( const RectI& borderRect, const RectI& boxRect, const RectI& clippingRect, Color colour, E effect )
+	{
+		assert( borderRect.right >= borderRect.left );
+		assert( borderRect.bottom >= borderRect.top );
+
+		assert( boxRect.right >= boxRect.left );
+		assert( boxRect.bottom >= boxRect.top );
+
+		assert( borderRect.left <= boxRect.left );
+		assert( borderRect.right >= boxRect.right );
+		assert( borderRect.top <= boxRect.top );
+		assert( borderRect.bottom >= boxRect.bottom );
+
+		assert( clippingRect.left >= 0 );
+		assert( clippingRect.right < Graphics::ScreenWidth );
+		assert( clippingRect.top >= 0 );
+		assert( clippingRect.bottom < Graphics::ScreenHeight );
+
+		int left = std::max( borderRect.left, clippingRect.left );
+		int right = std::min( borderRect.right, clippingRect.right );
+		int top = std::max( borderRect.top, clippingRect.top );
+		int bottom = std::min( borderRect.bottom, clippingRect.bottom );
+
+		for ( int x = left; x <= right; x++ )
 		{
-			Vei2 topLeft( rect.left + i, rect.top + i );
-			Vei2 topRight( rect.right - i, rect.top + i );
-			Vei2 bottomLeft( rect.left + i, rect.bottom - i );
-			Vei2 bottomRight( rect.right - i, rect.bottom - i );
-
-			if ( topLeft.x > bottomRight.x )
+			for ( int y = top; y <= bottom; y++ )
 			{
-				break;
+				if ( y >= boxRect.top && y <= boxRect.bottom &&
+					x >= boxRect.left && x <= boxRect.right )
+				{
+					y = boxRect.bottom;
+					continue;
+				}
+
+				effect( colour, x, y, *this );
 			}
-
-			DrawLine( topLeft, topRight, colour, effect );
-
-			if ( topLeft.y > bottomRight.y )
-			{
-				break;
-			}
-
-			DrawLine( bottomLeft, bottomRight, colour, effect );
-
-			if ( topLeft.y + 1 > bottomRight.y - 1 )
-			{
-				break;
-			}
-
-			DrawLine( topLeft + Vei2( 0, 1 ), bottomLeft + Vei2( 0, -1 ), colour, effect );
-			DrawLine( topRight + Vei2( 0, 1 ), bottomRight + Vei2( 0, -1 ), colour, effect );
 		}
 	}
 
@@ -236,13 +272,13 @@ public:
 	template<typename E>
 	void DrawSprite( const int x, const int y, const RectI& sourceRect, const Surface& surface, E effect )
 	{
-		DrawSprite( x, y, sourceRect, GetScreenRect(), surface, effect );
+		DrawSprite( x, y, sourceRect, GetScreenClippingRect(), surface, effect );
 	}
 
 	template<typename E>
 	void DrawSprite( RectI destinationRect, const RectI& sourceRect, const Surface& surface, E effect )
 	{
-		DrawSprite( destinationRect, sourceRect, GetScreenRect(), surface, effect );
+		DrawSprite( destinationRect, sourceRect, GetScreenClippingRect(), surface, effect );
 	}
 
 	template<typename E>
@@ -255,9 +291,16 @@ public:
 	void DrawSprite( RectI destinationRect, RectI sourceRect, const RectI& clippingRect, const Surface& surface, E effect )
 	{
 		assert( sourceRect.left >= 0 );
+		assert( sourceRect.right >= sourceRect.left );
 		assert( sourceRect.right <= surface.GetWidth() );
 		assert( sourceRect.top >= 0 );
+		assert( sourceRect.bottom >= sourceRect.top );
 		assert( sourceRect.bottom <= surface.GetHeight() );
+
+		assert( clippingRect.left >= 0 );
+		assert( clippingRect.right < Graphics::ScreenWidth );
+		assert( clippingRect.top >= 0 );
+		assert( clippingRect.bottom < Graphics::ScreenHeight );
 
 		const RectI originalDestination = destinationRect;
 		const float scaleX = (float)destinationRect.GetWidth() / (float)sourceRect.GetWidth();
@@ -270,9 +313,9 @@ public:
 			destinationRect.left = clippingRect.left;
 		}
 
-		if ( destinationRect.right >= clippingRect.right )
+		if ( destinationRect.right > clippingRect.right )
 		{
-			destinationRect.right = clippingRect.right - 1;
+			destinationRect.right = clippingRect.right;
 		}
 
 		if ( destinationRect.top < clippingRect.top )
@@ -280,9 +323,9 @@ public:
 			destinationRect.top = clippingRect.top;
 		}
 
-		if ( destinationRect.bottom >= clippingRect.bottom )
+		if ( destinationRect.bottom > clippingRect.bottom )
 		{
-			destinationRect.bottom = clippingRect.bottom - 1;
+			destinationRect.bottom = clippingRect.bottom;
 		}
 
 		for ( int dx = destinationRect.left; dx <= destinationRect.right; dx++ )
@@ -316,4 +359,5 @@ public:
 	static constexpr int ScreenWidth = 1440;
 	static constexpr int ScreenHeight = 800;
 	static RectI GetScreenRect();
+	static RectI GetScreenClippingRect();
 };
