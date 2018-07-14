@@ -20,7 +20,6 @@
  ******************************************************************************************/
 #include "MainWindow.h"
 #include "Game.h"
-#include "SpriteEffect.h"
 
 Game::Game( MainWindow& wnd )
 	:
@@ -75,7 +74,7 @@ void Game::SetupMenu()
 	MainMenuFont = std::make_unique<Font>( Surfaces->GetSurface( "Font_Fixedsys16x28" ), Colors::Yellow, Colors::White );
 	MainMenu = std::make_unique<Menu>( *(MainMenuFont.get()) );
 	MainMenu->SetLocation( { 20,20 } );
-	MainMenu->AddMenuItem( "$$oo$$", std::make_unique<TestCallBack>() );
+	MainMenu->AddMenuItem( "$$oo$$BHGV", std::make_unique<TestCallBack>() );
 }
 
 void Game::ComposeFrame()
