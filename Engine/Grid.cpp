@@ -110,7 +110,7 @@ void Grid::HighlightCell( const Vei2& gridLocation, const Color highlightColour,
 	const Vei2 bottomRight = mapScreenLocation + Vei2( (int)std::ceil( (float)(gridLocation.x + 1) * CellSize ) - 1, (int)std::ceil( (float)(gridLocation.y + 1) * CellSize ) - 1 );
 	const RectI rect( topLeft, bottomRight );
 
-	PixelEffect::Transparency effect( Colors::Magenta, highlightOpacity );
+	PixelEffect::Transparency effect( highlightOpacity );
 	gfx.DrawBox( rect, highlightColour, effect );
 
 	if ( drawBorder )
@@ -566,7 +566,7 @@ void Grid::HighlightSelectedCells( Graphics& gfx ) const
 		const Vei2 gridLocation = GetScreenLocation();
 		topLeft = (Vei2)((Vec2)topLeft * CellSize) + gridLocation;
 		bottomRight = (Vei2)((Vec2)(bottomRight + Vei2( 1, 1 )) * CellSize) + gridLocation;
-		gfx.DrawBoxBorder( RectI( topLeft, bottomRight ), EditConstants::CellSelection::SelectModeHoverColour, PixelEffect::Transparency( Colors::Magenta, EditConstants::CellSelection::CellHoverOpacity ), GetCellBorderThickness() );
+		gfx.DrawBoxBorder( RectI( topLeft, bottomRight ), EditConstants::CellSelection::SelectModeHoverColour, PixelEffect::Transparency( EditConstants::CellSelection::CellHoverOpacity ), GetCellBorderThickness() );
 	}
 }
 
