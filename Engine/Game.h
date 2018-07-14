@@ -25,6 +25,8 @@
 #include "Graphics.h"
 
 #include "Editor.h"
+#include "Font.h"
+#include "SurfaceRepository.h"
 
 class Game
 {
@@ -40,6 +42,7 @@ private:
 	/*  User Functions              */
 	void DoKeyboardEvents();
 	void DoMouseEvents();
+	void LoadSettings();
 	/********************************/
 private:
 	MainWindow& wnd;
@@ -47,5 +50,6 @@ private:
 	/********************************/
 	/*  User Variables              */
 	Editor Editor;
+	std::unique_ptr<SurfaceRepository> Surfaces = nullptr;
 	/********************************/
 };

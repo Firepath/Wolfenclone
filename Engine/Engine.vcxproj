@@ -143,10 +143,13 @@
     <ClInclude Include="DXErr.h" />
     <ClInclude Include="EditConstants.h" />
     <ClInclude Include="Editor.h" />
+    <ClInclude Include="Font.h" />
     <ClInclude Include="MapFixture.h" />
+    <ClInclude Include="Menu.h" />
     <ClInclude Include="Rect.h" />
     <ClInclude Include="SpriteEffect.h" />
     <ClInclude Include="Surface.h" />
+    <ClInclude Include="SurfaceRepository.h" />
     <ClInclude Include="VectorExtensions.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="Graphics.h" />
@@ -162,6 +165,7 @@
   <ItemGroup>
     <ClCompile Include="DXErr.cpp" />
     <ClCompile Include="Editor.cpp" />
+    <ClCompile Include="Font.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Graphics.cpp" />
     <ClCompile Include="Keyboard.cpp" />
@@ -171,6 +175,7 @@
     <ClCompile Include="Grid_Cell.cpp" />
     <ClCompile Include="Mouse.cpp" />
     <ClCompile Include="Surface.cpp" />
+    <ClCompile Include="SurfaceRepository.cpp" />
     <ClCompile Include="Wall.cpp" />
   </ItemGroup>
   <ItemGroup>

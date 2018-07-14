@@ -27,6 +27,9 @@ Game::Game( MainWindow& wnd )
 	wnd( wnd ),
 	gfx( wnd )
 {
+	Surfaces = std::make_unique<SurfaceRepository>();
+
+	LoadSettings();
 }
 
 void Game::Go()
@@ -59,6 +62,11 @@ void Game::DoMouseEvents()
 		const Mouse::Event e = wnd.mouse.Read();
 		Editor.DoMouseEvents( e );
 	}
+}
+
+void Game::LoadSettings()
+{
+	Surfaces->AddSurface( "Font_Fixedsys16x28", Surface( "Textures\\Fonts\\Fixedsys16x28.bmp" ) );
 }
 
 void Game::ComposeFrame()
