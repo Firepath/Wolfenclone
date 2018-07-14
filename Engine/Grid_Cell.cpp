@@ -1,5 +1,5 @@
 #include "Grid.h"
-#include "SpriteEffect.h"
+#include "PixelEffect.h"
 
 Grid::Cell::Cell( const Vei2& location, Surface* const surface )
 	:
@@ -16,7 +16,7 @@ void Grid::Cell::Draw( const Grid& map, Graphics& gfx ) const
 
 	if ( Surf != nullptr )
 	{
-		gfx.DrawSprite( RectI( topLeft, bottomRight ), *Surf, SpriteEffect::Copy() );
+		gfx.DrawSprite( RectI( topLeft, bottomRight ), *Surf, PixelEffect::Copy() );
 	}
 }
 
