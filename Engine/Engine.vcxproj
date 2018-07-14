@@ -147,7 +147,6 @@
     <ClInclude Include="MapFixture.h" />
     <ClInclude Include="Menu.h" />
     <ClInclude Include="Rect.h" />
-    <ClInclude Include="SpriteEffect.h" />
     <ClInclude Include="Surface.h" />
     <ClInclude Include="SurfaceRepository.h" />
     <ClInclude Include="VectorExtensions.h" />

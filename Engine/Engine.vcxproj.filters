@@ -69,9 +69,6 @@
     <ClInclude Include="Rect.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SpriteEffect.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="EditConstants.h">
       <Filter>Header Files</Filter>
     </ClInclude>
