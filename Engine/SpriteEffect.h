@@ -202,7 +202,7 @@ namespace SpriteEffect
 	class Transparency
 	{
 	public:
-		Transparency( Color chromaColour, float opacity )
+		Transparency( float opacity, Color chromaColour = Colors::Magenta )
 			:
 			ChromaColour( chromaColour ),
 			Opacity( opacity )
