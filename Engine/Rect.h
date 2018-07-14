@@ -52,6 +52,12 @@ public:
 
 	Rect_ GetExpanded( T offset ) const
 	{
+		if ( left - offset > right + offset || top - offset > bottom + offset )
+		{
+			const Vei2 centre = GetCenter();
+			return Rect_( centre, centre );
+		}
+
 		return Rect_( left - offset, right + offset, top - offset, bottom + offset );
 	}
 
