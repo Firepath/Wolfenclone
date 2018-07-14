@@ -38,7 +38,6 @@ public:
 	void DeleteCell( const Vei2& gridLocation );
 	void DeleteSelectedCells();
 	void Draw( Graphics& gfx );
-	void Fill( const Vei2& gridLocation, const Color colour );
 	void Fill( const Vei2& gridLocation, Surface* const surface );
 	Cell& GetCell( const Vei2& gridLocation ) const;
 	void HighlightCell( const Vei2& gridLocation, const Color highlightColour, const float highlightOpacity, const bool drawBorder, Graphics& gfx ) const;
