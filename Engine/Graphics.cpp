@@ -260,6 +260,11 @@ RectI Graphics::GetScreenRect()
 	return RectI( 0, Graphics::ScreenWidth, 0, Graphics::ScreenHeight );
 }
 
+RectI Graphics::GetScreenClippingRect()
+{
+	return RectI( 0, Graphics::ScreenWidth - 1, 0, Graphics::ScreenHeight - 1 );
+}
+
 void Graphics::EndFrame()
 {
 	HRESULT hr;
