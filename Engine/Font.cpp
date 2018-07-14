@@ -37,6 +37,16 @@ void Font::DrawString( const std::string& text, const Vei2& location, Graphics& 
 	}
 }
 
+const int Font::GetGlyphHeight() const
+{
+	return GlyphHeight;
+}
+
+const int Font::GetGlyphWidth() const
+{
+	return GlyphWidth;
+}
+
 RectI Font::MapGlyphRect( char c ) const
 {
 	assert( c >= Font::FirstChar && c <= Font::LastChar );

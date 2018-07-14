@@ -15,6 +15,9 @@ public:
 
 	void DrawString( const std::string& text, const Vei2& location, Graphics& gfx ) const;
 
+	const int GetGlyphHeight() const;
+	const int GetGlyphWidth() const;
+
 private:
 	RectI MapGlyphRect( char c ) const;
 
