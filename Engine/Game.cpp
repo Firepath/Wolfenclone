@@ -30,6 +30,7 @@ Game::Game( MainWindow& wnd )
 	Surfaces = std::make_unique<SurfaceRepository>();
 
 	LoadSettings();
+	SetupMenu();
 }
 
 void Game::Go()
@@ -69,7 +70,16 @@ void Game::LoadSettings()
 	Surfaces->AddSurface( "Font_Fixedsys16x28", Surface( "Textures\\Fonts\\Fixedsys16x28.bmp" ) );
 }
 
+void Game::SetupMenu()
+{
+	MainMenuFont = std::make_unique<Font>( Surfaces->GetSurface( "Font_Fixedsys16x28" ), Colors::Yellow, Colors::White );
+	MainMenu = std::make_unique<Menu>( *(MainMenuFont.get()) );
+	MainMenu->SetLocation( { 20,20 } );
+	MainMenu->AddMenuItem( "$$oo$$", std::make_unique<TestCallBack>() );
+}
+
 void Game::ComposeFrame()
 {
 	Editor.Draw( gfx );
+	MainMenu->Show( gfx );
 }
