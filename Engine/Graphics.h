@@ -241,9 +241,9 @@ public:
 		assert( sourceRect.bottom <= surface.GetHeight() );
 
 		const RectI originalDestination = destinationRect;
-		const float scaleX = (float)destinationRect.GetWidth() / (float)surface.GetWidth();
+		const float scaleX = (float)destinationRect.GetWidth() / (float)sourceRect.GetWidth();
 		const float scaleInvX = 1.0f / scaleX;
-		const float scaleY = (float)destinationRect.GetHeight() / (float)surface.GetHeight();
+		const float scaleY = (float)destinationRect.GetHeight() / (float)sourceRect.GetHeight();
 		const float scaleInvY = 1.0f / scaleY;
 
 		if ( destinationRect.left < clippingRect.left )
@@ -268,10 +268,10 @@ public:
 
 		for ( int dx = destinationRect.left; dx <= destinationRect.right; dx++ )
 		{
-			int sx = std::min( sourceRect.GetWidth() - 1, (int)std::floor( scaleInvX * (dx - originalDestination.left) ) );
+			int sx = std::min( sourceRect.GetWidth() - 1, (int)std::floor( scaleInvX * (dx - originalDestination.left) ) ) + sourceRect.left;
 			for ( int dy = destinationRect.top; dy <= destinationRect.bottom; dy++ )
 			{
-				int sy = std::min( sourceRect.GetHeight() - 1, (int)std::floor( scaleInvY * (dy - originalDestination.top) ) );
+				int sy = std::min( sourceRect.GetHeight() - 1, (int)std::floor( scaleInvY * (dy - originalDestination.top)) ) + sourceRect.top;
 
 				effect( surface.GetPixel( sx, sy ), dx, dy, *this );
 			}
