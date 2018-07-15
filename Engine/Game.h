@@ -54,6 +54,6 @@ private:
 	Editor Editor;
 	std::unique_ptr<SurfaceRepository> Surfaces = nullptr;
 	std::unique_ptr<Font> MainMenuFont = nullptr;
-	std::unique_ptr<Menu> MainMenu = nullptr;
+	std::unique_ptr<MenuItem> MainMenu = nullptr;
 	/********************************/
 };

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 #include "Font.h"
@@ -23,65 +24,89 @@ public:
 	void Execute() const override;
 };
 
-class Menu
+class MenuItem
 {
-private:
+public:
 	static constexpr Color DefaultBorderColour = Colors::White;
 	static constexpr size_t DefaultBorderThickness = 1u;
 	static constexpr Color DefaultBoxColour = Colors::DarkGray;
 	static constexpr size_t DefaultBoxPadding = 4u;
 	static constexpr size_t DefaultMaxHeight = 30u;
-	static constexpr size_t DefaultMaxWidth = 1400u;
+	static constexpr size_t DefaultMaxWidth = 300u;
 	static constexpr float DefaultOpacity = 95.0f;
 
-	class MenuItem
-	{
-	public:
-
-		MenuItem( std::string text, const Menu& menu, std::unique_ptr<SelectedCallBack> callback );
-
-		template<typename E>
-		void Draw( const Vei2& location, E effect, Graphics& gfx )
-		{
-
-			const RectI borderRect = RectI( location, Width, Height ).GetExpanded( -1 );
-			const RectI boxRect = borderRect.GetExpanded( -(int)_Menu.BorderThickness );
-			gfx.DrawBorderedBox( boxRect, borderRect, _Menu.BoxColour, _Menu.BorderColour, effect );
-			_Menu._Font.DrawString( GetText(), location + Vei2( (int)_Menu.BoxPadding, (int)_Menu.BoxPadding ), boxRect, gfx );
-		}
-
-		const Vei2 GetSize() const;
-		const std::string GetText() const;
-		void SetText( const std::string text );
-		void Select();
-
-	private:
-		size_t Height = Menu::DefaultMaxHeight;
-		size_t Width = Menu::DefaultMaxWidth;
-
-		const Menu& _Menu;
-		std::string Text;
-		std::unique_ptr<SelectedCallBack> CallBack;
-	};
-
-public:
-	Menu( const Font& font );
+	MenuItem( std::string text, std::unique_ptr<SelectedCallBack> callback, const MenuItem* const menu, const Font* const font, Graphics& gfx );
 
 	void AddMenuItem( std::string text, std::unique_ptr<SelectedCallBack> callback );
-	const Vei2 GetLocation();
+	const Vei2 GetLocation() const;
+	const Vei2 GetSize() const;
+	const std::string GetText() const;
+	const bool GetVisible() const;
+	const size_t GetWidth() const;
+	void Select();
 	void SetLocation( const Vei2 screenLocation );
-	void Show( Graphics& gfx );
+	void SetText( const std::string text );
+	void SetVisible( const bool visible );
+	void SetWidth( const size_t width );
 
-private:
-	Color BorderColour = Menu::DefaultBorderColour;
-	size_t BorderThickness = Menu::DefaultBorderThickness;
-	Color BoxColour = Menu::DefaultBoxColour;
-	size_t BoxPadding = Menu::DefaultBoxPadding;
-	size_t MaximumWidth = Menu::DefaultMaxWidth;
-	float Opacity = Menu::DefaultOpacity;
+	template<typename E>
+	void Show( const Vei2& location, E effect )
+	{
+		Location = location;
+		Visible = true;
+
+		const RectI borderRect = RectI( location, Width, Height ).GetExpanded( -1 );
+		const RectI boxRect = borderRect.GetExpanded( -(int)BorderThickness );
+		_gfx.DrawBorderedBox( boxRect, borderRect, BoxColour, BorderColour, effect );
+		_Font->DrawString( GetText(), location + Vei2( (int)BoxPadding, (int)BoxPadding ), boxRect, _gfx );
+	}
+
+	virtual void ShowMenu();
+
+protected:
+	void ShowMenu( const Vei2 location );
+
+protected:
+	Color BorderColour = DefaultBorderColour;
+	size_t BorderThickness = DefaultBorderThickness;
+	Color BoxColour = DefaultBoxColour;
+	size_t BoxPadding = DefaultBoxPadding;
+	size_t MaximumWidth = DefaultMaxWidth;
+	float Opacity = DefaultOpacity;
+
+	size_t Height = DefaultMaxHeight;
+	size_t Width = DefaultMaxWidth;
 
 	Vei2 Location;
-	const Font& _Font;
+	bool Visible = false;
 
+	const Font* const _Font;
+	Graphics& _gfx;
+
+	const MenuItem* const _Menu = nullptr;
+
+	std::string Text;
 	std::vector<MenuItem> MenuItems;
+	std::unique_ptr<SelectedCallBack> CallBack = nullptr;
+};
+
+class Menu : public MenuItem
+{
+public:
+	Menu( std::string text, const Font* const font, Graphics& gfx );
+
+	void ShowMenu() override;
+};
+
+class MenuBar
+{
+public:
+	MenuBar( const Vei2 location );
+
+	void AddMenu( const std::string name, std::unique_ptr<Menu> menu );
+
+private:
+	const Vei2 Location;
+
+	std::vector<std::unique_ptr<Menu>> Menus;
 };

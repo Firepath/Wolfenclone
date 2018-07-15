@@ -21,6 +21,8 @@
 #include "MainWindow.h"
 #include "Game.h"
 
+#include "PixelEffect.h"
+
 Game::Game( MainWindow& wnd )
 	:
 	wnd( wnd ),
@@ -71,18 +73,26 @@ void Game::LoadSettings()
 
 void Game::SetupMenu()
 {
-	MainMenuFont = std::make_unique<Font>( Surfaces->GetSurface( "Font_Fixedsys16x28" ), Colors::White, 14, Colors::White );
-	MainMenu = std::make_unique<Menu>( *(MainMenuFont.get()) );
-	MainMenu->SetLocation( { 20,20 } );
-	MainMenu->AddMenuItem( "!\"#$%&'()*+,-./0123456789:;<=>?", std::make_unique<TestCallBack>() );
-	MainMenu->AddMenuItem( "@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_", std::make_unique<TestCallBack>() );
-	MainMenu->AddMenuItem( "`abcdefghijklmnopqrstuvwxyz{|}~", std::make_unique<TestCallBack>() );
-	MainMenu->AddMenuItem( "A-a_B.b,1[2]3(4){5}<6>7=8?9:0;C.c,D^d\\", std::make_unique<TestCallBack>() );
-	MainMenu->AddMenuItem( "E`e~F!f\'G#g$H%h&I'i*J+j|K", std::make_unique<TestCallBack>() );
+	MainMenuFont = std::make_unique<Font>( Surfaces->GetSurface( "Font_Fixedsys16x28" ), Colors::White, 28, Colors::White );
+	//MainMenu = std::make_unique<Menu>( "Main Menu", MainMenuFont.get(), gfx );
+	MainMenu = std::make_unique<MenuItem>( "Main Menu", nullptr, nullptr, MainMenuFont.get(), gfx );
+	//MainMenu->SetLocation( { 20,20 } );
+	//MainMenu->AddMenuItem( "!\"#$%&'()*+,-./0123456789:;<=>?", std::make_unique<TestCallBack>() );
+	//MainMenu->AddMenuItem( "@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_", std::make_unique<TestCallBack>() );
+	//MainMenu->AddMenuItem( "`abcdefghijklmnopqrstuvwxyz{|}~", std::make_unique<TestCallBack>() );
+	//MainMenu->AddMenuItem( "A-a_B.b,1[2]3(4){5}<6>7=8?9:0;C.c,D^d\\", std::make_unique<TestCallBack>() );
+	//MainMenu->AddMenuItem( "E`e~F!f\'G#g$H%h&I'i*J+j|K", std::make_unique<TestCallBack>() );
+	
+	// "Real" tests
+	MainMenu->AddMenuItem( "Place", std::make_unique<TestCallBack>() );
+	MainMenu->AddMenuItem( "Select", std::make_unique<TestCallBack>() );
+	MainMenu->AddMenuItem( "Really long option", std::make_unique<TestCallBack>() );
+	MainMenu->AddMenuItem( "Go", std::make_unique<TestCallBack>() );
 }
 
 void Game::ComposeFrame()
 {
 	Editor.Draw( gfx );
-	MainMenu->Show( gfx );
+	MainMenu->Show( { 20,20 }, PixelEffect::Transparency( 50.0f ) );
+	MainMenu->ShowMenu();
 }
