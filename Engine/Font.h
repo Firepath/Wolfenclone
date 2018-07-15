@@ -4,6 +4,7 @@
 
 #include "Colors.h"
 #include "Graphics.h"
+#include "PixelEffect.h"
 #include "Rect.h"
 #include "Surface.h"
 #include "Vec2.h"
@@ -13,7 +14,38 @@ class Font
 public:
 	Font( Surface* const surface, Color colour, Color chroma = Colors::Magenta );
 
-	void DrawString( const std::string& text, const Vei2& location, Graphics& gfx ) const;
+	void DrawString( const std::string& text, const Vei2& location, Graphics& gfx ) const
+	{
+		DrawString( text, location, Graphics::GetScreenClippingRect(), gfx );
+	}
+
+	void DrawString( const std::string& text, const Vei2& location, const RectI& clippingRect, Graphics& gfx ) const
+	{
+		PixelEffect::Sustitution effect( Colour, Chroma );
+		DrawString( text, location, clippingRect, effect, gfx );
+	}
+	
+	template<typename E>
+	void DrawString( const std::string& text, const Vei2& location, const RectI& clippingRect, E effect, Graphics& gfx ) const
+	{
+		Vei2 currentLocation = location;
+		for ( auto c : text )
+		{
+			if ( c == '\n' )
+			{
+				currentLocation.y += GlyphHeight;
+				currentLocation.x = location.x;
+				continue;
+			}
+
+			if ( c >= Font::FirstChar + 1 && c <= Font::LastChar )
+			{
+				gfx.DrawSprite( currentLocation.x, currentLocation.y, MapGlyphRect( c ), clippingRect, *Sprite, effect );
+			}
+
+			currentLocation.x += GlyphWidth;
+		}
+	}
 
 	const int GetGlyphHeight() const;
 	const int GetGlyphWidth() const;
