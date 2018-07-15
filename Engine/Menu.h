@@ -40,11 +40,28 @@ private:
 	{
 	public:
 
-		MenuItem( std::string text, std::unique_ptr<SelectedCallBack> callback )
+		MenuItem( std::string text, const Menu& menu, std::unique_ptr<SelectedCallBack> callback )
 			:
 			Text( text ),
+			_Menu( menu ),
 			CallBack( std::move( callback ) )
 		{
+			Height = _Menu._Font.GetGlyphHeight() + 2 * _Menu.BoxPadding;
+			Width = _Menu.MaximumWidth;
+		}
+
+		template<typename E>
+		void Draw( const Vei2& location, E effect, Graphics& gfx )
+		{
+			const RectI borderRect( location, Width, Height );
+			const RectI boxRect = borderRect.GetExpanded( -(int)_Menu.BorderThickness );
+			gfx.DrawBorderedBox( boxRect, borderRect, _Menu.BoxColour, _Menu.BorderColour, effect );
+			_Menu._Font.DrawString( GetText(), location + Vei2( (int)_Menu.BoxPadding, (int)_Menu.BoxPadding ), boxRect, gfx );
+		}
+
+		const Vei2 GetSize() const
+		{
+			return Vei2( (int)Width, (int)Height );
 		}
 
 		const std::string GetText() const
@@ -63,6 +80,10 @@ private:
 		}
 
 	private:
+		size_t Height = Menu::DefaultMaxHeight;
+		size_t Width = Menu::DefaultMaxWidth;
+
+		const Menu& _Menu;
 		std::string Text;
 		std::unique_ptr<SelectedCallBack> CallBack;
 	};
@@ -72,12 +93,11 @@ public:
 		:
 		_Font( font )
 	{
-		BoxHeight = _Font.GetGlyphHeight() + 2 * BoxPadding;
 	}
 
 	void AddMenuItem( std::string text, std::unique_ptr<SelectedCallBack> callback )
 	{
-		MenuItems.emplace_back(  text, std::move( callback ) );
+		MenuItems.emplace_back(  text, *this, std::move( callback ) );
 	}
 
 	const Vei2 GetLocation()
@@ -100,22 +120,17 @@ public:
 		Vei2 location = Location;
 		for ( auto it = MenuItems.begin(); it != MenuItems.end(); it++ )
 		{
-			const RectI borderRect( location, BoxWidth, BoxHeight );
-			const RectI boxRect = borderRect.GetExpanded( -(int)BorderThickness );
-			gfx.DrawBorderedBox( boxRect, borderRect, BoxColour, BorderColour, boxEffect );
-			_Font.DrawString( it->GetText(), location + Vei2( (int)BoxPadding, (int)BoxPadding ), boxRect, gfx );
-			location.y += BoxHeight;
+			it->Draw( location, boxEffect, gfx );
+			location.y += it->GetSize().y;
 		}
 	}
 
 private:
-	size_t BoxHeight = Menu::DefaultMaxHeight;
-	size_t BoxWidth = Menu::DefaultMaxWidth;
-
 	Color BorderColour = Menu::DefaultBorderColour;
 	size_t BorderThickness = Menu::DefaultBorderThickness;
 	Color BoxColour = Menu::DefaultBoxColour;
 	size_t BoxPadding = Menu::DefaultBoxPadding;
+	size_t MaximumWidth = Menu::DefaultMaxWidth;
 	float Opacity = Menu::DefaultOpacity;
 
 	Vei2 Location;
