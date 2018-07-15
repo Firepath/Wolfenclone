@@ -26,13 +26,13 @@ public:
 class Menu
 {
 private:
-	static constexpr Color DefaultBorderColour = Colors::LightGray;
-	static constexpr size_t DefaultBorderThickness = 3u;
-	static constexpr Color DefaultBoxColour = Colors::Gray;
+	static constexpr Color DefaultBorderColour = Colors::White;
+	static constexpr size_t DefaultBorderThickness = 1u;
+	static constexpr Color DefaultBoxColour = Colors::DarkGray;
 	static constexpr size_t DefaultBoxPadding = 4u;
 	static constexpr size_t DefaultMaxHeight = 30u;
 	static constexpr size_t DefaultMaxWidth = 1400u;
-	static constexpr float DefaultOpacity = 50.0f;
+	static constexpr float DefaultOpacity = 95.0f;
 
 	class MenuItem
 	{
@@ -43,7 +43,8 @@ private:
 		template<typename E>
 		void Draw( const Vei2& location, E effect, Graphics& gfx )
 		{
-			const RectI borderRect( location, Width, Height );
+
+			const RectI borderRect = RectI( location, Width, Height ).GetExpanded( -1 );
 			const RectI boxRect = borderRect.GetExpanded( -(int)_Menu.BorderThickness );
 			gfx.DrawBorderedBox( boxRect, borderRect, _Menu.BoxColour, _Menu.BorderColour, effect );
 			_Menu._Font.DrawString( GetText(), location + Vei2( (int)_Menu.BoxPadding, (int)_Menu.BoxPadding ), boxRect, gfx );
