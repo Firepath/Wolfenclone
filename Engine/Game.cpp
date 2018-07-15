@@ -71,7 +71,7 @@ void Game::LoadSettings()
 
 void Game::SetupMenu()
 {
-	MainMenuFont = std::make_unique<Font>( Surfaces->GetSurface( "Font_Fixedsys16x28" ), Colors::Yellow, Colors::White );
+	MainMenuFont = std::make_unique<Font>( Surfaces->GetSurface( "Font_Fixedsys16x28" ), Colors::White, 14, Colors::White );
 	MainMenu = std::make_unique<Menu>( *(MainMenuFont.get()) );
 	MainMenu->SetLocation( { 20,20 } );
 	MainMenu->AddMenuItem( "!\"#$%&'()*+,-./0123456789:;<=>?", std::make_unique<TestCallBack>() );
