@@ -74,7 +74,11 @@ void Game::SetupMenu()
 	MainMenuFont = std::make_unique<Font>( Surfaces->GetSurface( "Font_Fixedsys16x28" ), Colors::Yellow, Colors::White );
 	MainMenu = std::make_unique<Menu>( *(MainMenuFont.get()) );
 	MainMenu->SetLocation( { 20,20 } );
-	MainMenu->AddMenuItem( "$$oo$$BHGV", std::make_unique<TestCallBack>() );
+	MainMenu->AddMenuItem( "!\"#$%&'()*+,-./0123456789:;<=>?", std::make_unique<TestCallBack>() );
+	MainMenu->AddMenuItem( "@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_", std::make_unique<TestCallBack>() );
+	MainMenu->AddMenuItem( "`abcdefghijklmnopqrstuvwxyz{|}~", std::make_unique<TestCallBack>() );
+	MainMenu->AddMenuItem( "A-a_B.b,1[2]3(4){5}<6>7=8?9:0;C.c,D^d\\", std::make_unique<TestCallBack>() );
+	MainMenu->AddMenuItem( "E`e~F!f\'G#g$H%h&I'i*J+j|K", std::make_unique<TestCallBack>() );
 }
 
 void Game::ComposeFrame()

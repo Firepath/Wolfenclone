@@ -172,6 +172,7 @@
     <ClCompile Include="MainWindow.cpp" />
     <ClCompile Include="Grid.cpp" />
     <ClCompile Include="Grid_Cell.cpp" />
+    <ClCompile Include="Menu.cpp" />
     <ClCompile Include="Mouse.cpp" />
     <ClCompile Include="Surface.cpp" />
     <ClCompile Include="SurfaceRepository.cpp" />
