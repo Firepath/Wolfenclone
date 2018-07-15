@@ -13,7 +13,7 @@ Menu::MenuItem::MenuItem( std::string text, const Menu& menu, std::unique_ptr<Se
 	_Menu( menu ),
 	CallBack( std::move( callback ) )
 {
-	Height = _Menu._Font.GetGlyphHeight() + 2 * _Menu.BoxPadding;
+	Height = _Menu._Font.GetHeight() + 2 * _Menu.BoxPadding;
 	Width = _Menu.MaximumWidth;
 }
 
