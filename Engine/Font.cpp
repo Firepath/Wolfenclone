@@ -37,6 +37,11 @@ const size_t Font::GetHeight() const
 	return Height;
 }
 
+const size_t Font::GetWidth() const
+{
+	return (size_t)(GetScale() * GlyphWidth);
+}
+
 void Font::SetHeight( const size_t height )
 {
 	Height = height;

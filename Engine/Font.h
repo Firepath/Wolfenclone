@@ -53,6 +53,7 @@ public:
 	}
 
 	const size_t GetHeight() const;
+	const size_t GetWidth() const;
 	void SetHeight( const size_t height );
 
 private:
