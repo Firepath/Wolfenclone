@@ -4,8 +4,8 @@
 #include <vector>
 
 #include "Graphics.h"
+#include "PixelEffect.h"
 #include "Rect.h"
-#include "SpriteEffect.h"
 #include "Vec2.h"
 
 class SelectedCallBack
@@ -95,13 +95,15 @@ public:
 		// TODO: Smarts to make sure menu shows on screen as best it can
 		// TODO: Further smarts to allow scrolling menu that is off the screen
 
-		SpriteEffect::Transparency boxEffect( Opacity );
+		PixelEffect::Transparency boxEffect( Opacity );
 
 		Vei2 location = Location;
 		for ( auto it = MenuItems.begin(); it != MenuItems.end(); it++ )
 		{
-			gfx.DrawBorderedBox( RectI( location, BoxWidth, BoxHeight ), BoxColour, BorderColour, boxEffect, BorderThickness );
-			_Font.DrawString( it->GetText(), location + Vei2( (int)BoxPadding, (int)BoxPadding ), gfx );
+			const RectI borderRect( location, BoxWidth, BoxHeight );
+			const RectI boxRect = borderRect.GetExpanded( -(int)BorderThickness );
+			gfx.DrawBorderedBox( boxRect, borderRect, BoxColour, BorderColour, boxEffect );
+			_Font.DrawString( it->GetText(), location + Vei2( (int)BoxPadding, (int)BoxPadding ), boxRect, gfx );
 			location.y += BoxHeight;
 		}
 	}
