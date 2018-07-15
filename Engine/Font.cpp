@@ -2,16 +2,17 @@
 
 #include "Font.h"
 
-Font::Font( Surface* const surface, Color colour, Color chroma )
+Font::Font( const Surface& surface, Color colour, Color chroma )
 	:
 	Sprite( surface ),
-	GlyphWidth( Sprite->GetWidth() / Font::SpriteSheetColumns ),
-	GlyphHeight( Sprite->GetHeight() / Font::SpriteSheetRows ),
+	GlyphWidth( Sprite.GetWidth() / Font::SpriteSheetColumns ),
+	GlyphHeight( Sprite.GetHeight() / Font::SpriteSheetRows ),
 	Chroma( chroma ),
-	Colour( colour )
+	Colour( colour ),
+	Height( (size_t)GlyphHeight )
 {
-	assert( GlyphWidth * Font::SpriteSheetColumns == Sprite->GetWidth() );
-	assert( GlyphHeight * Font::SpriteSheetRows == Sprite->GetHeight() );
+	assert( GlyphWidth * Font::SpriteSheetColumns == Sprite.GetWidth() );
+	assert( GlyphHeight * Font::SpriteSheetRows == Sprite.GetHeight() );
 }
 
 const int Font::GetGlyphHeight() const
@@ -22,6 +23,21 @@ const int Font::GetGlyphHeight() const
 const int Font::GetGlyphWidth() const
 {
 	return GlyphWidth;
+}
+
+const size_t Font::GetHeight() const
+{
+	return Height;
+}
+
+void Font::SetHeight( const size_t height )
+{
+	Height = height;
+}
+
+const float Font::GetScale() const
+{
+	return ((float)Height) / (float)GlyphHeight;
 }
 
 RectI Font::MapGlyphRect( char c ) const

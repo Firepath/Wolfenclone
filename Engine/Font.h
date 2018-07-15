@@ -12,7 +12,7 @@
 class Font
 {
 public:
-	Font( Surface* const surface, Color colour, Color chroma = Colors::Magenta );
+	Font( const Surface& surface, Color colour, Color chroma = Colors::Magenta );
 
 	void DrawString( const std::string& text, const Vei2& location, Graphics& gfx ) const
 	{
@@ -40,7 +40,7 @@ public:
 
 			if ( c >= Font::FirstChar + 1 && c <= Font::LastChar )
 			{
-				gfx.DrawSprite( currentLocation.x, currentLocation.y, MapGlyphRect( c ), clippingRect, *Sprite, effect );
+				gfx.DrawSprite( currentLocation.x, currentLocation.y, MapGlyphRect( c ), clippingRect, Sprite, effect );
 			}
 
 			currentLocation.x += GlyphWidth;
@@ -49,8 +49,11 @@ public:
 
 	const int GetGlyphHeight() const;
 	const int GetGlyphWidth() const;
+	const size_t GetHeight() const;
+	void SetHeight( const size_t height );
 
 private:
+	const float GetScale() const;
 	RectI MapGlyphRect( char c ) const;
 
 private:
@@ -59,10 +62,12 @@ private:
 	static constexpr char FirstChar = ' ';
 	static constexpr char LastChar = '~';
 
-	Surface* Sprite = nullptr;
+	const Surface& Sprite;
 
 	int GlyphWidth;
 	int GlyphHeight;
+
+	size_t Height;
 
 	Color Chroma;
 	Color Colour;
