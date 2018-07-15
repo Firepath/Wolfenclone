@@ -13,6 +13,7 @@ class Font
 {
 public:
 	Font( const Surface& surface, Color colour, Color chroma = Colors::Magenta );
+	Font( const Surface& surface, Color colour, size_t height, Color chroma = Colors::Magenta );
 
 	void DrawString( const std::string& text, const Vei2& location, Graphics& gfx ) const
 	{
@@ -28,31 +29,35 @@ public:
 	template<typename E>
 	void DrawString( const std::string& text, const Vei2& location, const RectI& clippingRect, E effect, Graphics& gfx ) const
 	{
+		const float scale = GetScale();
+		const int glyphWidth = (int)(GlyphWidth * scale);
+		const int glyphHeight = (int)(GlyphHeight * scale);
+
 		Vei2 currentLocation = location;
 		for ( auto c : text )
 		{
 			if ( c == '\n' )
 			{
-				currentLocation.y += GlyphHeight;
+				currentLocation.y += glyphHeight;
 				currentLocation.x = location.x;
 				continue;
 			}
 
 			if ( c >= Font::FirstChar + 1 && c <= Font::LastChar )
 			{
-				gfx.DrawSprite( currentLocation.x, currentLocation.y, MapGlyphRect( c ), clippingRect, Sprite, effect );
+				gfx.DrawSprite( RectI(Vei2(currentLocation.x, currentLocation.y), glyphWidth, glyphHeight), MapGlyphRect( c ), clippingRect, Sprite, effect );
 			}
 
-			currentLocation.x += GlyphWidth;
+			currentLocation.x += glyphWidth;
 		}
 	}
 
-	const int GetGlyphHeight() const;
-	const int GetGlyphWidth() const;
 	const size_t GetHeight() const;
 	void SetHeight( const size_t height );
 
 private:
+	const int GetGlyphHeight() const;
+	const int GetGlyphWidth() const;
 	const float GetScale() const;
 	RectI MapGlyphRect( char c ) const;
 

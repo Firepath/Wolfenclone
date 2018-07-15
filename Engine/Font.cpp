@@ -15,6 +15,13 @@ Font::Font( const Surface& surface, Color colour, Color chroma )
 	assert( GlyphHeight * Font::SpriteSheetRows == Sprite.GetHeight() );
 }
 
+Font::Font( const Surface & surface, Color colour, size_t height, Color chroma )
+	:
+	Font( surface, colour, chroma )
+{
+	SetHeight( height );
+}
+
 const int Font::GetGlyphHeight() const
 {
 	return GlyphHeight;
