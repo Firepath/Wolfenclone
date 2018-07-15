@@ -66,7 +66,7 @@ void Game::DoMouseEvents()
 
 void Game::LoadSettings()
 {
-	Surfaces->AddSurface( "Font_Fixedsys16x28", Surface( "Textures\\Fonts\\Fixedsys16x28.bmp" ) );
+	Surfaces->AddSurface( "Font_Fixedsys16x28", std::make_unique<Surface>( "Textures\\Fonts\\Fixedsys16x28.bmp" ) );
 }
 
 void Game::SetupMenu()
