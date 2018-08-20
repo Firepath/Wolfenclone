@@ -144,6 +144,7 @@
     <ClInclude Include="EditConstants.h" />
     <ClInclude Include="Editor.h" />
     <ClInclude Include="Font.h" />
+    <ClInclude Include="FontRepository.h" />
     <ClInclude Include="MapFixture.h" />
     <ClInclude Include="Menu.h" />
     <ClInclude Include="Rect.h" />
@@ -165,6 +166,7 @@
     <ClCompile Include="DXErr.cpp" />
     <ClCompile Include="Editor.cpp" />
     <ClCompile Include="Font.cpp" />
+    <ClCompile Include="FontRepository.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Graphics.cpp" />
     <ClCompile Include="Keyboard.cpp" />
