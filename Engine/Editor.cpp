@@ -3,7 +3,7 @@
 
 Editor::Editor()
 	:
-	MapGrid( 180, 100, Vec2( 0.0f, 0.0f ) )
+	MapGrid( 256, 256, Vec2( 0.0f, 0.0f ) )
 {
 }
 
