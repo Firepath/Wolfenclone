@@ -111,7 +111,7 @@ void MenuItem::SetWidth( const size_t width )
 
 void MenuItem::ShowMenu()
 {
-	const Vei2 topLeft = Location + Vei2( Width + 1, 0 );
+	const Vei2 topLeft = Location + Vei2( (int)Width + 1, 0 );
 	ShowMenu( topLeft );
 }
 
@@ -129,7 +129,7 @@ void MenuItem::ShowMenu( const Vei2 location )
 		itemsWidth = itemSize.x;
 	}
 
-	const RectI border = RectI( location, Vei2( itemLocation.x + itemsWidth, itemLocation.y - 1 ) );
+	const RectI border = RectI( location, Vei2( itemLocation.x + (int)itemsWidth, itemLocation.y - 1 ) );
 	const RectI insideBox = border.GetExpanded( -(int)BorderThickness );
 	_gfx.DrawBoxBorder( border, insideBox, BorderColour, boxEffect );
 }
@@ -142,19 +142,43 @@ Menu::Menu( std::string text, const Font* const font, Graphics& gfx )
 
 void Menu::ShowMenu()
 {
-	const Vei2 topLeft = Location + Vei2( 0, Height + 1 );
+	const Vei2 topLeft = Location + Vei2( 0, (int)Height + 1 );
 	MenuItem::ShowMenu( topLeft );
 }
 
-MenuBar::MenuBar( const Vei2 location )
+MenuBar::MenuBar( const Vei2 location, const Vei2 size, Graphics& gfx )
 	:
-	Location( location )
+	Location( location ),
+	_gfx( gfx ),
+	Size( size )
 {
 }
 
-void MenuBar::AddMenu( const std::string name, std::unique_ptr<Menu> menu )
+void MenuBar::AddMenu( std::unique_ptr<Menu> menu )
 {
+	const int menuHeight = menu->GetSize().y;
+	if ( menuHeight > Size.y )
+	{
+		Size.y = menuHeight;
+	}
+
 	Menus.push_back( std::move( menu ) );
+}
+
+void MenuBar::Draw() const
+{
+	PixelEffect::Transparency boxEffect( Opacity );
+	const RectI border = RectI( Location, Location + Size - Vei2( 1, 1 ) );
+	const RectI insideBox = border.GetExpanded( -(int)BorderThickness );
+	_gfx.DrawBoxBorder( border, insideBox, BorderColour, boxEffect );
+
+	Vei2 location = Location;
+	for (auto it = Menus.begin(); it != Menus.end(); it++)
+	{
+		Menu* menu = it->get();
+		menu->Show( location, PixelEffect::Copy() );
+		location.y += (int)menu->GetWidth();
+	}
 }
 
 //const Vei2 MenuBar::GetLocation() const

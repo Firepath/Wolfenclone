@@ -29,6 +29,7 @@ Game::Game( MainWindow& wnd )
 	gfx( wnd )
 {
 	Surfaces = std::make_unique<SurfaceRepository>();
+	Fonts = std::make_unique<FontRepository>();
 
 	LoadSettings();
 	SetupMenu();
@@ -69,13 +70,18 @@ void Game::DoMouseEvents()
 void Game::LoadSettings()
 {
 	Surfaces->AddSurface( "Font_Fixedsys16x28", std::make_unique<Surface>( "Textures\\Fonts\\Fixedsys16x28.bmp" ) );
+
+	Fonts->AddFont( "Font_Fixedsys16x28", std::make_unique<Font>( Surfaces->GetSurface( "Font_Fixedsys16x28" ), Colors::White, 28, Colors::White ) );
 }
 
 void Game::SetupMenu()
 {
-	MainMenuFont = std::make_unique<Font>( Surfaces->GetSurface( "Font_Fixedsys16x28" ), Colors::White, 28, Colors::White );
+	Font* menuFont = &Fonts->GetFont( "Font_Fixedsys16x28" );
+
+	MainMenuBar = std::make_unique<MenuBar>( Vei2( 0, 0 ), Vei2( Graphics::ScreenWidth, menuFont->GetHeight() + Menu::DefaultBoxPadding * 2 ), gfx );
+
 	//MainMenu = std::make_unique<Menu>( "Main Menu", MainMenuFont.get(), gfx );
-	MainMenu = std::make_unique<MenuItem>( "Main Menu", nullptr, nullptr, MainMenuFont.get(), gfx );
+	std::unique_ptr<Menu> MainMenu = std::make_unique<Menu>( "Main Menu", menuFont, gfx );
 	//MainMenu->SetLocation( { 20,20 } );
 	//MainMenu->AddMenuItem( "!\"#$%&'()*+,-./0123456789:;<=>?", std::make_unique<TestCallBack>() );
 	//MainMenu->AddMenuItem( "@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_", std::make_unique<TestCallBack>() );
@@ -88,11 +94,12 @@ void Game::SetupMenu()
 	MainMenu->AddMenuItem( "Select", std::make_unique<TestCallBack>() );
 	MainMenu->AddMenuItem( "Really long option", std::make_unique<TestCallBack>() );
 	MainMenu->AddMenuItem( "Go", std::make_unique<TestCallBack>() );
+
+	MainMenuBar->AddMenu( std::move( MainMenu ) );
 }
 
 void Game::ComposeFrame()
 {
 	Editor.Draw( gfx );
-	MainMenu->Show( { 20,20 }, PixelEffect::Transparency( 50.0f ) );
-	MainMenu->ShowMenu();
+	MainMenuBar->Draw();
 }

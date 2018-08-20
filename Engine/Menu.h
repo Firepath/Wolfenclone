@@ -55,7 +55,7 @@ public:
 		Location = location;
 		Visible = true;
 
-		const RectI borderRect = RectI( location, Width, Height ).GetExpanded( -1 );
+		const RectI borderRect = RectI( location, (int)Width, (int)Height ).GetExpanded( -1 );
 		const RectI boxRect = borderRect.GetExpanded( -(int)BorderThickness );
 		_gfx.DrawBorderedBox( boxRect, borderRect, BoxColour, BorderColour, effect );
 		_Font->DrawString( GetText(), location + Vei2( (int)BoxPadding, (int)BoxPadding ), boxRect, _gfx );
@@ -67,15 +67,15 @@ protected:
 	void ShowMenu( const Vei2 location );
 
 protected:
-	Color BorderColour = DefaultBorderColour;
-	size_t BorderThickness = DefaultBorderThickness;
-	Color BoxColour = DefaultBoxColour;
-	size_t BoxPadding = DefaultBoxPadding;
-	size_t MaximumWidth = DefaultMaxWidth;
-	float Opacity = DefaultOpacity;
+	Color BorderColour = MenuItem::DefaultBorderColour;
+	size_t BorderThickness = MenuItem::DefaultBorderThickness;
+	Color BoxColour = MenuItem::DefaultBoxColour;
+	size_t BoxPadding = MenuItem::DefaultBoxPadding;
+	size_t MaximumWidth = MenuItem::DefaultMaxWidth;
+	float Opacity = MenuItem::DefaultOpacity;
 
-	size_t Height = DefaultMaxHeight;
-	size_t Width = DefaultMaxWidth;
+	size_t Height = MenuItem::DefaultMaxHeight;
+	size_t Width = MenuItem::DefaultMaxWidth;
 
 	Vei2 Location;
 	bool Visible = false;
@@ -101,12 +101,25 @@ public:
 class MenuBar
 {
 public:
-	MenuBar( const Vei2 location );
+	static constexpr Color DefaultBorderColour = Colors::White;
+	static constexpr size_t DefaultBorderThickness = 1u;
+	static constexpr Color DefaultBoxColour = Colors::DarkGray;
+	static constexpr float DefaultOpacity = 95.0f;
 
-	void AddMenu( const std::string name, std::unique_ptr<Menu> menu );
+	MenuBar( const Vei2 location, const Vei2 size, Graphics& gfx );
+
+	void AddMenu( std::unique_ptr<Menu> menu );
+	void Draw() const;
 
 private:
+	Color BorderColour = MenuBar::DefaultBorderColour;
+	size_t BorderThickness = MenuBar::DefaultBorderThickness;
+	Color BoxColour = MenuBar::DefaultBoxColour;
+	float Opacity = MenuBar::DefaultOpacity;
+
 	const Vei2 Location;
+	Graphics& _gfx;
+	Vei2 Size;
 
 	std::vector<std::unique_ptr<Menu>> Menus;
 };

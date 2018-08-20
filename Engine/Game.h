@@ -26,7 +26,9 @@
 
 #include "Editor.h"
 #include "Font.h"
+#include "FontRepository.h"
 #include "Menu.h"
+#include "Surface.h"
 #include "SurfaceRepository.h"
 
 class Game
@@ -53,7 +55,7 @@ private:
 	/*  User Variables              */
 	Editor Editor;
 	std::unique_ptr<SurfaceRepository> Surfaces = nullptr;
-	std::unique_ptr<Font> MainMenuFont = nullptr;
-	std::unique_ptr<MenuItem> MainMenu = nullptr;
+	std::unique_ptr<FontRepository> Fonts = nullptr;
+	std::unique_ptr<MenuBar> MainMenuBar = nullptr;
 	/********************************/
 };
