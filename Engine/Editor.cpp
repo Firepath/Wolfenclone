@@ -7,8 +7,14 @@ Editor::Editor()
 {
 }
 
-void Editor::DoKeyboardEvents( const Keyboard::Event & ke )
+void Editor::DoKeyboardEvents( Keyboard::Event& ke )
 {
+	// Something else has already handled this
+	if ( ke.IsHandled() )
+	{
+		return;
+	}
+
 	const unsigned char c = ke.GetCode();
 	if ( ke.IsPress() )
 	{
@@ -17,22 +23,28 @@ void Editor::DoKeyboardEvents( const Keyboard::Event & ke )
 		case '`':
 		case '~':
 			MapGrid.ToggleGridDrawing();
+			ke.SetHandled( true );
 			break;
 		case VK_BACK:
 		case VK_DELETE:
 			MapGrid.DeleteSelectedCells();
+			ke.SetHandled( true );
 			break;
 		case VK_CONTROL:
 			EnableSingleSelectionMode();
+			ke.SetHandled( true );
 			break;
 		case VK_ESCAPE:
 			MapGrid.ClearSelectedCells();
+			ke.SetHandled( true );
 			break;
 		case VK_SHIFT:
 			EnableSelectionMode();
+			ke.SetHandled( true );
 			break;
 		case VK_TAB:
 			CycleMouseLClickMode();
+			ke.SetHandled( true );
 		default:
 			break;
 		}
@@ -43,9 +55,11 @@ void Editor::DoKeyboardEvents( const Keyboard::Event & ke )
 		{
 		case VK_CONTROL:
 			DisableSingleSelectionMode();
+			ke.SetHandled( true );
 			break;
 		case VK_SHIFT:
 			DisableSelectionMode();
+			ke.SetHandled( true );
 			break;
 		default:
 			break;
@@ -53,17 +67,25 @@ void Editor::DoKeyboardEvents( const Keyboard::Event & ke )
 	}
 }
 
-void Editor::DoMouseEvents( const Mouse::Event & me )
+void Editor::DoMouseEvents( Mouse::Event& me )
 {
+	// Something else has already handled this
+	if ( me.IsHandled() )
+	{
+		return;
+	}
+
 	Mouse::Event::Type meType = me.GetType();
 
 	switch ( meType )
 	{
 	case Mouse::Event::Type::LPress:
 		MouseLPress( me.GetPos() );
+		me.SetHandled( true );
 		break;
 	case Mouse::Event::Type::LRelease:
 		MouseLRelease();
+		me.SetHandled( true );
 		break;
 	case Mouse::Event::Type::Move:
 	{
@@ -74,6 +96,7 @@ void Editor::DoMouseEvents( const Mouse::Event & me )
 		if ( me.LeftIsPressed() )
 		{
 			MouseLPress( mousePos );
+			me.SetHandled( true );
 		}
 
 		if ( me.MiddleIsPressed() )
@@ -81,30 +104,35 @@ void Editor::DoMouseEvents( const Mouse::Event & me )
 			const Vei2 delta = mousePos - MouseInf.MMouseButtonLocation;
 			MouseInf.MMouseButtonLocation = mousePos;
 			MapGrid.Move( (Vec2)delta );
+			me.SetHandled( true );
 		}
 
 		if ( me.RightIsPressed() )
 		{
 			MouseRPress( mousePos );
+			me.SetHandled( true );
 		}
 	}
 	break;
 	case Mouse::Event::Type::MPress:
 		MouseInf.MMouseButtonLocation = me.GetPos();
+		me.SetHandled( true );
 		break;
 	case Mouse::Event::Type::RPress:
 		MouseRPress( me.GetPos() );
+		me.SetHandled( true );
 		break;
 	case Mouse::Event::Type::WheelUp:
 	case Mouse::Event::Type::WheelDown:
 		MapGrid.Zoom( (Vec2)me.GetPos(), meType == Mouse::Event::Type::WheelUp );
+		me.SetHandled( true );
 		break;
 	default:
 		break;
 	}
 }
 
-void Editor::Draw( Graphics & gfx )
+void Editor::Draw( Graphics& gfx )
 {
 	MapGrid.Draw( gfx );
 

@@ -53,7 +53,7 @@ private:
 	Graphics gfx;
 	/********************************/
 	/*  User Variables              */
-	Editor Editor;
+	std::unique_ptr<Editor> _Editor = nullptr;
 	std::unique_ptr<SurfaceRepository> Surfaces = nullptr;
 	std::unique_ptr<FontRepository> Fonts = nullptr;
 	std::unique_ptr<MenuBar> MainMenuBar = nullptr;

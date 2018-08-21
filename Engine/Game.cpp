@@ -28,6 +28,8 @@ Game::Game( MainWindow& wnd )
 	wnd( wnd ),
 	gfx( wnd )
 {
+	_Editor = std::make_unique<Editor>();
+
 	Surfaces = std::make_unique<SurfaceRepository>();
 	Fonts = std::make_unique<FontRepository>();
 
@@ -53,8 +55,9 @@ void Game::DoKeyboardEvents()
 {
 	while ( !wnd.kbd.KeyIsEmpty() )
 	{
-		const Keyboard::Event e = wnd.kbd.ReadKey();
-		Editor.DoKeyboardEvents( e );
+		Keyboard::Event e = wnd.kbd.ReadKey();
+		MainMenuBar->DoKeyboardEvents( e );
+		_Editor->DoKeyboardEvents( e );
 	}
 }
 
@@ -62,8 +65,9 @@ void Game::DoMouseEvents()
 {
 	while ( !wnd.mouse.IsEmpty() )
 	{
-		const Mouse::Event e = wnd.mouse.Read();
-		Editor.DoMouseEvents( e );
+		Mouse::Event e = wnd.mouse.Read();
+		MainMenuBar->DoMouseEvents( e );
+		_Editor->DoMouseEvents( e );
 	}
 }
 
@@ -78,7 +82,8 @@ void Game::SetupMenu()
 {
 	Font* menuFont = &Fonts->GetFont( "Font_Fixedsys16x28" );
 
-	MainMenuBar = std::make_unique<MenuBar>( Vei2( 0, 0 ), Vei2( Graphics::ScreenWidth, menuFont->GetHeight() + Menu::DefaultBoxPadding * 2 ), gfx );
+	//MainMenuBar = std::make_unique<MenuBar>( Vei2( 0, 0 ), Vei2( Graphics::ScreenWidth, menuFont->GetHeight() + (int)Menu::DefaultBoxPadding * 2 ), gfx );
+	MainMenuBar = std::make_unique<MenuBar>( Vei2( 0, 0 ), Vei2( Graphics::ScreenWidth, 10 ), gfx );
 
 	//MainMenu = std::make_unique<Menu>( "Main Menu", MainMenuFont.get(), gfx );
 	std::unique_ptr<Menu> MainMenu = std::make_unique<Menu>( "Main Menu", menuFont, gfx );
@@ -90,9 +95,30 @@ void Game::SetupMenu()
 	//MainMenu->AddMenuItem( "E`e~F!f\'G#g$H%h&I'i*J+j|K", std::make_unique<TestCallBack>() );
 	
 	// "Real" tests
+
+
+
+	std::unique_ptr<MenuItem> subMenu = std::make_unique<MenuItem>( "Sub-Menu", nullptr, MainMenu.get(), menuFont, gfx );
+
+	std::unique_ptr<MenuItem> subSubMenu1 = std::make_unique<MenuItem>( "Sub Option 1", std::make_unique<TestCallBack>(), subMenu.get(), menuFont, gfx );
+	subSubMenu1->AddMenuItem( "Sub-Sub 1 Option 1", std::make_unique<TestCallBack>() );
+	subSubMenu1->AddMenuItem( "Sub-Sub 1 Option 2", std::make_unique<TestCallBack>() );
+
+	std::unique_ptr<MenuItem> subSubMenu3 = std::make_unique<MenuItem>( "Sub Option 3", std::make_unique<TestCallBack>(), subMenu.get(), menuFont, gfx );
+	subSubMenu3->AddMenuItem( "Sub-Sub 3 Option 1", std::make_unique<TestCallBack>() );
+	subSubMenu3->AddMenuItem( "Sub-Sub 3 Option 2", std::make_unique<TestCallBack>() );
+
+	//subMenu->AddMenuItem( "Sub Option 1", std::make_unique<TestCallBack>() );
+	subMenu->AddMenuItem( std::move( subSubMenu1 ) );
+	subMenu->AddMenuItem( "Sub Option 2", std::make_unique<TestCallBack>() );
+	//subMenu->AddMenuItem( "Sub Option 3", std::make_unique<TestCallBack>() );
+	subMenu->AddMenuItem( std::move( subSubMenu3 ) );
+	subMenu->AddMenuItem( "Sub Option 4", std::make_unique<TestCallBack>() );
+
 	MainMenu->AddMenuItem( "Place", std::make_unique<TestCallBack>() );
 	MainMenu->AddMenuItem( "Select", std::make_unique<TestCallBack>() );
 	MainMenu->AddMenuItem( "Really long option", std::make_unique<TestCallBack>() );
+	MainMenu->AddMenuItem( std::move( subMenu ) );
 	MainMenu->AddMenuItem( "Go", std::make_unique<TestCallBack>() );
 
 	MainMenuBar->AddMenu( std::move( MainMenu ) );
@@ -100,6 +126,6 @@ void Game::SetupMenu()
 
 void Game::ComposeFrame()
 {
-	Editor.Draw( gfx );
+	_Editor->Draw( gfx );
 	MainMenuBar->Draw();
 }

@@ -28,8 +28,8 @@ public:
 
 	Editor();
 
-	void DoKeyboardEvents( const Keyboard::Event& ke );
-	void DoMouseEvents( const Mouse::Event& me );
+	void DoKeyboardEvents( Keyboard::Event& ke );
+	void DoMouseEvents( Mouse::Event& me );
 	void Draw( Graphics& gfx );
 
 private:
