@@ -1,7 +1,8 @@
 #pragma once
 
 #include "Colors.h"
-#include "Graphics.h"
+
+class Graphics;
 
 namespace ColourTransform
 {

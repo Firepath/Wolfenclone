@@ -6,8 +6,9 @@
 #include "Graphics.h"
 #include "PixelEffect.h"
 #include "Rect.h"
-#include "Surface.h"
 #include "Vec2.h"
+
+class Surface;
 
 class Font
 {

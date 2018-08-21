@@ -5,12 +5,12 @@
 #include <vector>
 
 #include "Font.h"
-#include "Graphics.h"
 #include "Keyboard.h"
 #include "Mouse.h"
-#include "PixelEffect.h"
 #include "Rect.h"
 #include "Vec2.h"
+
+class Graphics;
 
 class SelectedCallBack
 {

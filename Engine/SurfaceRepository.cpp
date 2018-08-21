@@ -1,3 +1,4 @@
+#include "Surface.h"
 #include "SurfaceRepository.h"
 
 void SurfaceRepository::AddSurface( const std::string name, std::unique_ptr<Surface> surface )

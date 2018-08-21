@@ -1,6 +1,9 @@
 #include <algorithm>
 
+#include "Graphics.h"
 #include "Grid.h"
+#include "PixelEffect.h"
+#include "Surface.h"
 #include "VectorExtensions.h"
 
 Grid::Grid( const int width, const int height, const Vec2& location )

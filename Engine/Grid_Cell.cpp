@@ -1,5 +1,7 @@
+#include "Graphics.h"
 #include "Grid.h"
 #include "PixelEffect.h"
+#include "Surface.h"
 
 Grid::Cell::Cell( const Vei2& location, Surface* const surface )
 	:

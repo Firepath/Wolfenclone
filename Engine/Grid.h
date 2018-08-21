@@ -7,12 +7,11 @@
 
 #include "Colors.h"
 #include "EditConstants.h"
-#include "Graphics.h"
-#include "MapFixture.h"
 #include "Mouse.h"
-#include "PixelEffect.h"
-#include "Surface.h"
 #include "Vec2.h"
+
+class Graphics;
+class Surface;
 
 class Grid
 {

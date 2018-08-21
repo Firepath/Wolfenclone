@@ -1,7 +1,8 @@
 #pragma once
 
 #include "MapFixture.h"
-#include "Surface.h"
+
+class Surface;
 
 class Wall : MapFixture
 {

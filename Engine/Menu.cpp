@@ -1,6 +1,8 @@
 #pragma once
 
+#include "Graphics.h"
 #include "Menu.h"
+#include "PixelEffect.h"
 
 MenuItem::MenuItem( std::string text, std::unique_ptr<SelectedCallBack> callback, const MenuItem* const menu, const Font* const font, Graphics& gfx, const Color textHighlightColour )
 	:

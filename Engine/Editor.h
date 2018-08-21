@@ -10,8 +10,9 @@
 #include "Grid.h"
 #include "Menu.h"
 #include "Mouse.h"
-#include "Surface.h"
 #include "Vec2.h"
+
+class Surface;
 
 class Editor
 {
@@ -61,7 +62,7 @@ private:
 	void SelectCell( const Vei2& gridLocation );
 	void SetMouseLClickMode( EditConstants::MouseLClickMode mode );
 
-	Surface GreyWallSurface = Surface( "Textures\\greystone.bmp" );
+	Surface GreyWallSurface;// = Surface( "Textures\\greystone.bmp" );
 
 	EditConstants::MouseLClickMode MouseLClickMode = EditConstants::MouseLClickMode::None;
 	EditConstants::SelectionMode SelectionMode = EditConstants::SelectionMode::Rectangle;

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Graphics.h"
 #include "PixelEffect.h"
 
 void PixelEffect::Copy::Process( Color sourceColour, int destX, int destY, Graphics& gfx ) const

@@ -15,7 +15,8 @@ void Editor::LeftMouseClickEditModeCallBack::Execute() const
 
 Editor::Editor()
 	:
-	MapGrid( 256, 256, Vec2( 0.0f, 0.0f ) )
+	MapGrid( 256, 256, Vec2( 0.0f, 0.0f ) ),
+	GreyWallSurface( "Textures\\greystone.bmp" )
 {
 }
 

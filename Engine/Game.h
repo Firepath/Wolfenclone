@@ -25,10 +25,8 @@
 #include "Graphics.h"
 
 #include "Editor.h"
-#include "Font.h"
 #include "FontRepository.h"
 #include "Menu.h"
-#include "Surface.h"
 #include "SurfaceRepository.h"
 
 class Game

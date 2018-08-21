@@ -21,7 +21,7 @@
 #include "MainWindow.h"
 #include "Game.h"
 
-#include "PixelEffect.h"
+#include "Font.h"
 
 Game::Game( MainWindow& wnd )
 	:
