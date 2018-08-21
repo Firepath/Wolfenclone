@@ -23,7 +23,7 @@ public:
 
 	Rect_( const _Vec2<T>& topLeft, T width, T height )
 		:
-		Rect_( topLeft, topLeft + _Vec2<T>( width, height ) )
+		Rect_( topLeft, topLeft + _Vec2<T>( width - 1, height - 1 ) )
 	{
 	}
 
@@ -41,7 +41,7 @@ public:
 
 	bool Contains( const _Vec2<T>& point ) const
 	{
-		return point.x >= left && point.x < right && point.y >= top && point.y < bottom;
+		return point.x >= left && point.x <= right && point.y >= top && point.y <= bottom;
 	}
 
 	Rect_ FromCenter( const _Vec2<T> & center, T halfWidth, T halfHeight )
