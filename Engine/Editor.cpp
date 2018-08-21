@@ -1,6 +1,18 @@
 #include "Editor.h"
 #include "VectorExtensions.h"
 
+Editor::LeftMouseClickEditModeCallBack::LeftMouseClickEditModeCallBack( Editor* const editor, EditConstants::MouseLClickMode mode )
+	:
+	_Editor( editor ),
+	Mode( mode )
+{
+}
+
+void Editor::LeftMouseClickEditModeCallBack::Execute() const
+{
+	_Editor->SetMouseLClickMode( Mode );
+}
+
 Editor::Editor()
 	:
 	MapGrid( 256, 256, Vec2( 0.0f, 0.0f ) )
@@ -143,6 +155,25 @@ void Editor::Draw( Graphics& gfx )
 	}
 }
 
+const Color Editor::GetCellHoverHighlightColour( const EditConstants::MouseLClickMode mode ) const
+{
+	Color colour = EditConstants::CellSelection::InactiveModeHoverColour;
+
+	switch ( mode )
+	{
+	case EditConstants::MouseLClickMode::Insert:
+		colour = EditConstants::CellSelection::InsertModeHoverColour;
+		break;
+	case EditConstants::MouseLClickMode::Select:
+		colour = EditConstants::CellSelection::SelectModeHoverColour;
+		break;
+	default:
+		break;
+	}
+
+	return colour;
+}
+
 void Editor::CycleMouseLClickMode()
 {
 	if ( SelectionModeOverride )
@@ -194,21 +225,7 @@ void Editor::EnableSelectionMode()
 
 const Color Editor::GetCellHoverHighlightColour() const
 {
-	Color colour = EditConstants::CellSelection::InactiveModeHoverColour;
-
-	switch ( GetMouseLClickMode() )
-	{
-	case EditConstants::MouseLClickMode::Insert:
-		colour = EditConstants::CellSelection::InsertModeHoverColour;
-		break;
-	case EditConstants::MouseLClickMode::Select:
-		colour = EditConstants::CellSelection::SelectModeHoverColour;
-		break;
-	default:
-		break;
-	}
-
-	return colour;
+	return GetCellHoverHighlightColour( GetMouseLClickMode() );
 }
 
 const EditConstants::MouseLClickMode Editor::GetMouseLClickMode() const
@@ -308,4 +325,9 @@ void Editor::SelectCell( const Vei2& gridLocation )
 	default:
 		break;
 	}
+}
+
+void Editor::SetMouseLClickMode( EditConstants::MouseLClickMode mode )
+{
+	MouseLClickMode = mode;
 }

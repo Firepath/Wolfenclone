@@ -8,6 +8,7 @@
 #include "Graphics.h"
 #include "Keyboard.h"
 #include "Grid.h"
+#include "Menu.h"
 #include "Mouse.h"
 #include "Surface.h"
 #include "Vec2.h"
@@ -15,6 +16,18 @@
 class Editor
 {
 public:
+	class LeftMouseClickEditModeCallBack : public SelectedCallBack
+	{
+	public:
+		LeftMouseClickEditModeCallBack( Editor* const editor, EditConstants::MouseLClickMode mode );
+
+		void Execute() const override;
+
+	private:
+		Editor * const _Editor;
+		EditConstants::MouseLClickMode Mode;
+	};
+
 	struct MouseInfo
 	{
 		// In Grid Coordinates
@@ -31,6 +44,7 @@ public:
 	void DoKeyboardEvents( Keyboard::Event& ke );
 	void DoMouseEvents( Mouse::Event& me );
 	void Draw( Graphics& gfx );
+	const Color GetCellHoverHighlightColour( const EditConstants::MouseLClickMode mode ) const;
 
 private:
 	void CycleMouseLClickMode();
@@ -45,6 +59,7 @@ private:
 	void MouseLRelease();
 	void MouseRPress( const Vei2& screenLocation );
 	void SelectCell( const Vei2& gridLocation );
+	void SetMouseLClickMode( EditConstants::MouseLClickMode mode );
 
 	Surface GreyWallSurface = Surface( "Textures\\greystone.bmp" );
 
