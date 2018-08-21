@@ -32,6 +32,11 @@ const int Font::GetGlyphWidth() const
 	return GlyphWidth;
 }
 
+const Color Font::GetColour() const
+{
+	return Colour;
+}
+
 const size_t Font::GetHeight() const
 {
 	return Height;
@@ -40,6 +45,11 @@ const size_t Font::GetHeight() const
 const size_t Font::GetWidth() const
 {
 	return (size_t)(GetScale() * GlyphWidth);
+}
+
+void Font::SetColour( const Color colour )
+{
+	Colour = colour;
 }
 
 void Font::SetHeight( const size_t height )

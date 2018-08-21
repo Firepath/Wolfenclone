@@ -52,8 +52,10 @@ public:
 		}
 	}
 
+	const Color GetColour() const;
 	const size_t GetHeight() const;
 	const size_t GetWidth() const;
+	void SetColour( const Color colour );
 	void SetHeight( const size_t height );
 
 private:
