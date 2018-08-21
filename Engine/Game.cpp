@@ -81,47 +81,15 @@ void Game::LoadSettings()
 void Game::SetupMenu()
 {
 	Font* menuFont = &Fonts->GetFont( "Font_Fixedsys16x28" );
+	Editor* editor = _Editor.get();
 
-	//MainMenuBar = std::make_unique<MenuBar>( Vei2( 0, 0 ), Vei2( Graphics::ScreenWidth, menuFont->GetHeight() + (int)Menu::DefaultBoxPadding * 2 ), gfx );
 	MainMenuBar = std::make_unique<MenuBar>( Vei2( 0, 0 ), Vei2( Graphics::ScreenWidth, 10 ), gfx );
-
-	//MainMenu = std::make_unique<Menu>( "Main Menu", MainMenuFont.get(), gfx );
-	std::unique_ptr<Menu> MainMenu = std::make_unique<Menu>( "Main Menu", menuFont, gfx );
-	//MainMenu->SetLocation( { 20,20 } );
-	//MainMenu->AddMenuItem( "!\"#$%&'()*+,-./0123456789:;<=>?", std::make_unique<TestCallBack>() );
-	//MainMenu->AddMenuItem( "@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_", std::make_unique<TestCallBack>() );
-	//MainMenu->AddMenuItem( "`abcdefghijklmnopqrstuvwxyz{|}~", std::make_unique<TestCallBack>() );
-	//MainMenu->AddMenuItem( "A-a_B.b,1[2]3(4){5}<6>7=8?9:0;C.c,D^d\\", std::make_unique<TestCallBack>() );
-	//MainMenu->AddMenuItem( "E`e~F!f\'G#g$H%h&I'i*J+j|K", std::make_unique<TestCallBack>() );
 	
-	// "Real" tests
-
-
-
-	std::unique_ptr<MenuItem> subMenu = std::make_unique<MenuItem>( "Sub-Menu", nullptr, MainMenu.get(), menuFont, gfx );
-
-	std::unique_ptr<MenuItem> subSubMenu1 = std::make_unique<MenuItem>( "Sub Option 1", std::make_unique<TestCallBack>(), subMenu.get(), menuFont, gfx );
-	subSubMenu1->AddMenuItem( "Sub-Sub 1 Option 1", std::make_unique<TestCallBack>() );
-	subSubMenu1->AddMenuItem( "Sub-Sub 1 Option 2", std::make_unique<TestCallBack>() );
-
-	std::unique_ptr<MenuItem> subSubMenu3 = std::make_unique<MenuItem>( "Sub Option 3", std::make_unique<TestCallBack>(), subMenu.get(), menuFont, gfx );
-	subSubMenu3->AddMenuItem( "Sub-Sub 3 Option 1", std::make_unique<TestCallBack>() );
-	subSubMenu3->AddMenuItem( "Sub-Sub 3 Option 2", std::make_unique<TestCallBack>() );
-
-	//subMenu->AddMenuItem( "Sub Option 1", std::make_unique<TestCallBack>() );
-	subMenu->AddMenuItem( std::move( subSubMenu1 ) );
-	subMenu->AddMenuItem( "Sub Option 2", std::make_unique<TestCallBack>() );
-	//subMenu->AddMenuItem( "Sub Option 3", std::make_unique<TestCallBack>() );
-	subMenu->AddMenuItem( std::move( subSubMenu3 ) );
-	subMenu->AddMenuItem( "Sub Option 4", std::make_unique<TestCallBack>() );
-
-	MainMenu->AddMenuItem( "Place", std::make_unique<TestCallBack>() );
-	MainMenu->AddMenuItem( "Select", std::make_unique<TestCallBack>() );
-	MainMenu->AddMenuItem( "Really long option", std::make_unique<TestCallBack>() );
-	MainMenu->AddMenuItem( std::move( subMenu ) );
-	MainMenu->AddMenuItem( "Go", std::make_unique<TestCallBack>() );
-
-	MainMenuBar->AddMenu( std::move( MainMenu ) );
+	std::unique_ptr<Menu> editMenu = std::make_unique<Menu>( "Edit", menuFont, gfx );
+	editMenu->AddMenuItem( "None", std::make_unique<Editor::LeftMouseClickEditModeCallBack>( editor, EditConstants::MouseLClickMode::None ), editor->GetCellHoverHighlightColour( EditConstants::MouseLClickMode::None ) );
+	editMenu->AddMenuItem( "Insert", std::make_unique<Editor::LeftMouseClickEditModeCallBack>( editor, EditConstants::MouseLClickMode::Insert ), editor->GetCellHoverHighlightColour( EditConstants::MouseLClickMode::Insert ) );
+	editMenu->AddMenuItem( "Select", std::make_unique<Editor::LeftMouseClickEditModeCallBack>( editor, EditConstants::MouseLClickMode::Select ), editor->GetCellHoverHighlightColour( EditConstants::MouseLClickMode::Select ) );
+	MainMenuBar->AddMenu( std::move( editMenu ) );
 }
 
 void Game::ComposeFrame()

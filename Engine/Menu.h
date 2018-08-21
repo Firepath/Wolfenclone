@@ -33,16 +33,16 @@ public:
 	static constexpr size_t DefaultBorderThickness = 1u;
 	static constexpr Color DefaultBoxColour = Colors::DarkGray;
 	static constexpr size_t DefaultBoxPadding = 4u;
-	static constexpr Color DefaultHoverTextColour = Colors::Yellow;
+	static constexpr Color DefaultHoverTextColour = Colors::LightBlue;
 	static constexpr size_t DefaultMaxHeight = 30u;
 	static constexpr size_t DefaultMaxWidth = 300u;
 	static constexpr float DefaultOpacity = 95.0f;
 	static constexpr Color DefaultTextColour = Colors::White;
 
-	MenuItem( std::string text, std::unique_ptr<SelectedCallBack> callback, const MenuItem* const menu, const Font* const font, Graphics& gfx );
+	MenuItem( std::string text, std::unique_ptr<SelectedCallBack> callback, const MenuItem* const menu, const Font* const font, Graphics& gfx, const Color textHighlightColour = MenuItem::DefaultHoverTextColour );
 
 	void AddMenuItem( std::unique_ptr<MenuItem> menuItem );
-	void AddMenuItem( std::string text, std::unique_ptr<SelectedCallBack> callback );
+	void AddMenuItem( std::string text, std::unique_ptr<SelectedCallBack> callback, const Color textHighlightColour );
 	void DoHovering( const bool hovering, const bool hoveringOnChild );
 	void DoKeyboardEvents( Keyboard::Event& ke );
 	void DoMouseEvents( Mouse::Event& me );
@@ -88,6 +88,7 @@ protected:
 	Color BoxColour = MenuItem::DefaultBoxColour;
 	size_t BoxPadding = MenuItem::DefaultBoxPadding;
 	Color TextColour = MenuItem::DefaultTextColour;
+	Color TextHighlightColour = MenuItem::DefaultHoverTextColour;
 	size_t MaximumWidth = MenuItem::DefaultMaxWidth;
 	float Opacity = MenuItem::DefaultOpacity;
 

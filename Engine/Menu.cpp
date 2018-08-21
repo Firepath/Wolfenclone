@@ -7,13 +7,14 @@ void TestCallBack::Execute() const
 	int i = 5;
 }
 
-MenuItem::MenuItem( std::string text, std::unique_ptr<SelectedCallBack> callback, const MenuItem* const menu, const Font* const font, Graphics& gfx )
+MenuItem::MenuItem( std::string text, std::unique_ptr<SelectedCallBack> callback, const MenuItem* const menu, const Font* const font, Graphics& gfx, const Color textHighlightColour )
 	:
 	Text( text ),
 	CallBack( std::move( callback ) ),
 	_Menu( menu ),
 	_Font( font ),
-	_gfx( gfx )
+	_gfx( gfx ),
+	TextHighlightColour( textHighlightColour )
 {
 	if ( _Font != nullptr )
 	{
@@ -52,9 +53,9 @@ void MenuItem::AddMenuItem( std::unique_ptr<MenuItem> menuItem )
 	}
 }
 
-void MenuItem::AddMenuItem( std::string text, std::unique_ptr<SelectedCallBack> callback )
+void MenuItem::AddMenuItem( std::string text, std::unique_ptr<SelectedCallBack> callback, Color textHighlightColour )
 {
-	std::unique_ptr<MenuItem> item = std::make_unique<MenuItem>( text, std::move( callback ), this, _Font, _gfx );
+	std::unique_ptr<MenuItem> item = std::make_unique<MenuItem>( text, std::move( callback ), this, _Font, _gfx, textHighlightColour );
 	AddMenuItem( std::move( item ) );
 }
 
@@ -68,7 +69,7 @@ void MenuItem::DoHovering( const bool hovering, const bool hoveringOnChild )
 	TextColour = MenuItem::DefaultTextColour;
 	if ( hovering || hoveringOnChild )
 	{
-		TextColour = MenuItem::DefaultHoverTextColour;
+		TextColour = TextHighlightColour;
 	}
 }
 
