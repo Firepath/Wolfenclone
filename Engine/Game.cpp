@@ -85,7 +85,7 @@ void Game::SetupMenu()
 
 	MainMenuBar = std::make_unique<MenuBar>( Vei2( 0, 0 ), Vei2( Graphics::ScreenWidth, 10 ), gfx );
 	
-	std::unique_ptr<Menu> editMenu = std::make_unique<Menu>( "Edit", menuFont, gfx );
+	std::unique_ptr<MenuItem> editMenu = std::make_unique<Menu>( "Edit", menuFont, gfx );
 	editMenu->AddMenuItem( "None", std::make_unique<Editor::LeftMouseClickEditModeCallBack>( editor, EditConstants::MouseLClickMode::None ), editor->GetCellHoverHighlightColour( EditConstants::MouseLClickMode::None ) );
 	editMenu->AddMenuItem( "Insert", std::make_unique<Editor::LeftMouseClickEditModeCallBack>( editor, EditConstants::MouseLClickMode::Insert ), editor->GetCellHoverHighlightColour( EditConstants::MouseLClickMode::Insert ) );
 	editMenu->AddMenuItem( "Select", std::make_unique<Editor::LeftMouseClickEditModeCallBack>( editor, EditConstants::MouseLClickMode::Select ), editor->GetCellHoverHighlightColour( EditConstants::MouseLClickMode::Select ) );

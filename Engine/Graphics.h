@@ -33,6 +33,17 @@
 #include "Surface.h"
 #include "Vec2.h"
 
+class Graphics;
+
+namespace PixelEffect
+{
+	class Effect
+	{
+	public:
+		virtual void Process( Color sourceColour, int destX, int destY, Graphics& gfx ) const = 0;
+	};
+}
+
 class Graphics
 {
 public:
@@ -79,8 +90,7 @@ public:
 	}
 	void PutPixel( int x,int y,Color c );
 
-	template <typename E>
-	void DrawLine( Vei2 p1, Vei2 p2, Color colour, E effect )
+	void DrawLine( Vei2 p1, Vei2 p2, Color colour, std::unique_ptr<PixelEffect::Effect>& effect )
 	{
 		if ( p1.x > p2.x )
 		{
@@ -115,7 +125,7 @@ public:
 			float x = m * startY + c;
 			while ( (int)x >= 0 && (int)x < Graphics::ScreenWidth && y <= endY )
 			{
-				effect( colour, (int)x, y, *this );
+				effect->Process( colour, (int)x, y, *this );
 				x += m;
 				y++;
 			}
@@ -131,28 +141,25 @@ public:
 			float y = m * startX + c;
 			while ( (int)y >= 0 && (int)y < Graphics::ScreenHeight && x <= endX )
 			{
-				effect( colour, x, (int)y, *this );
+				effect->Process( colour, x, (int)y, *this );
 				y += m;
 				x++;
 			}
 		}
 	}
 
-	template <typename E>
-	void DrawBox( Vei2 topLeft, Vei2 bottomRight, Color colour, E effect )
+	void DrawBox( Vei2 topLeft, Vei2 bottomRight, Color colour, std::unique_ptr<PixelEffect::Effect>& effect )
 	{
 		DrawBox( RectI( topLeft, bottomRight ), colour, effect );
 	}
 
-	template <typename E>
-	void DrawBox( const RectI& rect, Color colour, E effect )
+	void DrawBox( const RectI& rect, Color colour, std::unique_ptr<PixelEffect::Effect>& effect )
 	{
 		DrawBox( rect, Graphics::GetScreenClippingRect(), colour, effect );
 	}
 
 
-	template <typename E>
-	void DrawBox( const RectI& rect, const RectI& clippingRect, Color colour, E effect )
+	void DrawBox( const RectI& rect, const RectI& clippingRect, Color colour, std::unique_ptr<PixelEffect::Effect>& effect )
 	{
 		assert( rect.right >= rect.left );
 		assert( rect.bottom >= rect.top );
@@ -171,54 +178,47 @@ public:
 		{
 			for ( int i = left; i <= right; i++ )
 			{
-				effect( colour, i, j, *this );
+				effect->Process( colour, i, j, *this );
 			}
 		}
 	}
 
-	template <typename E>
-	void DrawBorderedBox( Vei2 topLeft, Vei2 bottomRight, Color boxColour, Color borderColour, E effect, const int thickness = 1 )
+	void DrawBorderedBox( Vei2 topLeft, Vei2 bottomRight, Color boxColour, Color borderColour, std::unique_ptr<PixelEffect::Effect>& effect, const int thickness = 1 )
 	{
 		DrawBorderedBox( RectI( topLeft, bottomRight ), boxColour, borderColour, effect, thickness );
 	}
 
-	template <typename E>
-	void DrawBorderedBox( const RectI& rect, Color boxColour, Color borderColour, E effect, const int thickness = 1 )
+	void DrawBorderedBox( const RectI& rect, Color boxColour, Color borderColour, std::unique_ptr<PixelEffect::Effect>& effect, const int thickness = 1 )
 	{
 		const RectI boxRect = rect.GetExpanded( -thickness );
 		DrawBox( boxRect, boxColour, effect );
 		DrawBoxBorder( rect, borderColour, effect, thickness );
 	}
 
-	template <typename E>
-	void DrawBorderedBox( const RectI& boxRect, const RectI& borderRect, Color boxColour, Color borderColour, E effect )
+	void DrawBorderedBox( const RectI& boxRect, const RectI& borderRect, Color boxColour, Color borderColour, std::unique_ptr<PixelEffect::Effect>& effect )
 	{
 		DrawBox( boxRect, boxColour, effect );
 		DrawBoxBorder( borderRect, boxRect, borderColour, effect );
 	}
 
-	template <typename E>
-	void DrawBoxBorder( Vei2 topLeft, Vei2 bottomRight, Color colour, E effect, const int thickness = 1 )
+	void DrawBoxBorder( Vei2 topLeft, Vei2 bottomRight, Color colour, std::unique_ptr<PixelEffect::Effect>& effect, const int thickness = 1 )
 	{
 		const RectI borderRect( topLeft, bottomRight );
 		DrawBoxBorder( borderRect, colour, effect );
 	}
 
-	template <typename E>
-	void DrawBoxBorder( const RectI& borderRect, Color colour, E effect, const int thickness = 1 )
+	void DrawBoxBorder( const RectI& borderRect, Color colour, std::unique_ptr<PixelEffect::Effect>& effect, const int thickness = 1 )
 	{
 		const RectI boxRect = borderRect.GetExpanded( -thickness );
 		DrawBoxBorder( borderRect, boxRect, colour, effect );
 	}
 
-	template <typename E>
-	void DrawBoxBorder( const RectI& borderRect, const RectI& boxRect, Color colour, E effect )
+	void DrawBoxBorder( const RectI& borderRect, const RectI& boxRect, Color colour, std::unique_ptr<PixelEffect::Effect>& effect )
 	{
 		DrawBoxBorder( borderRect, boxRect, Graphics::GetScreenClippingRect(), colour, effect );
 	}
 
-	template <typename E>
-	void DrawBoxBorder( const RectI& borderRect, const RectI& boxRect, const RectI& clippingRect, Color colour, E effect )
+	void DrawBoxBorder( const RectI& borderRect, const RectI& boxRect, const RectI& clippingRect, Color colour, std::unique_ptr<PixelEffect::Effect>& effect )
 	{
 		assert( borderRect.right >= borderRect.left );
 		assert( borderRect.bottom >= borderRect.top );
@@ -252,43 +252,37 @@ public:
 					continue;
 				}
 
-				effect( colour, x, y, *this );
+				effect->Process( colour, x, y, *this );
 			}
 		}
 	}
 
-	template<typename E>
-	void DrawSprite( const int x, const int y, const Surface& surface, E effect )
+	void DrawSprite( const int x, const int y, const Surface& surface, std::unique_ptr<PixelEffect::Effect>& effect )
 	{
 		DrawSprite( x, y, surface.GetRect(), surface, effect );
 	}
 
-	template<typename E>
-	void DrawSprite( RectI destinationRect, const Surface& surface, E effect )
+	void DrawSprite( RectI destinationRect, const Surface& surface, std::unique_ptr<PixelEffect::Effect>& effect )
 	{
 		DrawSprite( destinationRect, surface.GetRect(), surface, effect );
 	}
 
-	template<typename E>
-	void DrawSprite( const int x, const int y, const RectI& sourceRect, const Surface& surface, E effect )
+	void DrawSprite( const int x, const int y, const RectI& sourceRect, const Surface& surface, std::unique_ptr<PixelEffect::Effect>& effect )
 	{
 		DrawSprite( x, y, sourceRect, GetScreenClippingRect(), surface, effect );
 	}
 
-	template<typename E>
-	void DrawSprite( RectI destinationRect, const RectI& sourceRect, const Surface& surface, E effect )
+	void DrawSprite( RectI destinationRect, const RectI& sourceRect, const Surface& surface, std::unique_ptr<PixelEffect::Effect>& effect )
 	{
 		DrawSprite( destinationRect, sourceRect, GetScreenClippingRect(), surface, effect );
 	}
 
-	template<typename E>
-	void DrawSprite( int x, int y, RectI sourceRect, const RectI& clippingRect, const Surface& surface, E effect )
+	void DrawSprite( int x, int y, RectI sourceRect, const RectI& clippingRect, const Surface& surface, std::unique_ptr<PixelEffect::Effect>& effect )
 	{
 		DrawSprite( RectI( x, x + sourceRect.GetWidth(), y, y + sourceRect.GetHeight() ), sourceRect, clippingRect, surface, effect );
 	}
 
-	template<typename E>
-	void DrawSprite( RectI destinationRect, RectI sourceRect, const RectI& clippingRect, const Surface& surface, E effect )
+	void DrawSprite( RectI destinationRect, RectI sourceRect, const RectI& clippingRect, const Surface& surface, std::unique_ptr<PixelEffect::Effect>& effect )
 	{
 		assert( sourceRect.left >= 0 );
 		assert( sourceRect.right >= sourceRect.left );
@@ -335,7 +329,7 @@ public:
 			{
 				int sy = std::min( sourceRect.GetHeight() - 1, (int)std::floor( scaleInvY * (dy - originalDestination.top)) ) + sourceRect.top;
 
-				effect( surface.GetPixel( sx, sy ), dx, dy, *this );
+				effect->Process( surface.GetPixel( sx, sy ), dx, dy, *this );
 			}
 		}
 	}

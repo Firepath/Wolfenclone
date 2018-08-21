@@ -53,15 +53,14 @@ public:
 	void SetVisible( const bool visible );
 	void SetWidth( const size_t width );
 
-	template<typename E>
-	void Show( const Vei2& location, E effect )
+	void Show( const Vei2& location, std::unique_ptr<PixelEffect::Effect>& effect )
 	{
 		Location = location;
 		Visible = true;
 
 		const RectI boxRect = RectI( location, (int)Width, (int)Height );
 		_gfx.DrawBox( boxRect, BoxColour, effect );
-		PixelEffect::Sustitution fontEffect( TextColour, _Font->GetColour() );
+		std::unique_ptr<PixelEffect::Effect> fontEffect = std::make_unique<PixelEffect::Substitution>( TextColour, _Font->GetColour() );
 		_Font->DrawString( GetText(), location + Vei2( (int)BoxPadding, (int)BoxPadding ), boxRect, fontEffect, _gfx );
 
 		if ( IsOpen() )
@@ -121,7 +120,7 @@ public:
 
 	MenuBar( const Vei2 location, const Vei2 size, Graphics& gfx );
 
-	void AddMenu( std::unique_ptr<Menu> menu );
+	void AddMenu( std::unique_ptr<MenuItem> menu );
 	void DoKeyboardEvents( Keyboard::Event& ke );
 	void DoMouseEvents( Mouse::Event& me );
 	void Draw() const;
@@ -139,5 +138,5 @@ private:
 	Graphics& _gfx;
 	Vei2 Size;
 
-	std::vector<std::unique_ptr<Menu>> Menus;
+	std::vector<std::unique_ptr<MenuItem>> Menus;
 };

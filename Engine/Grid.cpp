@@ -110,7 +110,7 @@ void Grid::HighlightCell( const Vei2& gridLocation, const Color highlightColour,
 	const Vei2 bottomRight = mapScreenLocation + Vei2( (int)std::ceil( (float)(gridLocation.x + 1) * CellSize ) - 1, (int)std::ceil( (float)(gridLocation.y + 1) * CellSize ) - 1 );
 	const RectI rect( topLeft, bottomRight );
 
-	PixelEffect::Transparency effect( highlightOpacity );
+	std::unique_ptr<PixelEffect::Effect> effect = std::make_unique<PixelEffect::Transparency>( highlightOpacity );
 	gfx.DrawBox( rect, highlightColour, effect );
 
 	if ( drawBorder )
@@ -357,22 +357,25 @@ void Grid::DrawEnclosedCell( const Vei2 & screenLocation, const Vei2 & gridLocat
 {
 	Vei2 topLeft = screenLocation + Vei2( (int)std::ceil( (float)gridLocation.x * CellSize ), (int)std::ceil( (float)gridLocation.y * CellSize ) );
 	Vei2 bottomRight = screenLocation + Vei2( (int)std::ceil( (float)(gridLocation.x + 1) * CellSize ) - 1, (int)std::ceil( (float)(gridLocation.y + 1) * CellSize ) - 1 );
-	gfx.DrawBox( topLeft, bottomRight, EditConstants::CellConstants::CellEnclosedColour, PixelEffect::Copy() );
+	std::unique_ptr<PixelEffect::Effect> copy = std::make_unique<PixelEffect::Copy>();
+	gfx.DrawBox( topLeft, bottomRight, EditConstants::CellConstants::CellEnclosedColour, copy );
 }
 
 void Grid::DrawGrid( const Vei2 screenLocation, Graphics & gfx ) const
 {
+	std::unique_ptr<PixelEffect::Effect> copy = std::make_unique<PixelEffect::Copy>();
+
 	// Grid border
 	Vei2 topLeft = screenLocation;
 	Vei2 bottomRight = topLeft + Vei2( (int)std::ceil( Width * CellSize ) - 1, (int)std::ceil( Height * CellSize ) - 1 );
-	gfx.DrawBoxBorder( RectI( topLeft, bottomRight ), Grid::GridBorderColour, PixelEffect::Copy(), GetCellBorderThickness() );
+	gfx.DrawBoxBorder( RectI( topLeft, bottomRight ), Grid::GridBorderColour, copy, GetCellBorderThickness() );
 
 	// Vertical grid lines
 	for ( int i = 1; i < Width; i++ )
 	{
 		Vei2 top = screenLocation + Vei2( (int)std::ceil( i * CellSize ), 0 );
 		Vei2 bottom = top + Vei2( 0, (int)std::ceil( Height * CellSize ) - 1 );
-		gfx.DrawLine( top, bottom, Grid::GridColour, PixelEffect::Copy() );
+		gfx.DrawLine( top, bottom, Grid::GridColour, copy );
 	}
 
 	// Horizontal grid lines
@@ -380,7 +383,7 @@ void Grid::DrawGrid( const Vei2 screenLocation, Graphics & gfx ) const
 	{
 		Vei2 left = screenLocation + Vei2( 0, (int)std::ceil( j * CellSize ) );
 		Vei2 right = left + Vei2( (int)std::ceil( Width * CellSize ) - 1, 0 );
-		gfx.DrawLine( left, right, Grid::GridColour, PixelEffect::Copy() );
+		gfx.DrawLine( left, right, Grid::GridColour, copy );
 	}
 }
 
@@ -566,7 +569,9 @@ void Grid::HighlightSelectedCells( Graphics& gfx ) const
 		const Vei2 gridLocation = GetScreenLocation();
 		topLeft = (Vei2)((Vec2)topLeft * CellSize) + gridLocation;
 		bottomRight = (Vei2)((Vec2)(bottomRight + Vei2( 1, 1 )) * CellSize) + gridLocation;
-		gfx.DrawBoxBorder( RectI( topLeft, bottomRight ), EditConstants::CellSelection::SelectModeHoverColour, PixelEffect::Transparency( EditConstants::CellSelection::CellHoverOpacity ), GetCellBorderThickness() );
+
+		std::unique_ptr<PixelEffect::Effect> effect = std::make_unique<PixelEffect::Transparency>( EditConstants::CellSelection::CellHoverOpacity );
+		gfx.DrawBoxBorder( RectI( topLeft, bottomRight ), EditConstants::CellSelection::SelectModeHoverColour, effect, GetCellBorderThickness() );
 	}
 }
 

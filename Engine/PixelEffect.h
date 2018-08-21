@@ -29,98 +29,52 @@ namespace ColourTransform
 
 namespace PixelEffect
 {
-	class Copy
+	class Copy : public Effect
 	{
 	public:
-		void operator()( Color sourceColour, int destX, int destY, Graphics& gfx ) const
-		{
-			gfx.PutPixel( destX, destY, sourceColour );
-		}
+		void Process( Color sourceColour, int destX, int destY, Graphics& gfx ) const override;
 	};
 
-	class Chroma
+	class Chroma : public Effect
 	{
 	public:
-		Chroma( Color chromaColour = Colors::Magenta )
-			:
-			ChromaColour( chromaColour )
-		{
-		}
+		Chroma( Color chromaColour = Colors::Magenta );
 
-		void operator()( Color sourceColour, int destX, int destY, Graphics& gfx ) const
-		{
-			if ( sourceColour != ChromaColour )
-			{
-				gfx.PutPixel( destX, destY, sourceColour );
-			}
-		}
+		void Process( Color sourceColour, int destX, int destY, Graphics& gfx ) const override;
 
 	private:
 		Color ChromaColour;
 	};
 
-	class Inverse
+	class Inverse : public Effect
 	{
 	public:
-		Inverse( Color chromaColour = Colors::Magenta )
-			:
-			ChromaColour( chromaColour )
-		{
-		}
+		Inverse( Color chromaColour = Colors::Magenta );
 
-		void operator()( Color sourceColour, int destX, int destY, Graphics& gfx ) const
-		{
-			if ( sourceColour != ChromaColour )
-			{
-				gfx.PutPixel( destX, destY, ColourTransform::Invert()(sourceColour) );
-			}
-		}
+		void Process( Color sourceColour, int destX, int destY, Graphics& gfx ) const override;
 
 	private:
 		Color ChromaColour;
 	};
 
-	class InverseSustitution
+	class InverseSubstitution : public Effect
 	{
 	public:
-		InverseSustitution( Color substituteColour, Color chromaColour = Colors::Magenta )
-			:
-			ChromaColour( chromaColour ),
-			SubstituteColour( substituteColour )
-		{
-		}
+		InverseSubstitution( Color substituteColour, Color chromaColour = Colors::Magenta );
 
-		void operator()( Color sourceColour, int destX, int destY, Graphics& gfx ) const
-		{
-			if ( sourceColour != ChromaColour )
-			{
-				gfx.PutPixel( destX, destY, ColourTransform::Invert()(SubstituteColour) );
-			}
-		}
+		void Process( Color sourceColour, int destX, int destY, Graphics& gfx ) const override;
 
 	private:
 		Color ChromaColour;
 		Color SubstituteColour;
 	};
 
-	class InverseSubstituteTransparency
+	class InverseSubstituteTransparency : public Effect
 	{
 	public:
-		InverseSubstituteTransparency( Color substituteColour, float opacity, Color chromaColour = Colors::Magenta )
-			:
-			ChromaColour( chromaColour ),
-			SubstituteColour( substituteColour ),
-			Opacity( opacity )
-		{
-		}
+		InverseSubstituteTransparency( Color substituteColour, float opacity, Color chromaColour = Colors::Magenta );
 
-		void operator()( Color sourceColour, int destX, int destY, Graphics& gfx ) const
-		{
-			if ( sourceColour != ChromaColour )
-			{
-				gfx.PutPixel( destX, destY, ColourTransform::Blend()(ColourTransform::Invert()(SubstituteColour), Opacity, gfx.GetPixel( destX, destY )) );
-			}
-		}
+		void Process( Color sourceColour, int destX, int destY, Graphics& gfx ) const override;
 
 	private:
 		Color ChromaColour;
@@ -128,70 +82,36 @@ namespace PixelEffect
 		float Opacity;
 	};
 
-	class InverseTransparency
+	class InverseTransparency : public Effect
 	{
 	public:
-		InverseTransparency( float opacity, Color chromaColour = Colors::Magenta )
-			:
-			ChromaColour( chromaColour ),
-			Opacity( opacity )
-		{
-		}
+		InverseTransparency( float opacity, Color chromaColour = Colors::Magenta );
 
-		void operator()( Color sourceColour, int destX, int destY, Graphics& gfx ) const
-		{
-			if ( sourceColour != ChromaColour )
-			{
-				gfx.PutPixel( destX, destY, ColourTransform::Blend()(ColourTransform::Invert()(sourceColour), Opacity, gfx.GetPixel( destX, destY )) );
-			}
-		}
+		void Process( Color sourceColour, int destX, int destY, Graphics& gfx ) const override;
 
 	private:
 		Color ChromaColour;
 		float Opacity;
 	};
 
-	class Sustitution
+	class Substitution : public Effect
 	{
 	public:
-		Sustitution( Color substituteColour, Color chromaColour = Colors::Magenta )
-			:
-			ChromaColour( chromaColour ),
-			SubstituteColour( substituteColour )
-		{
-		}
+		Substitution( Color substituteColour, Color chromaColour = Colors::Magenta );
 
-		void operator()( Color sourceColour, int destX, int destY, Graphics& gfx ) const
-		{
-			if ( sourceColour != ChromaColour )
-			{
-				gfx.PutPixel( destX, destY, SubstituteColour );
-			}
-		}
+		void Process( Color sourceColour, int destX, int destY, Graphics& gfx ) const override;
 
 	private:
 		Color ChromaColour;
 		Color SubstituteColour;
 	};
 
-	class SubstituteTransparency
+	class SubstituteTransparency : public Effect
 	{
 	public:
-		SubstituteTransparency( Color substituteColour, float opacity, Color chromaColour = Colors::Magenta )
-			:
-			ChromaColour( chromaColour ),
-			SubstituteColour( substituteColour ),
-			Opacity( opacity )
-		{
-		}
+		SubstituteTransparency( Color substituteColour, float opacity, Color chromaColour = Colors::Magenta );
 
-		void operator()( Color sourceColour, int destX, int destY, Graphics& gfx ) const
-		{
-			if ( sourceColour != ChromaColour )
-			{
-				gfx.PutPixel( destX, destY, ColourTransform::Blend()(SubstituteColour, Opacity, gfx.GetPixel( destX, destY )) );
-			}
-		}
+		void Process( Color sourceColour, int destX, int destY, Graphics& gfx ) const override;
 
 	private:
 		Color ChromaColour;
@@ -199,23 +119,12 @@ namespace PixelEffect
 		float Opacity;
 	};
 
-	class Transparency
+	class Transparency : public Effect
 	{
 	public:
-		Transparency( float opacity, Color chromaColour = Colors::Magenta )
-			:
-			ChromaColour( chromaColour ),
-			Opacity( opacity )
-		{
-		}
+		Transparency( float opacity, Color chromaColour = Colors::Magenta );
 
-		void operator()( Color sourceColour, int destX, int destY, Graphics& gfx ) const
-		{
-			if ( sourceColour != ChromaColour )
-			{
-				gfx.PutPixel( destX, destY, ColourTransform::Blend()(sourceColour, Opacity, gfx.GetPixel( destX, destY )) );
-			}
-		}
+		void Process( Color sourceColour, int destX, int destY, Graphics& gfx ) const override;
 
 	private:
 		Color ChromaColour;

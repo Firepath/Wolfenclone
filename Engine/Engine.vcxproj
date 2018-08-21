@@ -176,6 +176,7 @@
     <ClCompile Include="Grid_Cell.cpp" />
     <ClCompile Include="Menu.cpp" />
     <ClCompile Include="Mouse.cpp" />
+    <ClCompile Include="PixelEffect.cpp" />
     <ClCompile Include="Surface.cpp" />
     <ClCompile Include="SurfaceRepository.cpp" />
     <ClCompile Include="Wall.cpp" />

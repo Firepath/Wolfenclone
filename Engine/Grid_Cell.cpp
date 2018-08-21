@@ -16,7 +16,8 @@ void Grid::Cell::Draw( const Grid& map, Graphics& gfx ) const
 
 	if ( Surf != nullptr )
 	{
-		gfx.DrawSprite( RectI( topLeft, bottomRight ), *Surf, PixelEffect::Copy() );
+		std::unique_ptr<PixelEffect::Effect> copy = std::make_unique<PixelEffect::Copy>();
+		gfx.DrawSprite( RectI( topLeft, bottomRight ), *Surf, copy );
 	}
 }
 

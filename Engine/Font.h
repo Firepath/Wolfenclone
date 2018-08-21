@@ -22,12 +22,11 @@ public:
 
 	void DrawString( const std::string& text, const Vei2& location, const RectI& clippingRect, Graphics& gfx ) const
 	{
-		PixelEffect::Sustitution effect( Colour, Chroma );
+		std::unique_ptr<PixelEffect::Effect> effect = std::make_unique<PixelEffect::Substitution>( Colour, Chroma );
 		DrawString( text, location, clippingRect, effect, gfx );
 	}
 	
-	template<typename E>
-	void DrawString( const std::string& text, const Vei2& location, const RectI& clippingRect, E effect, Graphics& gfx ) const
+	void DrawString( const std::string& text, const Vei2& location, const RectI& clippingRect, std::unique_ptr<PixelEffect::Effect>& effect, Graphics& gfx ) const
 	{
 		const float scale = GetScale();
 		const int glyphWidth = (int)(GlyphWidth * scale);

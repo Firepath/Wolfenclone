@@ -292,7 +292,7 @@ void MenuItem::ShowMenu( const Vei2 location )
 
 	SetOpen( true );
 
-	PixelEffect::Transparency boxEffect( Opacity );
+	std::unique_ptr<PixelEffect::Effect> boxEffect = std::make_unique<PixelEffect::Transparency>( Opacity );
 
 	size_t itemsWidth = Width;
 	Vei2 itemLocation = location;
@@ -329,7 +329,7 @@ MenuBar::MenuBar( const Vei2 location, const Vei2 size, Graphics& gfx )
 {
 }
 
-void MenuBar::AddMenu( std::unique_ptr<Menu> menu )
+void MenuBar::AddMenu( std::unique_ptr<MenuItem> menu )
 {
 	const int menuHeight = menu->GetSize().y;
 	if ( menuHeight > Size.y )
@@ -417,7 +417,7 @@ void MenuBar::DoMouseEvents( Mouse::Event& me )
 
 void MenuBar::Draw() const
 {
-	PixelEffect::Transparency boxEffect( Opacity );
+	std::unique_ptr<PixelEffect::Effect> boxEffect = std::make_unique<PixelEffect::Transparency>( Opacity );
 	const RectI border = RectI( Location, Size.x, Size.y );
 	const RectI insideBox = border.GetExpanded( -(int)BorderThickness );
 	_gfx.DrawBox( insideBox, BoxColour, boxEffect );
@@ -425,8 +425,9 @@ void MenuBar::Draw() const
 	Vei2 location = Location;
 	for (auto it = Menus.begin(); it != Menus.end(); it++)
 	{
-		Menu* menu = it->get();
-		menu->Show( location, PixelEffect::Copy() );
+		MenuItem* menu = it->get();
+		std::unique_ptr<PixelEffect::Effect> copy = std::make_unique<PixelEffect::Copy>();
+		menu->Show( location, copy );
 		location.y += (int)menu->GetWidth();
 	}
 
