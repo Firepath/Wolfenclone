@@ -38,6 +38,7 @@ public:
 	private:
 		Type type;
 		unsigned char code;
+		bool handled = false;
 	public:
 		Event()
 			:
@@ -49,6 +50,10 @@ public:
 			type( type ),
 			code( code )
 		{}
+		bool IsHandled() const
+		{
+			return handled;
+		}
 		bool IsPress() const
 		{
 			return type == Press;
@@ -64,6 +69,10 @@ public:
 		unsigned char GetCode() const
 		{
 			return code;
+		}
+		void SetHandled( bool isHandled )
+		{
+			handled = isHandled;
 		}
 	};
 public:

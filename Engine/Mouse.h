@@ -50,6 +50,7 @@ public:
 		bool rightIsPressed;
 		int x;
 		int y;
+		bool handled = false;
 	public:
 		Event()
 			:
@@ -69,6 +70,10 @@ public:
 			x( parent.x ),
 			y( parent.y )
 		{}
+		bool IsHandled() const
+		{
+			return handled;
+		}
 		bool IsValid() const
 		{
 			return type != Invalid;
@@ -100,6 +105,10 @@ public:
 		bool RightIsPressed() const
 		{
 			return rightIsPressed;
+		}
+		void SetHandled( bool isHandled )
+		{
+			handled = isHandled;
 		}
 	};
 public:
