@@ -2,11 +2,6 @@
 
 #include "Menu.h"
 
-void TestCallBack::Execute() const
-{
-	int i = 5;
-}
-
 MenuItem::MenuItem( std::string text, std::unique_ptr<SelectedCallBack> callback, const MenuItem* const menu, const Font* const font, Graphics& gfx, const Color textHighlightColour )
 	:
 	Text( text ),

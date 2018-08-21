@@ -20,12 +20,6 @@ public:
 	virtual void Execute() const = 0;
 };
 
-class TestCallBack : public SelectedCallBack
-{
-public:
-	void Execute() const override;
-};
-
 class MenuItem
 {
 public:
