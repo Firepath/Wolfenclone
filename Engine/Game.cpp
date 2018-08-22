@@ -33,6 +33,7 @@ Game::Game( MainWindow& wnd )
 	Surfaces = std::make_unique<SurfaceRepository>();
 	Fonts = std::make_unique<FontRepository>();
 
+	LoadTextures();
 	LoadSettings();
 	SetupMenu();
 }
@@ -73,6 +74,12 @@ void Game::DoMouseEvents()
 
 void Game::LoadSettings()
 {
+	Settings.LoadSettings( "Settings\\Settings.txt" );
+	Fonts->AddFont( "Font_Fixedsys16x28", std::make_unique<Font>( Surfaces->GetSurface( "Font_Fixedsys16x28" ), Colors::White, 28, Colors::White ) );
+}
+
+void Game::LoadTextures()
+{
 	Surfaces->AddSurface( "Font_Fixedsys16x28", std::make_unique<Surface>( "Textures\\Fonts\\Fixedsys16x28.bmp" ) );
 	//Surfaces->AddSurface( "bluestone", std::make_unique<Surface>( "Textures\\bluestone.bmp" ) );
 	//Surfaces->AddSurface( "colorstone", std::make_unique<Surface>( "Textures\\colorstone.bmp" ) );
@@ -87,8 +94,6 @@ void Game::LoadSettings()
 	Surfaces->AddSurface( "wal00001", std::make_unique<Surface>( "Textures\\Walls\\Dark\\wal00001.bmp" ) );
 	Surfaces->AddSurface( "wal00002", std::make_unique<Surface>( "Textures\\Walls\\Light\\wal00002.bmp" ) );
 	Surfaces->AddSurface( "wal00003", std::make_unique<Surface>( "Textures\\Walls\\Dark\\wal00003.bmp" ) );
-
-	Fonts->AddFont( "Font_Fixedsys16x28", std::make_unique<Font>( Surfaces->GetSurface( "Font_Fixedsys16x28" ), Colors::White, 28, Colors::White ) );
 }
 
 void Game::SetupMenu()

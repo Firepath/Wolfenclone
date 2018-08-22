@@ -27,6 +27,7 @@
 #include "Editor.h"
 #include "FontRepository.h"
 #include "Menu.h"
+#include "Settings.h"
 #include "SurfaceRepository.h"
 
 class Game
@@ -44,6 +45,7 @@ private:
 	void DoKeyboardEvents();
 	void DoMouseEvents();
 	void LoadSettings();
+	void LoadTextures();
 	void SetupMenu();
 	/********************************/
 private:
@@ -55,5 +57,6 @@ private:
 	std::unique_ptr<SurfaceRepository> Surfaces = nullptr;
 	std::unique_ptr<FontRepository> Fonts = nullptr;
 	std::unique_ptr<MenuBar> MainMenuBar = nullptr;
+	Settings Settings;
 	/********************************/
 };

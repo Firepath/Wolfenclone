@@ -148,6 +148,7 @@
     <ClInclude Include="MapFixture.h" />
     <ClInclude Include="Menu.h" />
     <ClInclude Include="Rect.h" />
+    <ClInclude Include="Settings.h" />
     <ClInclude Include="Surface.h" />
     <ClInclude Include="SurfaceRepository.h" />
     <ClInclude Include="VectorExtensions.h" />
@@ -177,6 +178,7 @@
     <ClCompile Include="Menu.cpp" />
     <ClCompile Include="Mouse.cpp" />
     <ClCompile Include="PixelEffect.cpp" />
+    <ClCompile Include="Settings.cpp" />
     <ClCompile Include="Surface.cpp" />
     <ClCompile Include="SurfaceRepository.cpp" />
     <ClCompile Include="Wall.cpp" />
