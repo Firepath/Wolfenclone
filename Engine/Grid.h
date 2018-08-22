@@ -19,13 +19,13 @@ public:
 	class Cell
 	{
 	public:
-		Cell( const Vei2& location, Surface* const surface );
+		Cell( const Vei2& location, const Surface* const surface );
 
 		void Draw( const Grid& map, Graphics& gfx ) const;
 		const Vei2& GetLocation() const;
 
 	private:
-		Surface* Surf = nullptr;
+		const Surface* Surf = nullptr;
 		Vei2 Location;
 		bool Enclosed = false;
 	};
@@ -37,7 +37,7 @@ public:
 	void DeleteCell( const Vei2& gridLocation );
 	void DeleteSelectedCells();
 	void Draw( Graphics& gfx );
-	void Fill( const Vei2& gridLocation, Surface* const surface );
+	void Fill( const Vei2& gridLocation, const Surface* const surface );
 	Cell& GetCell( const Vei2& gridLocation ) const;
 	void HighlightCell( const Vei2& gridLocation, const Color highlightColour, const float highlightOpacity, const bool drawBorder, Graphics& gfx ) const;
 	bool IsOnGrid( const Vei2& gridLocation ) const;

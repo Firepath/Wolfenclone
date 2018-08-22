@@ -1,17 +1,18 @@
 #pragma once
 
+#include "EditConstants.h"
 #include "Graphics.h"
 #include "Menu.h"
 #include "PixelEffect.h"
 
-MenuItem::MenuItem( std::string text, std::unique_ptr<SelectedCallBack> callback, const MenuItem* const menu, const Font* const font, Graphics& gfx, const Color textHighlightColour )
+MenuItem::MenuItem( std::string text, std::unique_ptr<SelectedCallBack> callback, const MenuItem* const menu, const Font* const font, Graphics& gfx, const Color highlightColour )
 	:
 	Text( text ),
 	CallBack( std::move( callback ) ),
 	_Menu( menu ),
 	_Font( font ),
 	_gfx( gfx ),
-	TextHighlightColour( textHighlightColour )
+	HighlightColour( highlightColour )
 {
 	if ( _Font != nullptr )
 	{
@@ -50,9 +51,9 @@ void MenuItem::AddMenuItem( std::unique_ptr<MenuItem> menuItem )
 	}
 }
 
-void MenuItem::AddMenuItem( std::string text, std::unique_ptr<SelectedCallBack> callback, Color textHighlightColour )
+void MenuItem::AddMenuItem( std::string text, std::unique_ptr<SelectedCallBack> callback, Color highlightColour )
 {
-	std::unique_ptr<MenuItem> item = std::make_unique<MenuItem>( text, std::move( callback ), this, _Font, _gfx, textHighlightColour );
+	std::unique_ptr<MenuItem> item = std::make_unique<MenuItem>( text, std::move( callback ), this, _Font, _gfx, highlightColour );
 	AddMenuItem( std::move( item ) );
 }
 
@@ -88,22 +89,7 @@ void MenuItem::DoMouseEvents( Mouse::Event& me )
 	const Vei2 mousePos = me.GetPos();
 	const bool mouseIsOnMenuItem = IsHovering( mousePos, true );
 
-	for ( auto it = MenuItems.begin(); it != MenuItems.end(); it++ )
-	{
-		MenuItem& item = *(it->get());
-
-		const bool isHovering = item.IsVisible() && item.IsHovering( mousePos, false );
-
-		if ( !isHovering )
-		{
-			item.TextColour = MenuItem::DefaultTextColour;
-
-			if ( &item != this && item.IsOpen() )
-			{
-				item.SetOpen( false );
-			}
-		}
-	}
+	ResetSubMenuItems( mousePos );
 
 	DoHovering( mouseIsOnMenuItem, IsHovering( mousePos, false ) );
 
@@ -130,23 +116,13 @@ void MenuItem::DoMouseEvents( Mouse::Event& me )
 	}
 	else
 	{
-		if ( IsOpen() )
-		{
-			for ( auto it = MenuItems.begin(); it != MenuItems.end() && !me.IsHandled(); it++ )
-			{
-				MenuItem& item = *(it->get());
-
-				item.DoMouseEvents( me );
-
-				// If it got handled and that menu item is no longer visible (because it got selected)
-				if ( me.IsHandled() && !item.IsVisible() )
-				{
-					// Close the menu
-					SetVisible( false );
-				}
-			}
-		}
+		DoSubMenuMouseEvents( me );
 	}
+}
+
+const size_t MenuItem::GetColumns() const
+{
+	return Columns;
 }
 
 const Vei2 MenuItem::GetLocation() const
@@ -193,6 +169,11 @@ void MenuItem::Select()
 			ShowMenu();
 		}
 	}
+}
+
+void MenuItem::SetColumns( const size_t columns )
+{
+	Columns = columns;
 }
 
 void MenuItem::SetLocation( const Vei2 screenLocation )
@@ -260,32 +241,115 @@ void MenuItem::DoHovering( const bool hovering, const bool hoveringOnChild )
 	TextColour = MenuItem::DefaultTextColour;
 	if ( hovering || hoveringOnChild )
 	{
-		TextColour = TextHighlightColour;
+		TextColour = HighlightColour;
 	}
 }
 
-const bool MenuItem::IsHovering( const Vei2 mouseLocation, const bool onlyCheckThisMenuItem ) const
+void MenuItem::DoSubMenuMouseEvents( Mouse::Event& me )
 {
-	assert( IsVisible() );
-
-	bool hovering = RectI( Location, GetSize().x, GetSize().y ).Contains( mouseLocation );
-
-	if ( !onlyCheckThisMenuItem && !hovering )
+	if ( IsOpen() )
 	{
-		for ( auto it = MenuItems.begin(); it != MenuItems.end(); it++ )
+		for ( auto it = MenuItems.begin(); it != MenuItems.end() && !me.IsHandled(); it++ )
 		{
 			MenuItem& item = *(it->get());
 
-			// but we are hovering on a child item,
-			if ( item.IsVisible() && item.IsHovering( mouseLocation, false ) )
+			item.DoMouseEvents( me );
+
+			// If it got handled and that menu item is no longer visible (because it got selected)
+			if ( me.IsHandled() && !item.IsVisible() )
 			{
-				// then consider us as hovering on this item.
-				return true;
+				// Close the menu
+				SetVisible( false );
 			}
 		}
 	}
+}
 
-	return hovering;
+const RectI MenuItem::GetSubMenuArea() const
+{
+	const Vei2 subMenuLocation = GetSubMenuLocation();
+	return RectI( subMenuLocation, subMenuLocation + GetSubMenuSize() );
+}
+
+const Vei2 MenuItem::GetSubMenuLocation() const
+{
+	const Vei2 size = GetSize();
+	Vei2 subMenuLocation( Location.x + size.x, Location.y );
+	return subMenuLocation;
+}
+
+const Vei2 MenuItem::GetSubMenuSize() const
+{
+	size_t itemsWidth = 0;
+	size_t currentRowWidth = 0;
+	size_t itemsHeight = 0;
+	size_t currentRowHeight = 0;
+
+	size_t column = 0;
+	for ( auto it = MenuItems.begin(); it != MenuItems.end(); it++ )
+	{
+		const Vei2 itemSize = it->get()->GetSize();
+		currentRowWidth += itemSize.x;
+		currentRowHeight = std::max( (int)currentRowHeight, itemSize.y );
+
+		column++;
+		column = column % Columns;
+
+		if ( column == 0 )
+		{
+			itemsWidth = std::max( itemsWidth, currentRowWidth );
+			currentRowWidth = 0;
+			itemsHeight += currentRowHeight;
+			currentRowHeight = 0;
+		}
+	}
+
+	if ( column != 0 )
+	{
+		itemsHeight += currentRowHeight;
+		currentRowHeight = 0;
+		column = 0;
+	}
+
+	return Vei2( itemsWidth, itemsHeight );
+}
+
+const bool MenuItem::IsHovering( const Vei2 mouseLocation, const bool onlyCheckThisMenuItem )
+{
+	assert( IsVisible() );
+
+	Hovering = RectI( Location, GetSize().x, GetSize().y ).Contains( mouseLocation );
+
+	if ( !onlyCheckThisMenuItem && !Hovering && IsOpen() )
+	{
+		const RectI subMenuArea = GetSubMenuArea();
+		if ( subMenuArea.Contains( mouseLocation ) )
+		{
+			return true;
+		}
+	}
+
+	return Hovering;
+}
+
+void MenuItem::ResetSubMenuItems( const Vei2 mousePos )
+{
+	for ( auto it = MenuItems.begin(); it != MenuItems.end(); it++ )
+	{
+		MenuItem& item = *(it->get());
+
+		const bool isHovering = item.IsVisible() && item.IsHovering( mousePos, false );
+
+		if ( !isHovering )
+		{
+			item.TextColour = MenuItem::DefaultTextColour;
+
+			if ( &item != this && item.IsOpen() )
+			{
+				item.SetOpen( false );
+			}
+		}
+	}
 }
 
 void MenuItem::ShowMenu( const Vei2 location )
@@ -294,33 +358,99 @@ void MenuItem::ShowMenu( const Vei2 location )
 
 	SetOpen( true );
 
-	std::unique_ptr<PixelEffect::Effect> boxEffect = std::make_unique<PixelEffect::Transparency>( Opacity );
+	const Vei2 subMenuSize = GetSubMenuSize();
 
-	size_t itemsWidth = Width;
+	const RectI border = RectI( location, Vei2( location.x + subMenuSize.x, location.y + subMenuSize.y ) );
+	const RectI insideBox = border.GetExpanded( -(int)BorderThickness );
+
+	std::unique_ptr<PixelEffect::Effect> boxEffect = std::make_unique<PixelEffect::Transparency>( Opacity );
+	_gfx.DrawBox( insideBox, BoxColour, boxEffect );
+
+	size_t column = 0;
+	size_t currentRowHeight = 0;
 	Vei2 itemLocation = location;
+	int column0X = itemLocation.x;
 	for ( auto it = MenuItems.begin(); it != MenuItems.end(); it++ )
 	{
 		it->get()->Show( itemLocation, boxEffect );
+
 		const Vei2 itemSize = it->get()->GetSize();
-		itemLocation.y += itemSize.y;
-		itemsWidth = itemSize.x;
+		currentRowHeight = std::max( (int)currentRowHeight, itemSize.y );
+
+		itemLocation.x += itemSize.x;
+
+		column++;
+		column = column % Columns;
+
+		if ( column == 0 )
+		{
+			itemLocation.y += currentRowHeight;
+			currentRowHeight = 0;
+			itemLocation.x = column0X;
+		}
 	}
 
-	const RectI border = RectI( location, Vei2( itemLocation.x + (int)itemsWidth, itemLocation.y ) );
-	const RectI insideBox = border.GetExpanded( -(int)BorderThickness );
 	_gfx.DrawBoxBorder( border, insideBox, BorderColour, boxEffect );
 }
 
-Menu::Menu( std::string text, const Font* const font, Graphics& gfx )
+Menu::Menu( std::string text, const Font* const font, Graphics& gfx, const Color highlightColour )
 	:
-	MenuItem(text, nullptr, this, font, gfx )
+	MenuItem(text, nullptr, this, font, gfx, highlightColour )
 {
+}
+
+void Menu::DoMouseEvents( Mouse::Event & me )
+{
+	const Vei2 mousePos = me.GetPos();
+	const bool mouseIsOnMenuItem = IsHovering( mousePos, true );
+
+	ResetSubMenuItems( mousePos );
+
+	DoHovering( mouseIsOnMenuItem, IsHovering( mousePos, false ) );
+
+	// Something else has already handled this
+	if ( me.IsHandled() )
+	{
+		return;
+	}
+
+	if ( mouseIsOnMenuItem )
+	{
+		Mouse::Event::Type meType = me.GetType();
+
+		switch ( meType )
+		{
+		case Mouse::Event::Type::LRelease:
+			if ( IsOpen() )
+			{
+				SetOpen( false );
+			}
+			else
+			{
+				Select();
+			}
+			break;
+		default:
+			break;
+		}
+
+		me.SetHandled( true );
+	}
+	else
+	{
+		DoSubMenuMouseEvents( me );
+	}
 }
 
 void Menu::ShowMenu()
 {
-	const Vei2 topLeft = Location + Vei2( 0, (int)Height - 2 );
+	const Vei2 topLeft = GetSubMenuLocation() - Vei2( 0, 2 );
 	MenuItem::ShowMenu( topLeft );
+}
+
+const Vei2 Menu::GetSubMenuLocation() const
+{
+	return Vei2( Location.x, Location.y + GetSize().y );
 }
 
 MenuBar::MenuBar( const Vei2 location, const Vei2 size, Graphics& gfx )
@@ -444,5 +574,41 @@ void MenuBar::CancelMenus()
 		{
 			it->get()->SetOpen( false );
 		}
+	}
+}
+
+ImageMenuItem::ImageMenuItem( const Surface* const image, const int height, const int width, std::unique_ptr<SelectedCallBack> callback, const MenuItem* const menu, Graphics& gfx, const Color highlightColour )
+	:
+	MenuItem( "", std::move( callback ), menu, nullptr, gfx, highlightColour ),
+	Image( image )
+{
+	Height = height + 2 * BoxPadding;
+	Width = width + 2 * BoxPadding;
+}
+
+void ImageMenuItem::Show( const Vei2 & location, std::unique_ptr<PixelEffect::Effect>& effect )
+{
+	Location = location;
+	Visible = true;
+
+	const RectI boxRect = RectI( location, (int)Width, (int)Height );
+	const RectI imageRect = boxRect.GetExpanded( -(int)BoxPadding );
+	_gfx.DrawBox( boxRect, BoxColour, effect );
+
+	if ( Image != nullptr )
+	{
+		if ( Hovering )
+		{
+			std::unique_ptr<PixelEffect::Effect> transparency = std::make_unique<PixelEffect::Transparency>( EditConstants::CellSelection::CellHoverOpacity );
+			_gfx.DrawBoxBorder( boxRect, imageRect, HighlightColour, transparency );
+		}
+
+		std::unique_ptr<PixelEffect::Effect> copy = std::make_unique<PixelEffect::Copy>();
+		_gfx.DrawSprite( imageRect, *Image, copy );
+	}
+
+	if ( IsOpen() )
+	{
+		ShowMenu();
 	}
 }

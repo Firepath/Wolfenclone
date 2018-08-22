@@ -3,7 +3,7 @@
 #include "PixelEffect.h"
 #include "Surface.h"
 
-Grid::Cell::Cell( const Vei2& location, Surface* const surface )
+Grid::Cell::Cell( const Vei2& location, const Surface* const surface )
 	:
 	Location( location ),
 	Surf( surface )

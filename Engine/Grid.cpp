@@ -73,7 +73,7 @@ void Grid::Draw( Graphics& gfx )
 	HighlightSelectedCells( gfx );
 }
 
-void Grid::Fill( const Vei2& gridLocation, Surface* const surface )
+void Grid::Fill( const Vei2& gridLocation, const Surface* const surface )
 {
 	assert( IsOnGrid( gridLocation ) );
 

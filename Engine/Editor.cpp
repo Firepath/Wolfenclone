@@ -1,22 +1,23 @@
 #include "Editor.h"
 #include "VectorExtensions.h"
 
-Editor::LeftMouseClickEditModeCallBack::LeftMouseClickEditModeCallBack( Editor* const editor, EditConstants::MouseLClickMode mode )
+Editor::LeftMouseClickEditModeCallBack::LeftMouseClickEditModeCallBack( Editor* const editor, EditConstants::MouseLClickMode mode, const Surface* const surface )
 	:
 	_Editor( editor ),
-	Mode( mode )
+	Mode( mode ),
+	_Surface( surface )
 {
 }
 
 void Editor::LeftMouseClickEditModeCallBack::Execute() const
 {
 	_Editor->SetMouseLClickMode( Mode );
+	_Editor->SetInsertSurface( _Surface );
 }
 
 Editor::Editor()
 	:
-	MapGrid( 256, 256, Vec2( 0.0f, 0.0f ) ),
-	GreyWallSurface( "Textures\\greystone.bmp" )
+	MapGrid( 256, 256, Vec2( 0.0f, 0.0f ) )
 {
 }
 
@@ -274,7 +275,10 @@ void Editor::MouseLPress( const Vei2& screenLocation )
 	switch ( GetMouseLClickMode() )
 	{
 	case EditConstants::MouseLClickMode::Insert:
-		MapGrid.Fill( gridLocation, &GreyWallSurface );
+		if ( InsertSurface != nullptr )
+		{
+			MapGrid.Fill( gridLocation, InsertSurface );
+		}
 		break;
 	case EditConstants::MouseLClickMode::Select:
 		SelectCell( gridLocation );
@@ -326,6 +330,11 @@ void Editor::SelectCell( const Vei2& gridLocation )
 	default:
 		break;
 	}
+}
+
+void Editor::SetInsertSurface( const Surface* const surface )
+{
+	InsertSurface = surface;
 }
 
 void Editor::SetMouseLClickMode( EditConstants::MouseLClickMode mode )

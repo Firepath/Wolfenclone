@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -8,6 +9,7 @@
 #include "Keyboard.h"
 #include "Mouse.h"
 #include "Rect.h"
+#include "Surface.h"
 #include "Vec2.h"
 
 class Graphics;
@@ -26,19 +28,20 @@ public:
 	static constexpr Color DefaultBorderColour = Colors::White;
 	static constexpr size_t DefaultBorderThickness = 1u;
 	static constexpr Color DefaultBoxColour = Colors::DarkGray;
-	static constexpr size_t DefaultBoxPadding = 4u;
+	static constexpr size_t DefaultBoxPadding = 8u;
 	static constexpr Color DefaultHoverTextColour = Colors::LightBlue;
 	static constexpr size_t DefaultMaxHeight = 30u;
 	static constexpr size_t DefaultMaxWidth = 300u;
 	static constexpr float DefaultOpacity = 95.0f;
 	static constexpr Color DefaultTextColour = Colors::White;
 
-	MenuItem( std::string text, std::unique_ptr<SelectedCallBack> callback, const MenuItem* const menu, const Font* const font, Graphics& gfx, const Color textHighlightColour = MenuItem::DefaultHoverTextColour );
+	MenuItem( std::string text, std::unique_ptr<SelectedCallBack> callback, const MenuItem* const menu, const Font* const font, Graphics& gfx, const Color highlightColour = MenuItem::DefaultHoverTextColour );
 
 	void AddMenuItem( std::unique_ptr<MenuItem> menuItem );
-	void AddMenuItem( std::string text, std::unique_ptr<SelectedCallBack> callback, const Color textHighlightColour );
+	void AddMenuItem( std::string text, std::unique_ptr<SelectedCallBack> callback, const Color highlightColour = MenuItem::DefaultHoverTextColour );
 	void DoKeyboardEvents( Keyboard::Event& ke );
-	void DoMouseEvents( Mouse::Event& me );
+	virtual void DoMouseEvents( Mouse::Event& me );
+	const size_t GetColumns() const;
 	const Vei2 GetLocation() const;
 	const Vei2 GetSize() const;
 	const std::string GetText() const;
@@ -46,19 +49,19 @@ public:
 	const bool IsOpen() const;
 	const bool IsVisible() const;
 	void Select();
+	void SetColumns( const size_t columns );
 	void SetLocation( const Vei2 screenLocation );
 	void SetOpen( const bool open );
 	void SetText( const std::string text );
 	void SetVisible( const bool visible );
 	void SetWidth( const size_t width );
 
-	void Show( const Vei2& location, std::unique_ptr<PixelEffect::Effect>& effect )
+	virtual void Show( const Vei2& location, std::unique_ptr<PixelEffect::Effect>& effect )
 	{
 		Location = location;
 		Visible = true;
 
-		const RectI boxRect = RectI( location, (int)Width, (int)Height );
-		_gfx.DrawBox( boxRect, BoxColour, effect );
+		RectI boxRect = RectI( location, (int)Width, (int)Height );
 		std::unique_ptr<PixelEffect::Effect> fontEffect = std::make_unique<PixelEffect::Substitution>( TextColour, _Font->GetColour() );
 		_Font->DrawString( GetText(), location + Vei2( (int)BoxPadding, (int)BoxPadding ), boxRect, fontEffect, _gfx );
 
@@ -72,7 +75,12 @@ public:
 
 protected:
 	void DoHovering( const bool hovering, const bool hoveringOnChild );
-	const bool IsHovering( const Vei2 mouseLocation, const bool onlyCheckThisMenuItem ) const;
+	void DoSubMenuMouseEvents( Mouse::Event& me );
+	const RectI GetSubMenuArea() const;
+	virtual const Vei2 GetSubMenuLocation() const;
+	const Vei2 GetSubMenuSize() const;
+	const bool IsHovering( const Vei2 mouseLocation, const bool onlyCheckThisMenuItem );
+	void ResetSubMenuItems( const Vei2 mousePos );
 	void ShowMenu( const Vei2 location );
 
 protected:
@@ -80,15 +88,16 @@ protected:
 	size_t BorderThickness = MenuItem::DefaultBorderThickness;
 	Color BoxColour = MenuItem::DefaultBoxColour;
 	size_t BoxPadding = MenuItem::DefaultBoxPadding;
-	Color TextColour = MenuItem::DefaultTextColour;
-	Color TextHighlightColour = MenuItem::DefaultHoverTextColour;
+	Color HighlightColour = MenuItem::DefaultHoverTextColour;
 	size_t MaximumWidth = MenuItem::DefaultMaxWidth;
+	Color TextColour = MenuItem::DefaultTextColour;
 	float Opacity = MenuItem::DefaultOpacity;
 
 	size_t Height = MenuItem::DefaultMaxHeight;
 	size_t Width = MenuItem::DefaultMaxWidth;
 
 	Vei2 Location;
+	bool Hovering = false;
 	bool Open = false;
 	bool Visible = false;
 
@@ -99,15 +108,31 @@ protected:
 
 	std::string Text;
 	std::vector<std::unique_ptr<MenuItem>> MenuItems;
+	size_t Columns = 1;
 	std::unique_ptr<SelectedCallBack> CallBack = nullptr;
 };
 
 class Menu : public MenuItem
 {
 public:
-	Menu( std::string text, const Font* const font, Graphics& gfx );
+	Menu( std::string text, const Font* const font, Graphics& gfx, const Color highlightColour = MenuItem::DefaultHoverTextColour );
 
+	void DoMouseEvents( Mouse::Event& me ) override;
 	void ShowMenu() override;
+
+protected:
+	const Vei2 GetSubMenuLocation() const override;
+};
+
+class ImageMenuItem : public MenuItem
+{
+public:
+	ImageMenuItem( const Surface* const image, const int height, const int width, std::unique_ptr<SelectedCallBack> callback, const MenuItem* const menu, Graphics& gfx, const Color highlightColour = MenuItem::DefaultHoverTextColour );
+
+	void Show( const Vei2& location, std::unique_ptr<PixelEffect::Effect>& effect ) override;
+
+private:
+	const Surface* const Image;
 };
 
 class MenuBar

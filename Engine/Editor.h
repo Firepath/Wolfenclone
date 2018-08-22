@@ -20,13 +20,14 @@ public:
 	class LeftMouseClickEditModeCallBack : public SelectedCallBack
 	{
 	public:
-		LeftMouseClickEditModeCallBack( Editor* const editor, EditConstants::MouseLClickMode mode );
+		LeftMouseClickEditModeCallBack( Editor* const editor, EditConstants::MouseLClickMode mode, const Surface* const surface );
 
 		void Execute() const override;
 
 	private:
 		Editor * const _Editor;
 		EditConstants::MouseLClickMode Mode;
+		const Surface* const _Surface;
 	};
 
 	struct MouseInfo
@@ -60,9 +61,11 @@ private:
 	void MouseLRelease();
 	void MouseRPress( const Vei2& screenLocation );
 	void SelectCell( const Vei2& gridLocation );
+	void SetInsertSurface( const Surface* const surface ); // will be changed to be a MapFixture eventually
 	void SetMouseLClickMode( EditConstants::MouseLClickMode mode );
 
-	Surface GreyWallSurface;// = Surface( "Textures\\greystone.bmp" );
+	//Surface GreyWallSurface;// = Surface( "Textures\\greystone.bmp" );
+	const Surface* InsertSurface = nullptr;
 
 	EditConstants::MouseLClickMode MouseLClickMode = EditConstants::MouseLClickMode::None;
 	EditConstants::SelectionMode SelectionMode = EditConstants::SelectionMode::Rectangle;
