@@ -37,7 +37,6 @@ public:
 
 	void AddMenuItem( std::unique_ptr<MenuItem> menuItem );
 	void AddMenuItem( std::string text, std::unique_ptr<SelectedCallBack> callback, const Color textHighlightColour );
-	void DoHovering( const bool hovering, const bool hoveringOnChild );
 	void DoKeyboardEvents( Keyboard::Event& ke );
 	void DoMouseEvents( Mouse::Event& me );
 	const Vei2 GetLocation() const;
@@ -72,6 +71,7 @@ public:
 	virtual void ShowMenu();
 
 protected:
+	void DoHovering( const bool hovering, const bool hoveringOnChild );
 	const bool IsHovering( const Vei2 mouseLocation, const bool onlyCheckThisMenuItem ) const;
 	void ShowMenu( const Vei2 location );
 

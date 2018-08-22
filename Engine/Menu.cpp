@@ -56,20 +56,6 @@ void MenuItem::AddMenuItem( std::string text, std::unique_ptr<SelectedCallBack> 
 	AddMenuItem( std::move( item ) );
 }
 
-void MenuItem::DoHovering( const bool hovering, const bool hoveringOnChild )
-{
-	if ( !IsOpen() && hovering && MenuItems.size() > 0 && typeid(*this) == typeid(MenuItem) )
-	{
-		SetOpen( true );
-	}
-
-	TextColour = MenuItem::DefaultTextColour;
-	if ( hovering || hoveringOnChild )
-	{
-		TextColour = TextHighlightColour;
-	}
-}
-
 void MenuItem::DoKeyboardEvents( Keyboard::Event& ke )
 {
 	// Something else has already handled this
@@ -262,6 +248,20 @@ void MenuItem::ShowMenu()
 {
 	const Vei2 topLeft = Location + Vei2( (int)Width, 0 );
 	ShowMenu( topLeft );
+}
+
+void MenuItem::DoHovering( const bool hovering, const bool hoveringOnChild )
+{
+	if ( !IsOpen() && hovering && MenuItems.size() > 0 && typeid(*this) == typeid(MenuItem) )
+	{
+		SetOpen( true );
+	}
+
+	TextColour = MenuItem::DefaultTextColour;
+	if ( hovering || hoveringOnChild )
+	{
+		TextColour = TextHighlightColour;
+	}
 }
 
 const bool MenuItem::IsHovering( const Vei2 mouseLocation, const bool onlyCheckThisMenuItem ) const
