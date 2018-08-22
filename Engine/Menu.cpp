@@ -311,6 +311,11 @@ const Vei2 MenuItem::GetSubMenuSize() const
 		column = 0;
 	}
 
+	if ( itemsWidth == 0 )
+	{
+		itemsWidth += currentRowWidth;
+	}
+
 	return Vei2( itemsWidth, itemsHeight );
 }
 
@@ -326,6 +331,18 @@ const bool MenuItem::IsHovering( const Vei2 mouseLocation, const bool onlyCheckT
 		if ( subMenuArea.Contains( mouseLocation ) )
 		{
 			return true;
+		}
+		else
+		{
+			for ( auto it = MenuItems.begin(); it != MenuItems.end(); it++ )
+			{
+				MenuItem& item = *(it->get());
+
+				if ( item.IsOpen() && item.IsHovering( mouseLocation, false ) )
+				{
+					return true;
+				}
+			}
 		}
 	}
 
