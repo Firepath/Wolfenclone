@@ -76,6 +76,20 @@ public:
 		return bottom - top;
 	}
 
+	Rect_& operator+=( const _Vec2<T>& rhs )
+	{
+		left += rhs.x;
+		right += rhs.x;
+		top += rhs.y;
+		bottom += rhs.y;
+		return *this;
+	}
+
+	Rect_ operator+( const _Vec2<T>& rhs )
+	{
+		return Rect_( *this ) += rhs;
+	}
+
 public:
 	T left;
 	T right;
