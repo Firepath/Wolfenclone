@@ -616,8 +616,8 @@ void ImageMenuItem::Show( const Vei2 & location, std::unique_ptr<PixelEffect::Ef
 	{
 		if ( Hovering )
 		{
-			std::unique_ptr<PixelEffect::Effect> transparency = std::make_unique<PixelEffect::Transparency>( EditConstants::CellSelection::CellHoverOpacity );
-			_gfx.DrawBoxBorder( boxRect, imageRect, HighlightColour, transparency );
+			std::unique_ptr<PixelEffect::Effect> copy = std::make_unique<PixelEffect::Copy>();
+			_gfx.DrawBoxBorder( boxRect, imageRect, HighlightColour, copy );
 		}
 
 		std::unique_ptr<PixelEffect::Effect> copy = std::make_unique<PixelEffect::Copy>();
