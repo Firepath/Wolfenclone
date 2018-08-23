@@ -41,7 +41,8 @@ void Settings::_LoadSettings( const std::string& filename )
 
 	while ( std::getline( in, line ).good() )
 	{
-		if ( line.length() == 0 )
+		// If a blank line or a comment line, skip it.
+		if ( line.length() == 0 || line.find( Settings::Comment, 0 ) == 0 )
 		{
 			continue;
 		}

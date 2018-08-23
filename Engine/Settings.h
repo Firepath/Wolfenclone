@@ -17,6 +17,8 @@ public:
 		EnumOptionsCount // This is the size of the enum, don't add things after it
 	};
 
+	static constexpr char Comment[] = "'";
+
 	static constexpr char None[] = "[None]";
 	static constexpr char ListFiles[] = "[List Files]";
 	static constexpr char TextureWallDark[] = "[Texture Wall Dark]";

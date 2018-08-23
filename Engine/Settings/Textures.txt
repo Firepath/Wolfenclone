@@ -1,4 +1,5 @@
 [Texture Wall Dark]
+'{Texture Name} {Relative File Path}
 WAL00001 Textures\Walls\Dark\WAL00001.bmp
 WAL00003 Textures\Walls\Dark\WAL00003.bmp
 WAL00005 Textures\Walls\Dark\WAL00005.bmp
@@ -51,6 +52,7 @@ WAL00101 Textures\Walls\Dark\WAL00101.bmp
 WAL00103 Textures\Walls\Dark\WAL00103.bmp
 WAL00105 Textures\Walls\Dark\WAL00105.bmp
 [Texture Wall Light]
+'{Texture Name} {Relative File Path}
 WAL00000 Textures\Walls\Light\WAL00000.bmp
 WAL00002 Textures\Walls\Light\WAL00002.bmp
 WAL00004 Textures\Walls\Light\WAL00004.bmp
