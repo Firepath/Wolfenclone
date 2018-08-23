@@ -44,8 +44,10 @@ private:
 	/*  User Functions              */
 	void DoKeyboardEvents();
 	void DoMouseEvents();
-	void LoadSettings();
+	void FillTextureMenuItemSubMenu( std::unique_ptr<MenuItem>& menuItem, Editor* const editor, const Settings::ReadMode contents );
+	void LoadFonts();
 	void LoadTextures();
+	void LoadTextures( const Settings::ReadMode contents );
 	void SetupMenu();
 	/********************************/
 private:

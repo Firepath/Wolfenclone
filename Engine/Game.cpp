@@ -33,8 +33,9 @@ Game::Game( MainWindow& wnd )
 	Surfaces = std::make_unique<SurfaceRepository>();
 	Fonts = std::make_unique<FontRepository>();
 
+	Settings.LoadSettings( "Settings\\Settings.txt" );
 	LoadTextures();
-	LoadSettings();
+	LoadFonts();
 	SetupMenu();
 }
 
@@ -72,28 +73,37 @@ void Game::DoMouseEvents()
 	}
 }
 
-void Game::LoadSettings()
+void Game::FillTextureMenuItemSubMenu( std::unique_ptr<MenuItem>& menuItem, Editor* const editor, const Settings::ReadMode contents )
 {
-	Settings.LoadSettings( "Settings\\Settings.txt" );
-	Fonts->AddFont( "Font_Fixedsys16x28", std::make_unique<Font>( Surfaces->GetSurface( "Font_Fixedsys16x28" ), Colors::White, 28, Colors::White ) );
+	auto& listTextures = Settings.GetSettingList( contents );
+	for ( auto it = listTextures.begin(); it != listTextures.end(); it++ )
+	{
+		// TODO: Change this to use MapFixtures instead of straight Surface pointers for the callback
+		// TODO: Also - hard-coded size of images? Maybe OK...
+		std::unique_ptr<MenuItem> subMenuItem = std::make_unique<ImageMenuItem>( &Surfaces->GetSurface( it->first ), 64, 64, std::make_unique<Editor::LeftMouseClickEditModeCallBack>( editor, EditConstants::MouseLClickMode::Insert, &Surfaces->GetSurface( it->first ) ), menuItem.get(), gfx, editor->GetCellHoverHighlightColour( EditConstants::MouseLClickMode::Insert ) );
+		menuItem->AddMenuItem( std::move( subMenuItem ) );
+	}
+}
+
+void Game::LoadFonts()
+{
+	Fonts->AddFont( "Font_Fixedsys16x28", std::make_unique<Font>( Surfaces->GetSurface( "Font_Fixedsys16x28" ), Colors::White, 14, Colors::White ) );
 }
 
 void Game::LoadTextures()
 {
 	Surfaces->AddSurface( "Font_Fixedsys16x28", std::make_unique<Surface>( "Textures\\Fonts\\Fixedsys16x28.bmp" ) );
-	//Surfaces->AddSurface( "bluestone", std::make_unique<Surface>( "Textures\\bluestone.bmp" ) );
-	//Surfaces->AddSurface( "colorstone", std::make_unique<Surface>( "Textures\\colorstone.bmp" ) );
-	//Surfaces->AddSurface( "eagle", std::make_unique<Surface>( "Textures\\eagle.bmp" ) );
-	//Surfaces->AddSurface( "greystone", std::make_unique<Surface>( "Textures\\greystone.bmp" ) );
-	//Surfaces->AddSurface( "mossy", std::make_unique<Surface>( "Textures\\mossy.bmp" ) );
-	//Surfaces->AddSurface( "purplestone", std::make_unique<Surface>( "Textures\\purplestone.bmp" ) );
-	//Surfaces->AddSurface( "redbrick", std::make_unique<Surface>( "Textures\\redbrick.bmp" ) );
-	//Surfaces->AddSurface( "wood", std::make_unique<Surface>( "Textures\\wood.bmp" ) );
+	LoadTextures( Settings::ReadMode::Texture_Wall_Dark );
+	LoadTextures( Settings::ReadMode::Texture_Wall_Light );
+}
 
-	Surfaces->AddSurface( "wal00000", std::make_unique<Surface>( "Textures\\Walls\\Light\\wal00000.bmp" ) );
-	Surfaces->AddSurface( "wal00001", std::make_unique<Surface>( "Textures\\Walls\\Dark\\wal00001.bmp" ) );
-	Surfaces->AddSurface( "wal00002", std::make_unique<Surface>( "Textures\\Walls\\Light\\wal00002.bmp" ) );
-	Surfaces->AddSurface( "wal00003", std::make_unique<Surface>( "Textures\\Walls\\Dark\\wal00003.bmp" ) );
+void Game::LoadTextures( const Settings::ReadMode contents )
+{
+	auto& listTextures = Settings.GetSettingList( contents );
+	for ( auto it = listTextures.begin(); it != listTextures.end(); it++ )
+	{
+		Surfaces->AddSurface( it->first, std::make_unique<Surface>( it->second ) );
+	}
 }
 
 void Game::SetupMenu()
@@ -105,44 +115,19 @@ void Game::SetupMenu()
 	
 	std::unique_ptr<MenuItem> editMenu = std::make_unique<Menu>( "Edit", menuFont, gfx );
 	editMenu->AddMenuItem( "None", std::make_unique<Editor::LeftMouseClickEditModeCallBack>( editor, EditConstants::MouseLClickMode::None, nullptr ), editor->GetCellHoverHighlightColour( EditConstants::MouseLClickMode::None ) );
-
 	std::unique_ptr<MenuItem> insertItem = std::make_unique<MenuItem>( "Insert", nullptr, editMenu.get(), menuFont, gfx, editor->GetCellHoverHighlightColour( EditConstants::MouseLClickMode::Insert ) );
-	//TODO: Change this to use MapFixtures instead of straight Surface pointers for the callback
-	// TODO: Also - hard-coded size of images? Maybe OK...
-	//std::unique_ptr<MenuItem> blueStoneItem = std::make_unique<ImageMenuItem>( &Surfaces->GetSurface( "bluestone" ), 96, 96, std::make_unique<Editor::LeftMouseClickEditModeCallBack>( editor, EditConstants::MouseLClickMode::Insert, &Surfaces->GetSurface( "bluestone" ) ), insertItem.get(), gfx, editor->GetCellHoverHighlightColour( EditConstants::MouseLClickMode::Insert ) );
-	//std::unique_ptr<MenuItem> colorStoneItem = std::make_unique<ImageMenuItem>( &Surfaces->GetSurface( "colorstone" ), 96, 96, std::make_unique<Editor::LeftMouseClickEditModeCallBack>( editor, EditConstants::MouseLClickMode::Insert, &Surfaces->GetSurface( "colorstone" ) ), insertItem.get(), gfx, editor->GetCellHoverHighlightColour( EditConstants::MouseLClickMode::Insert ) );
-	//std::unique_ptr<MenuItem> eagleItem = std::make_unique<ImageMenuItem>( &Surfaces->GetSurface( "eagle" ), 96, 96, std::make_unique<Editor::LeftMouseClickEditModeCallBack>( editor, EditConstants::MouseLClickMode::Insert, &Surfaces->GetSurface( "eagle" ) ), insertItem.get(), gfx, editor->GetCellHoverHighlightColour( EditConstants::MouseLClickMode::Insert ) );
-	//std::unique_ptr<MenuItem> greyStoneItem = std::make_unique<ImageMenuItem>( &Surfaces->GetSurface( "greystone" ), 96, 96, std::make_unique<Editor::LeftMouseClickEditModeCallBack>( editor, EditConstants::MouseLClickMode::Insert, &Surfaces->GetSurface( "greystone" ) ), insertItem.get(), gfx, editor->GetCellHoverHighlightColour( EditConstants::MouseLClickMode::Insert ) );
-	//std::unique_ptr<MenuItem> mossyItem = std::make_unique<ImageMenuItem>( &Surfaces->GetSurface( "mossy" ), 96, 96, std::make_unique<Editor::LeftMouseClickEditModeCallBack>( editor, EditConstants::MouseLClickMode::Insert, &Surfaces->GetSurface( "mossy" ) ), insertItem.get(), gfx, editor->GetCellHoverHighlightColour( EditConstants::MouseLClickMode::Insert ) );
-	//std::unique_ptr<MenuItem> purpleStoneItem = std::make_unique<ImageMenuItem>( &Surfaces->GetSurface( "purplestone" ), 96, 96, std::make_unique<Editor::LeftMouseClickEditModeCallBack>( editor, EditConstants::MouseLClickMode::Insert, &Surfaces->GetSurface( "purplestone" ) ), insertItem.get(), gfx, editor->GetCellHoverHighlightColour( EditConstants::MouseLClickMode::Insert ) );
-	//std::unique_ptr<MenuItem> redBrickItem = std::make_unique<ImageMenuItem>( &Surfaces->GetSurface( "redbrick" ), 96, 96, std::make_unique<Editor::LeftMouseClickEditModeCallBack>( editor, EditConstants::MouseLClickMode::Insert, &Surfaces->GetSurface( "redbrick" ) ), insertItem.get(), gfx, editor->GetCellHoverHighlightColour( EditConstants::MouseLClickMode::Insert ) );
-	//std::unique_ptr<MenuItem> woodItem = std::make_unique<ImageMenuItem>( &Surfaces->GetSurface( "wood" ), 96, 96, std::make_unique<Editor::LeftMouseClickEditModeCallBack>( editor, EditConstants::MouseLClickMode::Insert, &Surfaces->GetSurface( "wood" ) ), insertItem.get(), gfx, editor->GetCellHoverHighlightColour( EditConstants::MouseLClickMode::Insert ) );
-	//insertItem->AddMenuItem( std::move( blueStoneItem ) );
-	//insertItem->AddMenuItem( std::move( colorStoneItem ) );
-	//insertItem->AddMenuItem( std::move( eagleItem ) );
-	//insertItem->AddMenuItem( std::move( greyStoneItem ) );
-	//insertItem->AddMenuItem( std::move( mossyItem ) );
-	//insertItem->AddMenuItem( std::move( purpleStoneItem ) );
-	//insertItem->AddMenuItem( std::move( redBrickItem ) );
-	//insertItem->AddMenuItem( std::move( woodItem ) );
-
 	std::unique_ptr<MenuItem> insertWallItem = std::make_unique<MenuItem>( "Wall", nullptr, insertItem.get(), menuFont, gfx, editor->GetCellHoverHighlightColour( EditConstants::MouseLClickMode::Insert ) );
+
 	std::unique_ptr<MenuItem> insertWallDarkItem = std::make_unique<MenuItem>( "Dark", nullptr, insertWallItem.get(), menuFont, gfx, editor->GetCellHoverHighlightColour( EditConstants::MouseLClickMode::Insert ) );
-	insertWallDarkItem->SetColumns( 3 );
-	std::unique_ptr<MenuItem> insertWallLightItem = std::make_unique<MenuItem>( "Light", nullptr, insertWallItem.get(), menuFont, gfx, editor->GetCellHoverHighlightColour( EditConstants::MouseLClickMode::Insert ) );
-	insertWallLightItem->SetColumns( 3 );
-
-	std::unique_ptr<MenuItem> wal00000Item = std::make_unique<ImageMenuItem>( &Surfaces->GetSurface( "wal00000" ), 96, 96, std::make_unique<Editor::LeftMouseClickEditModeCallBack>( editor, EditConstants::MouseLClickMode::Insert, &Surfaces->GetSurface( "wal00000" ) ), insertItem.get(), gfx, editor->GetCellHoverHighlightColour( EditConstants::MouseLClickMode::Insert ) );
-	insertWallLightItem->AddMenuItem( std::move( wal00000Item ) );
-	std::unique_ptr<MenuItem> wal00001Item = std::make_unique<ImageMenuItem>( &Surfaces->GetSurface( "wal00001" ), 96, 96, std::make_unique<Editor::LeftMouseClickEditModeCallBack>( editor, EditConstants::MouseLClickMode::Insert, &Surfaces->GetSurface( "wal00001" ) ), insertItem.get(), gfx, editor->GetCellHoverHighlightColour( EditConstants::MouseLClickMode::Insert ) );
-	insertWallDarkItem->AddMenuItem( std::move( wal00001Item ) );
-	std::unique_ptr<MenuItem> wal00002Item = std::make_unique<ImageMenuItem>( &Surfaces->GetSurface( "wal00002" ), 96, 96, std::make_unique<Editor::LeftMouseClickEditModeCallBack>( editor, EditConstants::MouseLClickMode::Insert, &Surfaces->GetSurface( "wal00002" ) ), insertItem.get(), gfx, editor->GetCellHoverHighlightColour( EditConstants::MouseLClickMode::Insert ) );
-	insertWallLightItem->AddMenuItem( std::move( wal00002Item ) );
-	std::unique_ptr<MenuItem> wal00003Item = std::make_unique<ImageMenuItem>( &Surfaces->GetSurface( "wal00003" ), 96, 96, std::make_unique<Editor::LeftMouseClickEditModeCallBack>( editor, EditConstants::MouseLClickMode::Insert, &Surfaces->GetSurface( "wal00003" ) ), insertItem.get(), gfx, editor->GetCellHoverHighlightColour( EditConstants::MouseLClickMode::Insert ) );
-	insertWallDarkItem->AddMenuItem( std::move( wal00003Item ) );
-
+	insertWallDarkItem->SetColumns( 10 );
+	FillTextureMenuItemSubMenu( insertWallDarkItem, editor, Settings::ReadMode::Texture_Wall_Dark );
 	insertWallItem->AddMenuItem( std::move( insertWallDarkItem ) );
+
+	std::unique_ptr<MenuItem> insertWallLightItem = std::make_unique<MenuItem>( "Light", nullptr, insertWallItem.get(), menuFont, gfx, editor->GetCellHoverHighlightColour( EditConstants::MouseLClickMode::Insert ) );
+	insertWallLightItem->SetColumns( 10 );
+	FillTextureMenuItemSubMenu( insertWallLightItem, editor, Settings::ReadMode::Texture_Wall_Light );
 	insertWallItem->AddMenuItem( std::move( insertWallLightItem ) );
+
 	insertItem->AddMenuItem( std::move( insertWallItem ) );
 	editMenu->AddMenuItem( std::move( insertItem ) );
 	
