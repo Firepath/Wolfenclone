@@ -25,7 +25,7 @@ public:
 		void Execute() const override;
 
 	private:
-		Editor * const _Editor;
+		Editor* const _Editor;
 		EditConstants::MouseLClickMode Mode;
 		const Surface* const _Surface;
 	};
