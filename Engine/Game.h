@@ -25,11 +25,9 @@
 #include "Graphics.h"
 
 #include "Editor.h"
-#include "FixtureRepository.h"
-#include "FontRepository.h"
 #include "Menu.h"
 #include "Settings.h"
-#include "SurfaceRepository.h"
+#include "StringKeyRepository.h"
 #include "Wall.h"
 
 class Game
@@ -60,10 +58,10 @@ private:
 	/********************************/
 	/*  User Variables              */
 	std::unique_ptr<Editor> _Editor = nullptr;
-	std::unique_ptr<SurfaceRepository> Surfaces = nullptr;
-	std::unique_ptr<FontRepository> Fonts = nullptr;
+	std::unique_ptr<StringKeyRepository<Surface>> Surfaces = nullptr;
+	std::unique_ptr<StringKeyRepository<Font>> Fonts = nullptr;
 	std::unique_ptr<MenuBar> MainMenuBar = nullptr;
-	std::unique_ptr<FixtureRepository> Fixtures = nullptr;
+	std::unique_ptr<StringKeyRepository<MapFixture>> Fixtures = nullptr;
 	Settings Settings;
 	/********************************/
 };

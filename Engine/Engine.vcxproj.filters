@@ -87,16 +87,10 @@
     <ClInclude Include="Font.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SurfaceRepository.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="FontRepository.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Settings.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="FixtureRepository.h">
+    <ClInclude Include="StringKeyRepository.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -140,13 +134,7 @@
     <ClCompile Include="Font.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SurfaceRepository.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Menu.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="FontRepository.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="PixelEffect.cpp">
@@ -156,9 +144,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="MapFixture.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="FixtureRepository.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

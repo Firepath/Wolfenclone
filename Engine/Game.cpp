@@ -30,9 +30,10 @@ Game::Game( MainWindow& wnd )
 {
 	_Editor = std::make_unique<Editor>();
 
-	Surfaces = std::make_unique<SurfaceRepository>();
-	Fonts = std::make_unique<FontRepository>();
-	Fixtures = std::make_unique<FixtureRepository>();
+	//Surfaces = std::make_unique<SurfaceRepository>();
+	Surfaces = std::make_unique<StringKeyRepository<Surface>>();
+	Fonts = std::make_unique<StringKeyRepository<Font>>();
+	Fixtures = std::make_unique<StringKeyRepository<MapFixture>>();
 
 	Settings.LoadSettings( "Settings\\Settings.txt" );
 	LoadTextures();
@@ -80,7 +81,7 @@ void Game::FillFixtureMenuItems( std::unique_ptr<MenuItem>& menuItem, Editor* co
 	auto& listFixtures = Settings.GetSettingList( fixtureContents );
 	for ( auto it = listFixtures.begin(); it != listFixtures.end(); it++ )
 	{
-		MapFixture* fixture = &(Fixtures->GetFixture( it->first ));
+		MapFixture* fixture = &(Fixtures->GetItem( it->first ));
 
 		std::unique_ptr<MenuItem> subMenuItem = std::make_unique<ImageMenuItem>( fixture->GetTexture(), 64, 64, std::make_unique<Editor::LeftMouseClickEditModeCallBack>( editor, EditConstants::MouseLClickMode::Insert, fixture ), menuItem.get(), gfx, editor->GetCellHoverHighlightColour( EditConstants::MouseLClickMode::Insert ) );
 		menuItem->AddMenuItem( std::move( subMenuItem ) );
@@ -89,7 +90,7 @@ void Game::FillFixtureMenuItems( std::unique_ptr<MenuItem>& menuItem, Editor* co
 
 void Game::LoadFonts()
 {
-	Fonts->AddFont( "Font_Fixedsys16x28", std::make_unique<Font>( Surfaces->GetSurface( "Font_Fixedsys16x28" ), Colors::White, 14, Colors::White ) );
+	Fonts->AddItem( "Font_Fixedsys16x28", std::make_unique<Font>( Surfaces->GetItem( "Font_Fixedsys16x28" ), Colors::White, 14, Colors::White ) );
 }
 
 void Game::LoadFixtures()
@@ -103,15 +104,15 @@ void Game::LoadFixtures( const Settings::ReadMode contents )
 	auto& listFixtures = Settings.GetSettingList( contents );
 	for ( auto it = listFixtures.begin(); it != listFixtures.end(); it++ )
 	{
-		const Surface* texture = &(Surfaces->GetSurface( it->first ));
+		const Surface* texture = &(Surfaces->GetItem( it->first ));
 		std::unique_ptr<MapFixture> wall = std::make_unique<Wall>( texture );
-		Fixtures->AddFixture( it->first, std::move( wall ) );
+		Fixtures->AddItem( it->first, std::move( wall ) );
 	}
 }
 
 void Game::LoadTextures()
 {
-	Surfaces->AddSurface( "Font_Fixedsys16x28", std::make_unique<Surface>( "Textures\\Fonts\\Fixedsys16x28.bmp" ) );
+	Surfaces->AddItem( "Font_Fixedsys16x28", std::make_unique<Surface>( "Textures\\Fonts\\Fixedsys16x28.bmp" ) );
 	LoadTextures( Settings::ReadMode::Texture_Wall_Dark );
 	LoadTextures( Settings::ReadMode::Texture_Wall_Light );
 }
@@ -121,13 +122,13 @@ void Game::LoadTextures( const Settings::ReadMode contents )
 	auto& listTextures = Settings.GetSettingList( contents );
 	for ( auto it = listTextures.begin(); it != listTextures.end(); it++ )
 	{
-		Surfaces->AddSurface( it->first, std::make_unique<Surface>( it->second ) );
+		Surfaces->AddItem( it->first, std::make_unique<Surface>( it->second ) );
 	}
 }
 
 void Game::SetupMenu()
 {
-	Font* menuFont = &Fonts->GetFont( "Font_Fixedsys16x28" );
+	Font* menuFont = &Fonts->GetItem( "Font_Fixedsys16x28" );
 	Editor* editor = _Editor.get();
 
 	MainMenuBar = std::make_unique<MenuBar>( Vei2( 0, 0 ), Vei2( Graphics::ScreenWidth, 10 ), gfx );
