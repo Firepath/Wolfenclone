@@ -62,6 +62,6 @@ private:
 	std::unique_ptr<StringKeyRepository<Font>> Fonts = nullptr;
 	std::unique_ptr<MenuBar> MainMenuBar = nullptr;
 	std::unique_ptr<StringKeyRepository<MapFixture>> Fixtures = nullptr;
-	Settings Settings;
+	std::unique_ptr<Settings> _Settings = nullptr;
 	/********************************/
 };

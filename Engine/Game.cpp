@@ -30,12 +30,12 @@ Game::Game( MainWindow& wnd )
 {
 	_Editor = std::make_unique<Editor>();
 
-	//Surfaces = std::make_unique<SurfaceRepository>();
+	_Settings = std::make_unique<Settings>();
 	Surfaces = std::make_unique<StringKeyRepository<Surface>>();
 	Fonts = std::make_unique<StringKeyRepository<Font>>();
 	Fixtures = std::make_unique<StringKeyRepository<MapFixture>>();
 
-	Settings.LoadSettings( "Settings\\Settings.txt" );
+	_Settings->LoadSettings( "Settings\\Settings.txt" );
 	LoadTextures();
 	LoadFonts();
 	LoadFixtures();
@@ -78,7 +78,7 @@ void Game::DoMouseEvents()
 
 void Game::FillFixtureMenuItems( std::unique_ptr<MenuItem>& menuItem, Editor* const editor, const Settings::ReadMode fixtureContents )
 {
-	auto& listFixtures = Settings.GetSettingList( fixtureContents );
+	auto& listFixtures = _Settings->GetSettingList( fixtureContents );
 	for ( auto it = listFixtures.begin(); it != listFixtures.end(); it++ )
 	{
 		MapFixture* fixture = &(Fixtures->GetItem( it->first ));
@@ -101,7 +101,7 @@ void Game::LoadFixtures()
 
 void Game::LoadFixtures( const Settings::ReadMode contents )
 {
-	auto& listFixtures = Settings.GetSettingList( contents );
+	auto& listFixtures = _Settings->GetSettingList( contents );
 	for ( auto it = listFixtures.begin(); it != listFixtures.end(); it++ )
 	{
 		const Surface* texture = &(Surfaces->GetItem( it->first ));
@@ -119,7 +119,7 @@ void Game::LoadTextures()
 
 void Game::LoadTextures( const Settings::ReadMode contents )
 {
-	auto& listTextures = Settings.GetSettingList( contents );
+	auto& listTextures = _Settings->GetSettingList( contents );
 	for ( auto it = listTextures.begin(); it != listTextures.end(); it++ )
 	{
 		Surfaces->AddItem( it->first, std::make_unique<Surface>( it->second ) );
