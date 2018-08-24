@@ -1,18 +1,19 @@
 #include "Editor.h"
+#include "MapFixture.h"
 #include "VectorExtensions.h"
 
-Editor::LeftMouseClickEditModeCallBack::LeftMouseClickEditModeCallBack( Editor* const editor, EditConstants::MouseLClickMode mode, const Surface* const surface )
+Editor::LeftMouseClickEditModeCallBack::LeftMouseClickEditModeCallBack( Editor* const editor, EditConstants::MouseLClickMode mode, const MapFixture* const fixture )
 	:
 	_Editor( editor ),
 	Mode( mode ),
-	_Surface( surface )
+	Fixture( fixture )
 {
 }
 
 void Editor::LeftMouseClickEditModeCallBack::Execute() const
 {
 	_Editor->SetMouseLClickMode( Mode );
-	_Editor->SetInsertSurface( _Surface );
+	_Editor->SetInsertFixture( Fixture );
 }
 
 Editor::Editor()
@@ -275,9 +276,9 @@ void Editor::MouseLPress( const Vei2& screenLocation )
 	switch ( GetMouseLClickMode() )
 	{
 	case EditConstants::MouseLClickMode::Insert:
-		if ( InsertSurface != nullptr )
+		if ( InsertFixture != nullptr )
 		{
-			MapGrid.Fill( gridLocation, InsertSurface );
+			MapGrid.Fill( gridLocation, InsertFixture );
 		}
 		break;
 	case EditConstants::MouseLClickMode::Select:
@@ -332,9 +333,9 @@ void Editor::SelectCell( const Vei2& gridLocation )
 	}
 }
 
-void Editor::SetInsertSurface( const Surface* const surface )
+void Editor::SetInsertFixture( const MapFixture* const fixture )
 {
-	InsertSurface = surface;
+	InsertFixture = fixture;
 }
 
 void Editor::SetMouseLClickMode( EditConstants::MouseLClickMode mode )

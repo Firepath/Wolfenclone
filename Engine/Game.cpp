@@ -32,10 +32,12 @@ Game::Game( MainWindow& wnd )
 
 	Surfaces = std::make_unique<SurfaceRepository>();
 	Fonts = std::make_unique<FontRepository>();
+	Fixtures = std::make_unique<FixtureRepository>();
 
 	Settings.LoadSettings( "Settings\\Settings.txt" );
 	LoadTextures();
 	LoadFonts();
+	LoadFixtures();
 	SetupMenu();
 }
 
@@ -73,14 +75,14 @@ void Game::DoMouseEvents()
 	}
 }
 
-void Game::FillTextureMenuItemSubMenu( std::unique_ptr<MenuItem>& menuItem, Editor* const editor, const Settings::ReadMode contents )
+void Game::FillFixtureMenuItems( std::unique_ptr<MenuItem>& menuItem, Editor* const editor, const Settings::ReadMode fixtureContents )
 {
-	auto& listTextures = Settings.GetSettingList( contents );
-	for ( auto it = listTextures.begin(); it != listTextures.end(); it++ )
+	auto& listFixtures = Settings.GetSettingList( fixtureContents );
+	for ( auto it = listFixtures.begin(); it != listFixtures.end(); it++ )
 	{
-		// TODO: Change this to use MapFixtures instead of straight Surface pointers for the callback
-		// TODO: Also - hard-coded size of images? Maybe OK...
-		std::unique_ptr<MenuItem> subMenuItem = std::make_unique<ImageMenuItem>( &Surfaces->GetSurface( it->first ), 64, 64, std::make_unique<Editor::LeftMouseClickEditModeCallBack>( editor, EditConstants::MouseLClickMode::Insert, &Surfaces->GetSurface( it->first ) ), menuItem.get(), gfx, editor->GetCellHoverHighlightColour( EditConstants::MouseLClickMode::Insert ) );
+		MapFixture* fixture = &(Fixtures->GetFixture( it->first ));
+
+		std::unique_ptr<MenuItem> subMenuItem = std::make_unique<ImageMenuItem>( fixture->GetTexture(), 64, 64, std::make_unique<Editor::LeftMouseClickEditModeCallBack>( editor, EditConstants::MouseLClickMode::Insert, fixture ), menuItem.get(), gfx, editor->GetCellHoverHighlightColour( EditConstants::MouseLClickMode::Insert ) );
 		menuItem->AddMenuItem( std::move( subMenuItem ) );
 	}
 }
@@ -88,6 +90,23 @@ void Game::FillTextureMenuItemSubMenu( std::unique_ptr<MenuItem>& menuItem, Edit
 void Game::LoadFonts()
 {
 	Fonts->AddFont( "Font_Fixedsys16x28", std::make_unique<Font>( Surfaces->GetSurface( "Font_Fixedsys16x28" ), Colors::White, 14, Colors::White ) );
+}
+
+void Game::LoadFixtures()
+{
+	LoadFixtures( Settings::ReadMode::Texture_Wall_Dark );
+	LoadFixtures( Settings::ReadMode::Texture_Wall_Light );
+}
+
+void Game::LoadFixtures( const Settings::ReadMode contents )
+{
+	auto& listFixtures = Settings.GetSettingList( contents );
+	for ( auto it = listFixtures.begin(); it != listFixtures.end(); it++ )
+	{
+		const Surface* texture = &(Surfaces->GetSurface( it->first ));
+		std::unique_ptr<MapFixture> wall = std::make_unique<Wall>( texture );
+		Fixtures->AddFixture( it->first, std::move( wall ) );
+	}
 }
 
 void Game::LoadTextures()
@@ -120,12 +139,12 @@ void Game::SetupMenu()
 
 	std::unique_ptr<MenuItem> insertWallDarkItem = std::make_unique<MenuItem>( "Dark", nullptr, insertWallItem.get(), menuFont, gfx, editor->GetCellHoverHighlightColour( EditConstants::MouseLClickMode::Insert ) );
 	insertWallDarkItem->SetColumns( 10 );
-	FillTextureMenuItemSubMenu( insertWallDarkItem, editor, Settings::ReadMode::Texture_Wall_Dark );
+	FillFixtureMenuItems( insertWallDarkItem, editor, Settings::ReadMode::Texture_Wall_Dark );
 	insertWallItem->AddMenuItem( std::move( insertWallDarkItem ) );
 
 	std::unique_ptr<MenuItem> insertWallLightItem = std::make_unique<MenuItem>( "Light", nullptr, insertWallItem.get(), menuFont, gfx, editor->GetCellHoverHighlightColour( EditConstants::MouseLClickMode::Insert ) );
 	insertWallLightItem->SetColumns( 10 );
-	FillTextureMenuItemSubMenu( insertWallLightItem, editor, Settings::ReadMode::Texture_Wall_Light );
+	FillFixtureMenuItems( insertWallLightItem, editor, Settings::ReadMode::Texture_Wall_Light );
 	insertWallItem->AddMenuItem( std::move( insertWallLightItem ) );
 
 	insertItem->AddMenuItem( std::move( insertWallItem ) );

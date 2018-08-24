@@ -73,7 +73,7 @@ void Grid::Draw( Graphics& gfx )
 	HighlightSelectedCells( gfx );
 }
 
-void Grid::Fill( const Vei2& gridLocation, const Surface* const surface )
+void Grid::Fill( const Vei2& gridLocation, const MapFixture* const fixture )
 {
 	assert( IsOnGrid( gridLocation ) );
 
@@ -85,7 +85,7 @@ void Grid::Fill( const Vei2& gridLocation, const Surface* const surface )
 		wasEmpty = false;
 	}
 
-	Cells->emplace( gridLocation, Cell( gridLocation, surface ) );
+	Cells->emplace( gridLocation, Cell( gridLocation, fixture ) );
 
 	Cell& cell = GetCell( gridLocation );
 	if ( wasEmpty )

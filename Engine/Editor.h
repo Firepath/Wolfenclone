@@ -12,7 +12,7 @@
 #include "Mouse.h"
 #include "Vec2.h"
 
-class Surface;
+class MapFixture;
 
 class Editor
 {
@@ -20,14 +20,14 @@ public:
 	class LeftMouseClickEditModeCallBack : public SelectedCallBack
 	{
 	public:
-		LeftMouseClickEditModeCallBack( Editor* const editor, EditConstants::MouseLClickMode mode, const Surface* const surface );
+		LeftMouseClickEditModeCallBack( Editor* const editor, EditConstants::MouseLClickMode mode, const MapFixture* const fixture );
 
 		void Execute() const override;
 
 	private:
 		Editor* const _Editor;
 		EditConstants::MouseLClickMode Mode;
-		const Surface* const _Surface;
+		const MapFixture* const Fixture;
 	};
 
 	struct MouseInfo
@@ -61,11 +61,10 @@ private:
 	void MouseLRelease();
 	void MouseRPress( const Vei2& screenLocation );
 	void SelectCell( const Vei2& gridLocation );
-	void SetInsertSurface( const Surface* const surface ); // will be changed to be a MapFixture eventually
+	void SetInsertFixture( const MapFixture* const fixture );
 	void SetMouseLClickMode( EditConstants::MouseLClickMode mode );
 
-	//Surface GreyWallSurface;// = Surface( "Textures\\greystone.bmp" );
-	const Surface* InsertSurface = nullptr;
+	const MapFixture* InsertFixture = nullptr;
 
 	EditConstants::MouseLClickMode MouseLClickMode = EditConstants::MouseLClickMode::None;
 	EditConstants::SelectionMode SelectionMode = EditConstants::SelectionMode::Rectangle;

@@ -14,6 +14,8 @@ public:
 		List_Files,
 		Texture_Wall_Dark,
 		Texture_Wall_Light,
+		Map_Fixture_Wall_Dark,
+		Map_Fixture_Wall_Light,
 		EnumOptionsCount // This is the size of the enum, don't add things after it
 	};
 
@@ -23,6 +25,8 @@ public:
 	static constexpr char ListFiles[] = "[List Files]";
 	static constexpr char TextureWallDark[] = "[Texture Wall Dark]";
 	static constexpr char TextureWallLight[] = "[Texture Wall Light]";
+	static constexpr char MapFixtureWallDark[] = "[Fixture Wall Dark]";
+	static constexpr char MapFixtureWallLight[] = "[Fixture Wall Light]";
 
 	Settings();
 

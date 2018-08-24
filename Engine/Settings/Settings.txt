@@ -1,3 +1,4 @@
 [List Files]
 '{List Name} {Relative File Path}
 Textures Settings\Textures.txt
+MapFixtures Settings\MapFixtures.txt

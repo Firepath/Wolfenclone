@@ -8,6 +8,8 @@ Settings::Settings()
 	SettingsLists[Settings::ListFiles] = std::make_unique<std::unordered_map<std::string, std::string, std::hash<std::string>>>();
 	SettingsLists[Settings::TextureWallDark] = std::make_unique<std::unordered_map<std::string, std::string, std::hash<std::string>>>();
 	SettingsLists[Settings::TextureWallLight] = std::make_unique<std::unordered_map<std::string, std::string, std::hash<std::string>>>();
+	SettingsLists[Settings::MapFixtureWallDark] = std::make_unique<std::unordered_map<std::string, std::string, std::hash<std::string>>>();
+	SettingsLists[Settings::MapFixtureWallLight] = std::make_unique<std::unordered_map<std::string, std::string, std::hash<std::string>>>();
 }
 
 const std::unordered_map<std::string, std::string, std::hash<std::string>>& Settings::GetSettingList( ReadMode mode )
@@ -78,12 +80,25 @@ void Settings::ReadSetting( const std::string& line )
 	case ReadMode::List_Files:
 	case ReadMode::Texture_Wall_Dark:
 	case ReadMode::Texture_Wall_Light:
+	{
 		size_t split = line.find( " " );
 		std::string name = line.substr( 0, split );
 		std::string filename = line.substr( split + 1, line.length() - split );
 
 		auto& list = *(SettingsLists.at( GetReadModeText( Mode ) ).get());
 		list[name] = filename;
+	}
+		break;
+	case ReadMode::Map_Fixture_Wall_Dark:
+	case ReadMode::Map_Fixture_Wall_Light:
+	{
+		size_t split = line.find( " " );
+		std::string name = line.substr( 0, split );
+		std::string textureName = line.substr( split + 1, line.length() - split );
+
+		auto& list = *(SettingsLists.at( GetReadModeText( Mode ) ).get());
+		list[name] = textureName;
+	}
 		break;
 	}
 }
@@ -100,6 +115,10 @@ std::string Settings::GetReadModeText( const ReadMode mode ) const
 		return Settings::TextureWallDark;
 	case ReadMode::Texture_Wall_Light:
 		return Settings::TextureWallLight;
+	case ReadMode::Map_Fixture_Wall_Dark:
+		return Settings::MapFixtureWallDark;
+	case ReadMode::Map_Fixture_Wall_Light:
+		return Settings::MapFixtureWallLight;
 	}
 
 	// Make sure we ALWAYS handle each mode's text.

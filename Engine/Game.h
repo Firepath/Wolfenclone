@@ -25,10 +25,12 @@
 #include "Graphics.h"
 
 #include "Editor.h"
+#include "FixtureRepository.h"
 #include "FontRepository.h"
 #include "Menu.h"
 #include "Settings.h"
 #include "SurfaceRepository.h"
+#include "Wall.h"
 
 class Game
 {
@@ -44,8 +46,10 @@ private:
 	/*  User Functions              */
 	void DoKeyboardEvents();
 	void DoMouseEvents();
-	void FillTextureMenuItemSubMenu( std::unique_ptr<MenuItem>& menuItem, Editor* const editor, const Settings::ReadMode contents );
+	void FillFixtureMenuItems( std::unique_ptr<MenuItem>& menuItem, Editor* const editor, const Settings::ReadMode fixtureContents );
 	void LoadFonts();
+	void LoadFixtures();
+	void LoadFixtures( const Settings::ReadMode contents );
 	void LoadTextures();
 	void LoadTextures( const Settings::ReadMode contents );
 	void SetupMenu();
@@ -59,6 +63,7 @@ private:
 	std::unique_ptr<SurfaceRepository> Surfaces = nullptr;
 	std::unique_ptr<FontRepository> Fonts = nullptr;
 	std::unique_ptr<MenuBar> MainMenuBar = nullptr;
+	std::unique_ptr<FixtureRepository> Fixtures = nullptr;
 	Settings Settings;
 	/********************************/
 };

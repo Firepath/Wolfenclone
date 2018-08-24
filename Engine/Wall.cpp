@@ -1,12 +1,6 @@
 #include "Wall.h"
 
-Wall::Wall( const Surface& texture )
-	:
-	Texture( texture )
+Wall::Wall( const Surface* const texture )
 {
-}
-
-const Surface& Wall::GetTexture() const
-{
-	return Texture;
+	SetTexture( texture );
 }
