@@ -197,10 +197,6 @@ void MenuItem::SetOpen( const bool open )
 		{
 			MenuItem& item = *(it->get());
 			item.SetVisible( false );
-			if ( item.IsOpen() )
-			{
-				item.SetOpen( false );
-			}
 		}
 	}
 }
@@ -216,6 +212,7 @@ void MenuItem::SetVisible( const bool visible )
 
 	if ( !IsVisible() )
 	{
+		SetHovering( false );
 		SetOpen( false );
 	}
 }
@@ -319,9 +316,17 @@ const Vei2 MenuItem::GetSubMenuSize() const
 	return Vei2( itemsWidth, itemsHeight );
 }
 
+const bool MenuItem::IsHovering()
+{
+	return Hovering;
+}
+
 const bool MenuItem::IsHovering( const Vei2 mouseLocation, const bool onlyCheckThisMenuItem )
 {
-	assert( IsVisible() );
+	if ( !IsVisible() )
+	{
+		return false;
+	}
 
 	Hovering = RectI( Location, GetSize().x, GetSize().y ).Contains( mouseLocation );
 
@@ -369,6 +374,11 @@ void MenuItem::ResetSubMenuItems( const Vei2 mousePos )
 	}
 }
 
+void MenuItem::SetHovering( bool hovering )
+{
+	Hovering = hovering;
+}
+
 void MenuItem::ShowMenu( const Vei2 location )
 {
 	assert( MenuItems.size() > 0 );
@@ -383,15 +393,31 @@ void MenuItem::ShowMenu( const Vei2 location )
 	std::unique_ptr<PixelEffect::Effect> boxEffect = std::make_unique<PixelEffect::Transparency>( Opacity );
 	_gfx.DrawBox( insideBox, BoxColour, boxEffect );
 
+	ShowSubMenu( location, boxEffect, false );
+	_gfx.DrawBoxBorder( border, insideBox, BorderColour, boxEffect );
+	ShowSubMenu( location, boxEffect, true );
+}
+
+void MenuItem::ShowSubMenu( const Vei2 location, std::unique_ptr<PixelEffect::Effect>& boxEffect, bool onlyHovering )
+{
 	size_t column = 0;
 	size_t currentRowHeight = 0;
 	Vei2 itemLocation = location;
 	int column0X = itemLocation.x;
 	for ( auto it = MenuItems.begin(); it != MenuItems.end(); it++ )
 	{
-		it->get()->Show( itemLocation, boxEffect );
+		MenuItem& item = *(it->get());
 
-		const Vei2 itemSize = it->get()->GetSize();
+		if ( onlyHovering == item.IsHovering() )
+		{
+			item.Show( itemLocation, boxEffect );
+			if ( onlyHovering )
+			{
+				break; // Should only be one...
+			}
+		}
+
+		const Vei2 itemSize = item.GetSize();
 		currentRowHeight = std::max( (int)currentRowHeight, itemSize.y );
 
 		itemLocation.x += itemSize.x;
@@ -406,8 +432,6 @@ void MenuItem::ShowMenu( const Vei2 location )
 			itemLocation.x = column0X;
 		}
 	}
-
-	_gfx.DrawBoxBorder( border, insideBox, BorderColour, boxEffect );
 }
 
 Menu::Menu( std::string text, const Font* const font, Graphics& gfx, const Color highlightColour )
@@ -609,15 +633,18 @@ void ImageMenuItem::Show( const Vei2 & location, std::unique_ptr<PixelEffect::Ef
 	Visible = true;
 
 	const RectI boxRect = RectI( location, (int)Width, (int)Height );
-	const RectI imageRect = boxRect.GetExpanded( -(int)BoxPadding );
 	_gfx.DrawBox( boxRect, BoxColour, effect );
 
 	if ( Image != nullptr )
 	{
-		if ( Hovering )
+		RectI imageRect = boxRect.GetExpanded( -(int)BoxPadding );
+
+		if ( IsHovering() )
 		{
+			const RectI highlightRect = boxRect.GetExpanded( std::max( (int)BoxPadding, boxRect.GetWidth() / 4 ) );
+			imageRect = highlightRect.GetExpanded( -(int)BoxPadding );
 			std::unique_ptr<PixelEffect::Effect> copy = std::make_unique<PixelEffect::Copy>();
-			_gfx.DrawBoxBorder( boxRect, imageRect, HighlightColour, copy );
+			_gfx.DrawBoxBorder( highlightRect, imageRect, HighlightColour, copy );
 		}
 
 		std::unique_ptr<PixelEffect::Effect> copy = std::make_unique<PixelEffect::Copy>();

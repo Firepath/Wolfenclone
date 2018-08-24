@@ -79,9 +79,12 @@ protected:
 	const RectI GetSubMenuArea() const;
 	virtual const Vei2 GetSubMenuLocation() const;
 	const Vei2 GetSubMenuSize() const;
+	const bool IsHovering();
 	const bool IsHovering( const Vei2 mouseLocation, const bool onlyCheckThisMenuItem );
 	void ResetSubMenuItems( const Vei2 mousePos );
+	void SetHovering( bool hovering );
 	void ShowMenu( const Vei2 location );
+	void ShowSubMenu( const Vei2 location, std::unique_ptr<PixelEffect::Effect>& boxEffect, bool onlyHovering );
 
 protected:
 	Color BorderColour = MenuItem::DefaultBorderColour;
@@ -97,7 +100,6 @@ protected:
 	size_t Width = MenuItem::DefaultMaxWidth;
 
 	Vei2 Location;
-	bool Hovering = false;
 	bool Open = false;
 	bool Visible = false;
 
@@ -110,6 +112,9 @@ protected:
 	std::vector<std::unique_ptr<MenuItem>> MenuItems;
 	size_t Columns = 1;
 	std::unique_ptr<SelectedCallBack> CallBack = nullptr;
+
+private:
+	bool Hovering = false;
 };
 
 class Menu : public MenuItem
