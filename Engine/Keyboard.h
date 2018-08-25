@@ -31,6 +31,7 @@ public:
 	public:
 		enum Type
 		{
+			Char,
 			Press,
 			Release,
 			Invalid
@@ -53,6 +54,10 @@ public:
 		bool IsHandled() const
 		{
 			return handled;
+		}
+		bool IsChar() const
+		{
+			return type == Char;
 		}
 		bool IsPress() const
 		{
@@ -93,7 +98,7 @@ public:
 private:
 	void OnKeyPressed( unsigned char keycode );
 	void OnKeyReleased( unsigned char keycode );
-	void OnChar( char character );
+	void OnChar( unsigned char character );
 	template<typename T>
 	void TrimBuffer( std::queue<T>& buffer );
 private:

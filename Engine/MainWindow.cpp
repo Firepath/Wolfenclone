@@ -148,10 +148,6 @@ LRESULT MainWindow::HandleMsg( HWND hWnd,UINT msg,WPARAM wParam,LPARAM lParam )
 		break;
 	case WM_CHAR:
 		kbd.OnChar( static_cast<unsigned char>(wParam) );
-		if ( !(lParam & 0x40000000) || kbd.AutorepeatIsEnabled() ) // no thank you on the autorepeat
-		{
-			kbd.OnKeyPressed( static_cast<unsigned char>(wParam) );
-		}
 		break;
 		// ************ END KEYBOARD MESSAGES ************ //
 

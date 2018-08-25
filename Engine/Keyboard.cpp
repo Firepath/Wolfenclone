@@ -108,9 +108,10 @@ void Keyboard::OnKeyReleased( unsigned char keycode )
 	TrimBuffer( keybuffer );
 }
 
-void Keyboard::OnChar( char character )
+void Keyboard::OnChar( unsigned char character )
 {
 	charbuffer.push( character );
+	keybuffer.push( Keyboard::Event( Keyboard::Event::Char, character ) );
 	TrimBuffer( charbuffer );
 }
 
