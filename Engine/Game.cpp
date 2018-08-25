@@ -152,7 +152,8 @@ void Game::SetupMenu()
 	editMenu->AddMenuItem( std::move( insertItem ) );
 	
 	editMenu->AddMenuItem( "Select", std::make_unique<Editor::LeftMouseClickEditModeCallBack>( editor, EditConstants::MouseLClickMode::Select, nullptr ), editor->GetCellHoverHighlightColour( EditConstants::MouseLClickMode::Select ) );
-	
+	editMenu->AddMenuItem( "Move", std::make_unique<Editor::LeftMouseClickEditModeCallBack>( editor, EditConstants::MouseLClickMode::Move, nullptr ), editor->GetCellHoverHighlightColour( EditConstants::MouseLClickMode::Move ) );
+
 	MainMenuBar->AddMenu( std::move( editMenu ) );
 }
 

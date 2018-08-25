@@ -28,3 +28,8 @@ const Vei2& Grid::Cell::GetLocation() const
 {
 	return Location;
 }
+
+void Grid::Cell::SetLocation( const Vei2& location )
+{
+	Location = location;
+}

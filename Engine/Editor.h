@@ -52,11 +52,13 @@ private:
 	void CycleMouseLClickMode();
 	void DisableSingleSelectionMode();
 	void DisableSelectionMode();
+	RectI GetSelectionRectangle( const Vei2& gridLocation ) const;
 	void EnableSingleSelectionMode();
 	void EnableSelectionMode();
 	const Color GetCellHoverHighlightColour() const;
 	const EditConstants::MouseLClickMode GetMouseLClickMode() const;
 	const EditConstants::SelectionMode GetSelectionMode() const;
+	void MouseLDrag( const Vei2& gridLocation );
 	void MouseLPress( const Vei2& screenLocation );
 	void MouseLRelease();
 	void MouseRPress( const Vei2& screenLocation );

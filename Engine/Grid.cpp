@@ -22,7 +22,7 @@ void Grid::ClearSelectedCells()
 	SelectedCells.clear();
 }
 
-void Grid::DeleteCell( const Vei2& gridLocation )
+void Grid::DeleteCell( const Vei2& gridLocation, const bool eraseSelection )
 {
 	if ( !IsOnGrid( gridLocation ) || !IsCellOccupied( gridLocation ) )
 	{
@@ -41,15 +41,17 @@ void Grid::DeleteCell( const Vei2& gridLocation )
 		ClearEnclosedCells( gridLocation );
 	}
 
-	auto newEnd = std::remove_if( SelectedCells.begin(), SelectedCells.end(), [this]( Vei2 gridLocation ) { return !IsCellOccupied( gridLocation ); } );
-	SelectedCells.erase( newEnd, SelectedCells.end() );
+	if ( eraseSelection )
+	{
+		EraseSelectedCell( gridLocation );
+	}
 }
 
 void Grid::DeleteSelectedCells()
 {
 	while ( SelectedCells.size() > 0 )
 	{
-		DeleteCell( SelectedCells.back() );
+		DeleteCell( SelectedCells.back(), true );
 	}
 }
 
@@ -63,7 +65,8 @@ void Grid::Draw( Graphics& gfx )
 	}
 
 	DrawEnclosedCells( screenLocation, gfx );
-	DrawCells( screenLocation, gfx );
+	DrawCells( gfx );
+	DrawMovingCells( screenLocation, gfx );
 
 	if ( DrawGridOverCells )
 	{
@@ -85,18 +88,7 @@ void Grid::Fill( const Vei2& gridLocation, const MapFixture* const fixture )
 		wasEmpty = false;
 	}
 
-	Cells->emplace( gridLocation, Cell( gridLocation, fixture ) );
-
-	Cell& cell = GetCell( gridLocation );
-	if ( wasEmpty )
-	{
-		CheckForClosingArea( gridLocation, wasEnclosed );
-	}
-
-	if ( wasEnclosed )
-	{
-		EraseEnclosedCell( gridLocation );
-	}
+	Fill( gridLocation, Cell( gridLocation, fixture ), wasEnclosed, wasEmpty );
 }
 
 Grid::Cell& Grid::GetCell( const Vei2& gridLocation ) const
@@ -104,6 +96,11 @@ Grid::Cell& Grid::GetCell( const Vei2& gridLocation ) const
 	assert( IsOnGrid( gridLocation ) );
 	assert( IsCellOccupied( gridLocation ) );
 	return Cells->at( gridLocation );
+}
+
+const bool Grid::HasSelectedCells() const
+{
+	return SelectedCells.size() > 0;
 }
 
 void Grid::HighlightCell( const Vei2& gridLocation, const Color highlightColour, const float highlightOpacity, const bool drawBorder, Graphics & gfx ) const
@@ -128,7 +125,7 @@ bool Grid::IsOnGrid( const Vei2& gridLocation ) const
 		gridLocation.x < Width && gridLocation.y < Height;
 }
 
-void Grid::Move( const Vec2 & delta )
+void Grid::Move( const Vec2& delta )
 {
 	Location += delta;
 }
@@ -141,12 +138,46 @@ const Vei2 Grid::ScreenToGrid( const Vei2& screenLocation ) const
 		return Vei2( -1, -1 );
 	}
 
-	const Vei2 gridLocation( (int)(gridLocationF.x / CellSize), (int)(gridLocationF.y / CellSize) );
+	const int x = (int)(gridLocationF.x / CellSize);
+	const int y = (int)(gridLocationF.y / CellSize);
+	if ( x >= (float)Width || y >= (float)Height )
+	{
+		return Vei2( Width, Height );
+	}
+
+	const Vei2 gridLocation( x, y );
 	return gridLocation;
+}
+
+void Grid::SetTemporaryMovedToMoved()
+{
+	if ( TemporarySelectedMovingCells.size() == 0 )
+	{
+		return;
+	}
+
+	for ( Cell& cell : TemporarySelectedMovingCells )
+	{
+		const Vei2& location = cell.GetLocation();
+		Fill( location, std::move( cell ), IsCellEnclosed( location ), true );
+	}
+
+	TemporarySelectedMovingCells.clear();
+
+	// If we were moving, and only moving one at a time, clear selection for convenience.
+	if ( SelectedCells.size() == 1 )
+	{
+		ClearSelectedCells();
+	}
 }
 
 void Grid::SetTemporarySelectedToSelected()
 {
+	if ( TemporarySelectedCells.size() == 0 )
+	{
+		return;
+	}
+
 	// Move temporary selection into "permanent" selection
 	for ( Vei2 location : TemporarySelectedCells )
 	{
@@ -161,6 +192,39 @@ void Grid::SetTemporarySelectedToSelected()
 	SelectedCells.erase( newEnd, SelectedCells.end() );
 
 	TemporarySelectedCells.clear();
+}
+
+void Grid::TemporaryMoveSelectedCells( const Vei2& gridDelta )
+{
+	assert( HasSelectedCells() );
+
+	const RectI extents = GetSelectedCellExtents();
+
+	const Vei2 delta( std::max( 0 - extents.left, std::min( Width - 1 - extents.right, gridDelta.x ) ), std::max( 0 - extents.top, std::min( Height - 1 - extents.bottom, gridDelta.y ) ) );
+	if ( delta.LenSq() == 0 )
+	{
+		return;
+	}
+
+	if ( TemporarySelectedMovingCells.size() == 0 )
+	{
+		for ( const Vei2& cell : SelectedCells )
+		{
+			// Move the selected cells into a temporary space
+			TemporarySelectedMovingCells.push_back( GetCell( cell ) );
+			DeleteCell( cell, false );
+		}
+	}
+
+	for ( Cell& cell : TemporarySelectedMovingCells )
+	{
+		cell.SetLocation( cell.GetLocation() + delta );
+	}
+
+	for ( Vei2& cell : SelectedCells )
+	{
+		cell += delta;
+	}
 }
 
 void Grid::TemporarySelectCell( const Vei2 & gridLocation )
@@ -215,6 +279,18 @@ void Grid::Zoom( const Vec2& zoomLocation, const bool zoomingIn )
 	Location += deltaLocation;
 }
 
+void Grid::CheckForClosingArea( const Vei2& gridLocation )
+{
+	if ( IsJointFormed( gridLocation ) )
+	{
+		// Fill the various potential enclosed directions
+		FillClosedArea( gridLocation + Vei2( -1, 0 ) );
+		FillClosedArea( gridLocation + Vei2( 1, 0 ) );
+		FillClosedArea( gridLocation + Vei2( 0, -1 ) );
+		FillClosedArea( gridLocation + Vei2( 0, 1 ) );
+	}
+}
+
 const bool Grid::CheckIfCellIsEnclosed( const Vei2& gridLocation ) const
 {
 	bool enclosed = FindWall( gridLocation, -1, 0 );
@@ -253,7 +329,10 @@ void Grid::ClearEnclosedCells( const Vei2& gridLocation )
 	{
 		const Vei2 location = toBeChecked->back();
 		toBeChecked->pop_back();
-		EraseEnclosedCell( location );
+		if ( IsCellEnclosed( location ) )
+		{
+			EraseEnclosedCell( location );
+		}
 		checked->emplace_back( location );
 
 		Vei2 left = location + Vei2( -1, 0 );
@@ -282,36 +361,15 @@ void Grid::ClearEnclosedCells( const Vei2& gridLocation )
 	}
 }
 
-void Grid::DrawCells( const Vei2& screenLocation, Graphics & gfx ) const
+void Grid::DrawCells( Graphics & gfx ) const
 {
-	for ( int j = 0; j < Height; j++ )
+	const RectI visibleGrid = GetVisibleGridCells();
+	for ( int x = visibleGrid.left; x <= visibleGrid.right; x++ )
 	{
-		const int y = screenLocation.y + (int)std::ceil( j * CellSize );
-		const int y1 = screenLocation.y + (int)std::ceil( (j + 1) * CellSize ) - 1;
-		if ( y1 < 0 )
+		for ( int y = visibleGrid.top; y <= visibleGrid.bottom; y++ )
 		{
-			continue;
-		}
-		else if ( y >= Graphics::ScreenHeight )
-		{
-			break;
-		}
-
-		for ( int i = 0; i < Width; i++ )
-		{
-			const int x = screenLocation.x + (int)std::ceil( i * CellSize );
-			const int x1 = screenLocation.x + (int)std::ceil( (i + 1) * CellSize ) - 1;
-			if ( x1 < 0 )
-			{
-				continue;
-			}
-			else if ( x >= Graphics::ScreenWidth )
-			{
-				break;
-			}
-
-			const Vei2 cellLocation( i, j );
-			if ( IsCellOccupied( cellLocation ) )
+			const Vei2 cellLocation( x, y );
+			if ( IsOnGrid( cellLocation ) && IsCellOccupied( cellLocation ) )
 			{
 				GetCell( cellLocation ).Draw( *this, gfx );
 			}
@@ -321,34 +379,13 @@ void Grid::DrawCells( const Vei2& screenLocation, Graphics & gfx ) const
 
 void Grid::DrawEnclosedCells( const Vei2& screenLocation, Graphics & gfx ) const
 {
-	for ( int j = 0; j < Height; j++ )
+	const RectI visibleGrid = GetVisibleGridCells();
+	for ( int x = visibleGrid.left; x <= visibleGrid.right; x++ )
 	{
-		const int y = screenLocation.y + (int)std::ceil( j * CellSize );
-		const int y1 = screenLocation.y + (int)std::ceil( (j + 1) * CellSize ) - 1;
-		if ( y1 < 0 )
+		for ( int y = visibleGrid.top; y <= visibleGrid.bottom; y++ )
 		{
-			continue;
-		}
-		else if ( y >= Graphics::ScreenHeight )
-		{
-			break;
-		}
-
-		for ( int i = 0; i < Width; i++ )
-		{
-			const int x = screenLocation.x + (int)std::ceil( i * CellSize );
-			const int x1 = screenLocation.x + (int)std::ceil( (i + 1) * CellSize ) - 1;
-			if ( x1 < 0 )
-			{
-				continue;
-			}
-			else if ( x >= Graphics::ScreenWidth )
-			{
-				break;
-			}
-
-			const Vei2 cellLocation( i, j );
-			if ( IsCellEnclosed( cellLocation ) )
+			const Vei2 cellLocation( x, y );
+			if ( IsOnGrid( cellLocation ) && IsCellEnclosed( cellLocation ) )
 			{
 				DrawEnclosedCell( screenLocation, cellLocation, gfx );
 			}
@@ -390,34 +427,48 @@ void Grid::DrawGrid( const Vei2 screenLocation, Graphics & gfx ) const
 	}
 }
 
-void Grid::EraseCell( const Vei2 & gridLocation )
+void Grid::DrawMovingCells( const Vei2 & screenLocation, Graphics & gfx ) const
 {
-	assert( IsOnGrid( gridLocation ) );
-
-	if ( IsCellOccupied( gridLocation ) )
+	for ( const Cell& cell : TemporarySelectedMovingCells )
 	{
-		Cells->erase( gridLocation );
+		cell.Draw( *this, gfx );
 	}
 }
 
-void Grid::EraseEnclosedCell( const Vei2 & gridLocation )
+void Grid::EraseCell( const Vei2& gridLocation )
 {
 	assert( IsOnGrid( gridLocation ) );
+	assert( IsCellOccupied( gridLocation ) );
 
-	if ( IsCellEnclosed( gridLocation ) )
-	{
-		EnclosedCells->erase( gridLocation );
-	}
+	Cells->erase( gridLocation );
 }
-void Grid::CheckForClosingArea( const Vei2 & gridLocation, const bool wasEnclosed )
+
+void Grid::EraseEnclosedCell( const Vei2& gridLocation )
 {
-	if ( !wasEnclosed && IsJointFormed( gridLocation ) )
+	assert( IsOnGrid( gridLocation ) );
+	assert( IsCellEnclosed( gridLocation ) );
+
+	EnclosedCells->erase( gridLocation );
+}
+
+void Grid::EraseSelectedCell( const Vei2& gridLocation )
+{
+	auto newEnd = std::remove_if( SelectedCells.begin(), SelectedCells.end(), [this, gridLocation]( Vei2 listLocation ) { return gridLocation == listLocation; } );
+	SelectedCells.erase( newEnd, SelectedCells.end() );
+}
+
+void Grid::Fill( const Vei2 & gridLocation, const Cell&& cell, const bool wasEnclosed, const bool checkForEnclosing )
+{
+	Cells->emplace( gridLocation, cell );
+
+	if ( checkForEnclosing && !wasEnclosed )
 	{
-		// Fill the various potential enclosed directions
-		FillClosedArea( gridLocation + Vei2( -1, 0 ) );
-		FillClosedArea( gridLocation + Vei2( 1, 0 ) );
-		FillClosedArea( gridLocation + Vei2( 0, -1 ) );
-		FillClosedArea( gridLocation + Vei2( 0, 1 ) );
+		CheckForClosingArea( gridLocation );
+	}
+
+	if ( wasEnclosed )
+	{
+		EraseEnclosedCell( gridLocation );
 	}
 }
 
@@ -435,12 +486,14 @@ const bool Grid::FillClosedArea( const Vei2& gridLocation )
 	std::unique_ptr<std::vector<Vei2>> toBeChecked = std::make_unique<std::vector<Vei2>>(); toBeChecked->reserve(Width * Height);
 	toBeChecked->emplace_back( gridLocation );
 
-	auto NeedsToBeChecked = [this]( const Vei2& location, std::unique_ptr<std::vector<Vei2>>& checked, std::unique_ptr<std::vector<Vei2>>& toBeChecked )
+	auto AddToListIfNeedsToBeChecked = [this]( const Vei2& location, std::unique_ptr<std::vector<Vei2>>& checked, std::unique_ptr<std::vector<Vei2>>& toBeChecked )
 	{
-		return
-			!IsCellOccupied( location ) && // Already a wall if not empty
+		if ( !IsCellOccupied( location ) && // Already a wall if not empty
 			!VectorExtension::Contains( checked, location ) && // Not already checked
-			!VectorExtension::Contains( toBeChecked, location ); // Not already in the list to be checked
+			!VectorExtension::Contains( toBeChecked, location ) ) // Not already in the list to be checked
+		{
+			toBeChecked->emplace_back( location );
+		}
 	};
 
 	bool closed = true;
@@ -453,29 +506,10 @@ const bool Grid::FillClosedArea( const Vei2& gridLocation )
 			enclosed->emplace_back( location );
 			checked->emplace_back( location );
 
-			Vei2 left = location + Vei2( -1, 0 );
-			if ( NeedsToBeChecked( left, checked, toBeChecked ) )
-			{
-				toBeChecked->emplace_back( left );
-			}
-
-			Vei2 right = location + Vei2( 1, 0 );
-			if ( NeedsToBeChecked( right, checked, toBeChecked ) )
-			{
-				toBeChecked->emplace_back( right );
-			}
-
-			Vei2 top = location + Vei2( 0, -1 );
-			if ( NeedsToBeChecked( top, checked, toBeChecked ) )
-			{
-				toBeChecked->emplace_back( top );
-			}
-
-			Vei2 bottom = location + Vei2( 0, 1 );
-			if ( NeedsToBeChecked( bottom, checked, toBeChecked ) )
-			{
-				toBeChecked->emplace_back( bottom );
-			}
+			AddToListIfNeedsToBeChecked( location + Vei2( -1, 0 ), checked, toBeChecked );
+			AddToListIfNeedsToBeChecked( location + Vei2( 1, 0 ), checked, toBeChecked );
+			AddToListIfNeedsToBeChecked( location + Vei2( 0, -1 ), checked, toBeChecked );
+			AddToListIfNeedsToBeChecked( location + Vei2( 0, 1 ), checked, toBeChecked );
 		}
 		else
 		{
@@ -495,7 +529,7 @@ const bool Grid::FillClosedArea( const Vei2& gridLocation )
 	return closed;
 }
 
-const bool Grid::FindWall( const Vei2 & gridLocation, const int xDirection, const int yDirection ) const
+const bool Grid::FindWall( const Vei2& gridLocation, const int xDirection, const int yDirection ) const
 {
 	// One of either direction must be zero and the other not zero
 	assert( xDirection != 0 && yDirection == 0 || yDirection != 0 && xDirection == 0 );
@@ -540,9 +574,31 @@ const Vei2 Grid::GetScreenLocation() const
 	return Vei2( (int)std::ceil( Location.x ), (int)std::ceil( Location.y ) );
 }
 
+const RectI Grid::GetSelectedCellExtents() const
+{
+	assert( SelectedCells.size() > 0 );
+
+	RectI extents( Width - 1, 0, Height - 1, 0 );
+
+	for ( auto cell : SelectedCells )
+	{
+		extents.left = std::min( cell.x, extents.left );
+		extents.right = std::max( cell.x, extents.right );
+		extents.top = std::min( cell.y, extents.top );
+		extents.bottom = std::max( cell.y, extents.bottom );
+	}
+
+	return extents;
+}
+
 const Vei2 Grid::GetSize() const
 {
 	return Vei2( Width, Height );
+}
+
+const RectI Grid::GetVisibleGridCells() const
+{
+	return RectI( ScreenToGrid( { 0, 0 } ), ScreenToGrid( { Graphics::ScreenWidth, Graphics::ScreenHeight } ) );
 }
 
 void Grid::HighlightSelectedCells( Graphics& gfx ) const

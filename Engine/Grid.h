@@ -24,6 +24,7 @@ public:
 
 		void Draw( const Grid& map, Graphics& gfx ) const;
 		const Vei2& GetLocation() const;
+		void SetLocation( const Vei2& location );
 
 	private:
 		const MapFixture* Fixture = nullptr;
@@ -35,16 +36,19 @@ public:
 	Grid( const int width, const int height, const Vec2& location );
 
 	void ClearSelectedCells();
-	void DeleteCell( const Vei2& gridLocation );
+	void DeleteCell( const Vei2& gridLocation, const bool eraseSelection );
 	void DeleteSelectedCells();
 	void Draw( Graphics& gfx );
 	void Fill( const Vei2& gridLocation, const MapFixture* const fixture );
 	Cell& GetCell( const Vei2& gridLocation ) const;
+	const bool HasSelectedCells() const;
 	void HighlightCell( const Vei2& gridLocation, const Color highlightColour, const float highlightOpacity, const bool drawBorder, Graphics& gfx ) const;
 	bool IsOnGrid( const Vei2& gridLocation ) const;
 	void Move( const Vec2& delta );
 	const Vei2 ScreenToGrid( const Vei2& screenLocation ) const;
+	void SetTemporaryMovedToMoved();
 	void SetTemporarySelectedToSelected();
+	void TemporaryMoveSelectedCells( const Vei2& gridDelta );
 	void TemporarySelectCell( const Vei2& gridLocation );
 	void TemporarySelectCellsInRectangle( const RectI& rect );
 	void ToggleGridDrawing();
@@ -60,20 +64,25 @@ private:
 	static constexpr float DefaultCellSize = 8.0f;
 	static constexpr float MinimumCellSize = 2.0f;
 
+	void CheckForClosingArea( const Vei2& gridLocation );
 	const bool CheckIfCellIsEnclosed( const Vei2& gridLocation ) const;
 	void ClearEnclosedCells( const Vei2& gridLocation );
-	void DrawCells( const Vei2& screenLocation, Graphics& gfx ) const;
+	void DrawCells( Graphics& gfx ) const;
 	void DrawEnclosedCells( const Vei2& screenLocation, Graphics& gfx ) const;
 	void DrawEnclosedCell( const Vei2& screenLocation, const Vei2& gridLocation, Graphics& gfx ) const;
 	void DrawGrid( const Vei2 screenLocation, Graphics& gfx ) const;
+	void DrawMovingCells( const Vei2& screenLocation, Graphics& gfx ) const;
 	void EraseCell( const Vei2& gridLocation );
 	void EraseEnclosedCell( const Vei2& gridLocation );
-	void CheckForClosingArea( const Vei2& gridLocation, const bool wasEnclosed );
+	void EraseSelectedCell( const Vei2& gridLocation );
+	void Fill( const Vei2& gridLocation, const Cell&& cell, const bool wasEnclosed, const bool checkForEnclosing );
 	const bool FillClosedArea( const Vei2& gridLocation );
 	const bool FindWall( const Vei2& gridLocation, const int xDirection, const int yDirection ) const;
 	const int GetCellBorderThickness() const;
 	const Vei2 GetScreenLocation() const;
+	const RectI GetSelectedCellExtents() const;
 	const Vei2 GetSize() const;
+	const RectI GetVisibleGridCells() const;
 	void HighlightSelectedCells( Graphics& gfx ) const;
 	const bool IsCellAlreadyEnclosed( const Vei2& gridLocation ) const;
 	const bool IsCellEnclosed( const Vei2& gridLocation ) const;
@@ -91,4 +100,5 @@ private:
 	std::unique_ptr<std::unordered_map<Vei2, bool, Vei2::Hasher>> EnclosedCells;
 	std::vector<Vei2> SelectedCells;
 	std::vector<Vei2> TemporarySelectedCells;
+	std::vector<Cell> TemporarySelectedMovingCells;
 };

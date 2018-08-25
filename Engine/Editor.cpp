@@ -13,7 +13,11 @@ Editor::LeftMouseClickEditModeCallBack::LeftMouseClickEditModeCallBack( Editor* 
 void Editor::LeftMouseClickEditModeCallBack::Execute() const
 {
 	_Editor->SetMouseLClickMode( Mode );
-	_Editor->SetInsertFixture( Fixture );
+
+	if ( _Editor->GetMouseLClickMode() == EditConstants::MouseLClickMode::Insert )
+	{
+		_Editor->SetInsertFixture( Fixture );
+	}
 }
 
 Editor::Editor()
@@ -35,11 +39,6 @@ void Editor::DoKeyboardEvents( Keyboard::Event& ke )
 	{
 		switch ( c )
 		{
-		case '`':
-		case '~':
-			MapGrid.ToggleGridDrawing();
-			ke.SetHandled( true );
-			break;
 		case VK_BACK:
 		case VK_DELETE:
 			MapGrid.DeleteSelectedCells();
@@ -60,6 +59,19 @@ void Editor::DoKeyboardEvents( Keyboard::Event& ke )
 		case VK_TAB:
 			CycleMouseLClickMode();
 			ke.SetHandled( true );
+		default:
+			break;
+		}
+	}
+	else if ( ke.IsChar() )
+	{
+		switch ( c )
+		{
+		case '`':
+		case '~':
+			MapGrid.ToggleGridDrawing();
+			ke.SetHandled( true );
+			break;
 		default:
 			break;
 		}
@@ -111,6 +123,10 @@ void Editor::DoMouseEvents( Mouse::Event& me )
 		if ( me.LeftIsPressed() )
 		{
 			MouseLPress( mousePos );
+			if ( GetMouseLClickMode() == EditConstants::MouseLClickMode::Move )
+			{
+				MouseLDrag( MouseInf.HoverGridLocation );
+			}
 			me.SetHandled( true );
 		}
 
@@ -170,6 +186,9 @@ const Color Editor::GetCellHoverHighlightColour( const EditConstants::MouseLClic
 	case EditConstants::MouseLClickMode::Select:
 		colour = EditConstants::CellSelection::SelectModeHoverColour;
 		break;
+	case EditConstants::MouseLClickMode::Move:
+		colour = EditConstants::CellSelection::MoveModeHoverColour;
+		break;
 	default:
 		break;
 	}
@@ -201,6 +220,15 @@ void Editor::DisableSelectionMode()
 	}
 
 	SelectionModeOverride = false;
+}
+
+RectI Editor::GetSelectionRectangle( const Vei2& gridLocation ) const
+{
+	Vei2 startLocation = MouseInf.LMouseButtonGridLocationAtLPress;
+	Vei2 topLeft( std::min( startLocation.x, gridLocation.x ), std::min( startLocation.y, gridLocation.y ) );
+	Vei2 bottomRight( std::max( startLocation.x, gridLocation.x ), std::max( startLocation.y, gridLocation.y ) );
+
+	return RectI( topLeft, bottomRight );
 }
 
 void Editor::EnableSingleSelectionMode()
@@ -246,6 +274,36 @@ const EditConstants::SelectionMode Editor::GetSelectionMode() const
 	return SelectionMode;
 }
 
+void Editor::MouseLDrag( const Vei2 & gridLocation )
+{
+	if ( !MapGrid.IsOnGrid( gridLocation ) )
+	{
+		return;
+	}
+
+	switch ( MouseLClickMode )
+	{
+	case EditConstants::MouseLClickMode::Move:
+	{
+		if ( !MapGrid.HasSelectedCells() )
+		{
+			return;
+		}
+
+		const Vei2 delta = gridLocation - MouseInf.LMouseButtonGridLocationAtLPress;
+		if ( delta.LenSq() == 0 )
+		{
+			return;
+		}
+
+		MapGrid.TemporaryMoveSelectedCells( delta );
+		MouseInf.LMouseButtonGridLocationAtLPress = gridLocation;
+	}
+	default:
+		break;
+	}
+}
+
 void Editor::MouseLPress( const Vei2& screenLocation )
 {
 	const Vei2 gridLocation = MapGrid.ScreenToGrid( screenLocation );
@@ -267,7 +325,7 @@ void Editor::MouseLPress( const Vei2& screenLocation )
 		// Set this location only when first pressing the left mouse button down (start press location)
 		MouseInf.LMouseButtonGridLocationAtLPress = gridLocation;
 
-		if ( !AppendSelection )
+		if ( !AppendSelection && (MouseLClickMode != EditConstants::MouseLClickMode::Move || SelectionModeOverride) )
 		{
 			MapGrid.ClearSelectedCells();
 		}
@@ -284,6 +342,12 @@ void Editor::MouseLPress( const Vei2& screenLocation )
 	case EditConstants::MouseLClickMode::Select:
 		SelectCell( gridLocation );
 		break;
+	case EditConstants::MouseLClickMode::Move:
+		if ( !MapGrid.HasSelectedCells() )
+		{
+			SelectCell( gridLocation );
+		}
+		break;
 	default:
 		break;
 	}
@@ -295,11 +359,12 @@ void Editor::MouseLRelease()
 	MouseInf.LMouseButtonGridLocationAtLPress = Vei2( -1, -1 );
 
 	MapGrid.SetTemporarySelectedToSelected();
+	MapGrid.SetTemporaryMovedToMoved();
 }
 
 void Editor::MouseRPress( const Vei2 & screenLocation )
 {
-	MapGrid.DeleteCell( MapGrid.ScreenToGrid( screenLocation ) );
+	MapGrid.DeleteCell( MapGrid.ScreenToGrid( screenLocation ), true );
 }
 
 void Editor::SelectCell( const Vei2& gridLocation )
@@ -313,16 +378,14 @@ void Editor::SelectCell( const Vei2& gridLocation )
 	{
 	case EditConstants::SelectionMode::Rectangle:
 	{
-		Vei2 startLocation = MouseInf.LMouseButtonGridLocationAtLPress;
-		if ( !MapGrid.IsOnGrid( startLocation ) )
+		if ( !MapGrid.IsOnGrid( MouseInf.LMouseButtonGridLocationAtLPress ) )
 		{
 			return;
 		}
 
-		Vei2 topLeft( std::min( startLocation.x, gridLocation.x ), std::min( startLocation.y, gridLocation.y ) );
-		Vei2 bottomRight( std::max( startLocation.x, gridLocation.x ), std::max( startLocation.y, gridLocation.y ) );
+		const RectI rectangle = GetSelectionRectangle( gridLocation );
 
-		MapGrid.TemporarySelectCellsInRectangle( RectI( topLeft, bottomRight ) );
+		MapGrid.TemporarySelectCellsInRectangle( rectangle );
 	}
 		break;
 	case EditConstants::SelectionMode::Single:
@@ -330,6 +393,11 @@ void Editor::SelectCell( const Vei2& gridLocation )
 		break;
 	default:
 		break;
+	}
+
+	if ( GetMouseLClickMode() == EditConstants::MouseLClickMode::Move )
+	{
+		MapGrid.SetTemporarySelectedToSelected();
 	}
 }
 
