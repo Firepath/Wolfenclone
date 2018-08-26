@@ -21,6 +21,7 @@
 #include "MainWindow.h"
 #include "Game.h"
 
+#include "EditTool.h"
 #include "Font.h"
 
 Game::Game( MainWindow& wnd )
@@ -78,12 +79,13 @@ void Game::DoMouseEvents()
 
 void Game::FillFixtureMenuItems( std::unique_ptr<MenuItem>& menuItem, Editor* const editor, const Settings::ReadMode fixtureContents )
 {
+	EditTool_MouseButton* tool = editor->GetToolBox().GetMouseButtonTool( EditTool_MouseButton_Insert::TypeName );
 	auto& listFixtures = _Settings->GetSettingList( fixtureContents );
 	for ( auto it = listFixtures.begin(); it != listFixtures.end(); it++ )
 	{
 		MapFixture* fixture = &(Fixtures->GetItem( it->first ));
 
-		std::unique_ptr<MenuItem> subMenuItem = std::make_unique<ImageMenuItem>( fixture->GetTexture(), 64, 64, std::make_unique<Editor::LeftMouseClickEditModeCallBack>( editor, EditConstants::MouseLClickMode::Insert, fixture ), menuItem.get(), gfx, editor->GetCellHoverHighlightColour( EditConstants::MouseLClickMode::Insert ) );
+		std::unique_ptr<MenuItem> subMenuItem = std::make_unique<ImageMenuItem>( fixture->GetTexture(), 64, 64, std::make_unique<Editor::EditTool_MouseButton_InsertLCallBack>( editor, tool, fixture ), menuItem.get(), gfx, tool->GetToolColour() );
 		menuItem->AddMenuItem( std::move( subMenuItem ) );
 	}
 }
@@ -134,16 +136,20 @@ void Game::SetupMenu()
 	MainMenuBar = std::make_unique<MenuBar>( Vei2( 0, 0 ), Vei2( Graphics::ScreenWidth, 10 ), gfx );
 	
 	std::unique_ptr<MenuItem> editMenu = std::make_unique<Menu>( "Edit", menuFont, gfx );
-	editMenu->AddMenuItem( "None", std::make_unique<Editor::LeftMouseClickEditModeCallBack>( editor, EditConstants::MouseLClickMode::None, nullptr ), editor->GetCellHoverHighlightColour( EditConstants::MouseLClickMode::None ) );
-	std::unique_ptr<MenuItem> insertItem = std::make_unique<MenuItem>( "Insert", nullptr, editMenu.get(), menuFont, gfx, editor->GetCellHoverHighlightColour( EditConstants::MouseLClickMode::Insert ) );
-	std::unique_ptr<MenuItem> insertWallItem = std::make_unique<MenuItem>( "Wall", nullptr, insertItem.get(), menuFont, gfx, editor->GetCellHoverHighlightColour( EditConstants::MouseLClickMode::Insert ) );
 
-	std::unique_ptr<MenuItem> insertWallDarkItem = std::make_unique<MenuItem>( "Dark", nullptr, insertWallItem.get(), menuFont, gfx, editor->GetCellHoverHighlightColour( EditConstants::MouseLClickMode::Insert ) );
+	EditTool_MouseButton* noneTool = editor->GetToolBox().GetMouseButtonTool( EditTool_MouseButton_None::TypeName );
+	editMenu->AddMenuItem( "None", std::make_unique<Editor::EditTool_MouseButtonLCallBack>( editor, noneTool ), noneTool->GetToolColour() );
+
+	Color insertToolColour = editor->GetToolBox().GetMouseButtonTool( EditTool_MouseButton_Insert::TypeName )->GetToolColour();
+	std::unique_ptr<MenuItem> insertItem = std::make_unique<MenuItem>( "Insert", nullptr, editMenu.get(), menuFont, gfx, insertToolColour );
+	std::unique_ptr<MenuItem> insertWallItem = std::make_unique<MenuItem>( "Wall", nullptr, insertItem.get(), menuFont, gfx, insertToolColour );
+
+	std::unique_ptr<MenuItem> insertWallDarkItem = std::make_unique<MenuItem>( "Dark", nullptr, insertWallItem.get(), menuFont, gfx, insertToolColour );
 	insertWallDarkItem->SetColumns( 10 );
 	FillFixtureMenuItems( insertWallDarkItem, editor, Settings::ReadMode::Texture_Wall_Dark );
 	insertWallItem->AddMenuItem( std::move( insertWallDarkItem ) );
 
-	std::unique_ptr<MenuItem> insertWallLightItem = std::make_unique<MenuItem>( "Light", nullptr, insertWallItem.get(), menuFont, gfx, editor->GetCellHoverHighlightColour( EditConstants::MouseLClickMode::Insert ) );
+	std::unique_ptr<MenuItem> insertWallLightItem = std::make_unique<MenuItem>( "Light", nullptr, insertWallItem.get(), menuFont, gfx, insertToolColour );
 	insertWallLightItem->SetColumns( 10 );
 	FillFixtureMenuItems( insertWallLightItem, editor, Settings::ReadMode::Texture_Wall_Light );
 	insertWallItem->AddMenuItem( std::move( insertWallLightItem ) );
@@ -151,8 +157,12 @@ void Game::SetupMenu()
 	insertItem->AddMenuItem( std::move( insertWallItem ) );
 	editMenu->AddMenuItem( std::move( insertItem ) );
 	
-	editMenu->AddMenuItem( "Select", std::make_unique<Editor::LeftMouseClickEditModeCallBack>( editor, EditConstants::MouseLClickMode::Select, nullptr ), editor->GetCellHoverHighlightColour( EditConstants::MouseLClickMode::Select ) );
-	editMenu->AddMenuItem( "Move", std::make_unique<Editor::LeftMouseClickEditModeCallBack>( editor, EditConstants::MouseLClickMode::Move, nullptr ), editor->GetCellHoverHighlightColour( EditConstants::MouseLClickMode::Move ) );
+	EditTool_MouseButton* selectTool = editor->GetToolBox().GetMouseButtonTool( EditTool_MouseButton_Select::TypeName );
+	editMenu->AddMenuItem( "Select", std::make_unique<Editor::EditTool_MouseButtonLCallBack>( editor, selectTool ), selectTool->GetToolColour() );
+
+	EditTool_MouseButton* moveTool = editor->GetToolBox().GetMouseButtonTool( EditTool_MouseButton_Move::TypeName );
+	std::unique_ptr<SelectedCallBack> moveCallBack = std::make_unique<Editor::EditTool_MouseButtonLCallBack>( editor, moveTool );
+	editMenu->AddMenuItem( "Move", std::move( moveCallBack ), moveTool->GetToolColour() );
 
 	MainMenuBar->AddMenu( std::move( editMenu ) );
 }

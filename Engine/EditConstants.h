@@ -11,7 +11,7 @@ namespace EditConstants
 		static constexpr Color CellEnclosedPlayableAreaColour = Colors::DarkBlue;
 	};
 
-	class CellSelection
+	class CellEditing
 	{
 	public:
 		static constexpr Color InactiveModeHoverColour = Colors::MediumGray;
@@ -28,11 +28,5 @@ namespace EditConstants
 		Insert,
 		Move,
 		EnumOptionsCount // This is the size of the enum, don't add things after it
-	};
-
-	enum class SelectionMode
-	{
-		Rectangle,
-		Single
 	};
 }

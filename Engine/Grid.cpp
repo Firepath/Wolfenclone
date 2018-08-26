@@ -605,7 +605,7 @@ void Grid::HighlightSelectedCells( Graphics& gfx ) const
 {
 	for ( Vei2 gridLocation : SelectedCells )
 	{
-		HighlightCell( gridLocation, EditConstants::CellSelection::SelectModeHoverColour, EditConstants::CellSelection::CellHoverOpacity, true, gfx );
+		HighlightCell( gridLocation, EditConstants::CellEditing::SelectModeHoverColour, EditConstants::CellEditing::CellHoverOpacity, true, gfx );
 	}
 
 	Vei2 topLeft = GetSize();
@@ -614,7 +614,7 @@ void Grid::HighlightSelectedCells( Graphics& gfx ) const
 	{
 		if ( !VectorExtension::Contains( SelectedCells, gridLocation ) ) // Already drawn (above)
 		{
-			HighlightCell( gridLocation, EditConstants::CellSelection::SelectModeHoverColour, EditConstants::CellSelection::CellHoverOpacity, false, gfx );
+			HighlightCell( gridLocation, EditConstants::CellEditing::SelectModeHoverColour, EditConstants::CellEditing::CellHoverOpacity, false, gfx );
 		}
 
 		if ( gridLocation.x < topLeft.x ) { topLeft.x = gridLocation.x; }
@@ -629,8 +629,8 @@ void Grid::HighlightSelectedCells( Graphics& gfx ) const
 		topLeft = (Vei2)((Vec2)topLeft * CellSize) + gridLocation;
 		bottomRight = (Vei2)((Vec2)(bottomRight + Vei2( 1, 1 )) * CellSize) + gridLocation;
 
-		std::unique_ptr<PixelEffect::Effect> effect = std::make_unique<PixelEffect::Transparency>( EditConstants::CellSelection::CellHoverOpacity );
-		gfx.DrawBoxBorder( RectI( topLeft, bottomRight ), EditConstants::CellSelection::SelectModeHoverColour, effect, GetCellBorderThickness() );
+		std::unique_ptr<PixelEffect::Effect> effect = std::make_unique<PixelEffect::Transparency>( EditConstants::CellEditing::CellHoverOpacity );
+		gfx.DrawBoxBorder( RectI( topLeft, bottomRight ), EditConstants::CellEditing::SelectModeHoverColour, effect, GetCellBorderThickness() );
 	}
 }
 

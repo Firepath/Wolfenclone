@@ -93,6 +93,9 @@
     <ClInclude Include="StringKeyRepository.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="EditTool.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DXErr.cpp">
@@ -144,6 +147,24 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="MapFixture.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="EditTool_MouseButton_None.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="EditTool_MouseButton_Move.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="EditTool_MouseButton_Select.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="EditTool_MouseButton_Insert.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="EditToolBox.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="EditTool.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

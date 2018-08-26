@@ -1,29 +1,30 @@
+#include "EditTool.h"
 #include "Editor.h"
-#include "MapFixture.h"
 #include "VectorExtensions.h"
 
-Editor::LeftMouseClickEditModeCallBack::LeftMouseClickEditModeCallBack( Editor* const editor, EditConstants::MouseLClickMode mode, const MapFixture* const fixture )
-	:
-	_Editor( editor ),
-	Mode( mode ),
-	Fixture( fixture )
+void Editor::EditTool_MouseButtonLCallBack::Execute() const
 {
+	GetEditor()->SetMouseLButtonTool( GetTool() );
 }
 
-void Editor::LeftMouseClickEditModeCallBack::Execute() const
+Editor* Editor::EditTool_MouseButtonCallBack::GetEditor() const
 {
-	_Editor->SetMouseLClickMode( Mode );
+	return _Editor;
+}
 
-	if ( _Editor->GetMouseLClickMode() == EditConstants::MouseLClickMode::Insert )
-	{
-		_Editor->SetInsertFixture( Fixture );
-	}
+EditTool_MouseButton* Editor::EditTool_MouseButtonCallBack::GetTool() const
+{
+	return Tool;
 }
 
 Editor::Editor()
 	:
 	MapGrid( 256, 256, Vec2( 0.0f, 0.0f ) )
 {
+	ToolBox = std::make_unique<EditToolBox>();
+	ToolBox->SetupTools( this );
+
+	MouseLButtonTool = ToolBox->GetMouseButtonTool( EditTool_MouseButton_None::TypeName );
 }
 
 void Editor::DoKeyboardEvents( Keyboard::Event& ke )
@@ -37,15 +38,12 @@ void Editor::DoKeyboardEvents( Keyboard::Event& ke )
 	const unsigned char c = ke.GetCode();
 	if ( ke.IsPress() )
 	{
+		SetControlKeys( c, true );
 		switch ( c )
 		{
 		case VK_BACK:
 		case VK_DELETE:
 			MapGrid.DeleteSelectedCells();
-			ke.SetHandled( true );
-			break;
-		case VK_CONTROL:
-			EnableSingleSelectionMode();
 			ke.SetHandled( true );
 			break;
 		case VK_ESCAPE:
@@ -78,19 +76,7 @@ void Editor::DoKeyboardEvents( Keyboard::Event& ke )
 	}
 	else if ( ke.IsRelease() )
 	{
-		switch ( c )
-		{
-		case VK_CONTROL:
-			DisableSingleSelectionMode();
-			ke.SetHandled( true );
-			break;
-		case VK_SHIFT:
-			DisableSelectionMode();
-			ke.SetHandled( true );
-			break;
-		default:
-			break;
-		}
+		SetControlKeys( c, false );
 	}
 }
 
@@ -107,56 +93,23 @@ void Editor::DoMouseEvents( Mouse::Event& me )
 	switch ( meType )
 	{
 	case Mouse::Event::Type::LPress:
-		MouseLPress( me.GetPos() );
-		me.SetHandled( true );
+		MouseLPress( me );
 		break;
 	case Mouse::Event::Type::LRelease:
-		MouseLRelease();
-		me.SetHandled( true );
+		MouseLRelease( me );
 		break;
 	case Mouse::Event::Type::Move:
-	{
-		const Vei2 mousePos = me.GetPos();
-
-		MouseInf.HoverGridLocation = MapGrid.ScreenToGrid( mousePos );
-
-		if ( me.LeftIsPressed() )
-		{
-			MouseLPress( mousePos );
-			if ( GetMouseLClickMode() == EditConstants::MouseLClickMode::Move )
-			{
-				MouseLDrag( MouseInf.HoverGridLocation );
-			}
-			me.SetHandled( true );
-		}
-
-		if ( me.MiddleIsPressed() )
-		{
-			const Vei2 delta = mousePos - MouseInf.MMouseButtonLocation;
-			MouseInf.MMouseButtonLocation = mousePos;
-			MapGrid.Move( (Vec2)delta );
-			me.SetHandled( true );
-		}
-
-		if ( me.RightIsPressed() )
-		{
-			MouseRPress( mousePos );
-			me.SetHandled( true );
-		}
-	}
-	break;
+		MouseMove( me );
+		break;
 	case Mouse::Event::Type::MPress:
-		MouseInf.MMouseButtonLocation = me.GetPos();
-		me.SetHandled( true );
+		MouseMPress( me );
 		break;
 	case Mouse::Event::Type::RPress:
-		MouseRPress( me.GetPos() );
-		me.SetHandled( true );
+		MouseRPress( me );
 		break;
 	case Mouse::Event::Type::WheelUp:
 	case Mouse::Event::Type::WheelDown:
-		MapGrid.Zoom( (Vec2)me.GetPos(), meType == Mouse::Event::Type::WheelUp );
-		me.SetHandled( true );
+		MouseWheel( me );
 		break;
 	default:
 		break;
@@ -170,56 +123,23 @@ void Editor::Draw( Graphics& gfx )
 	// Highlight currently-hovered cell
 	if ( MapGrid.IsOnGrid( MouseInf.HoverGridLocation ) )
 	{
-		MapGrid.HighlightCell( MouseInf.HoverGridLocation, GetCellHoverHighlightColour(), EditConstants::CellSelection::CellHoverOpacity, true, gfx );
+		MapGrid.HighlightCell( MouseInf.HoverGridLocation, MouseLButtonTool->GetToolColour(), EditConstants::CellEditing::CellHoverOpacity, true, gfx );
 	}
 }
 
-const Color Editor::GetCellHoverHighlightColour( const EditConstants::MouseLClickMode mode ) const
+const bool Editor::GetControlModeEnabled() const
 {
-	Color colour = EditConstants::CellSelection::InactiveModeHoverColour;
-
-	switch ( mode )
-	{
-	case EditConstants::MouseLClickMode::Insert:
-		colour = EditConstants::CellSelection::InsertModeHoverColour;
-		break;
-	case EditConstants::MouseLClickMode::Select:
-		colour = EditConstants::CellSelection::SelectModeHoverColour;
-		break;
-	case EditConstants::MouseLClickMode::Move:
-		colour = EditConstants::CellSelection::MoveModeHoverColour;
-		break;
-	default:
-		break;
-	}
-
-	return colour;
+	return ControlModeEnabled;
 }
 
-void Editor::CycleMouseLClickMode()
+Grid& Editor::GetMapGrid()
 {
-	if ( SelectionModeOverride )
-	{
-		// Don't cycle through while we're in forced selection mode, or the user could get confused.
-		return;
-	}
-
-	MouseLClickMode = (EditConstants::MouseLClickMode)(((int)MouseLClickMode + 1) % (int)EditConstants::MouseLClickMode::EnumOptionsCount);
+	return MapGrid;
 }
 
-void Editor::DisableSingleSelectionMode()
+Editor::MouseInfo& Editor::GetMouseInfo()
 {
-	SelectionMode = EditConstants::SelectionMode::Rectangle;
-}
-
-void Editor::DisableSelectionMode()
-{
-	if ( MouseLClickMode == EditConstants::MouseLClickMode::Select ) // Already in select mode, this can toggle appending
-	{
-		AppendSelection = false;
-	}
-
-	SelectionModeOverride = false;
+	return MouseInf;
 }
 
 RectI Editor::GetSelectionRectangle( const Vei2& gridLocation ) const
@@ -231,9 +151,58 @@ RectI Editor::GetSelectionRectangle( const Vei2& gridLocation ) const
 	return RectI( topLeft, bottomRight );
 }
 
-void Editor::EnableSingleSelectionMode()
+const bool Editor::GetShiftModeEnabled() const
 {
-	SelectionMode = EditConstants::SelectionMode::Single;
+	return ShiftModeEnabled;
+}
+
+const EditToolBox & Editor::GetToolBox() const
+{
+	return *ToolBox;
+}
+
+void Editor::CycleMouseLClickMode()
+{
+	if ( GetShiftModeEnabled() )
+	{
+		// Don't cycle through while we're in forced selection mode, or the user could get confused.
+		return;
+	}
+
+	if ( MouseLButtonToolSelectionOverrideParked != nullptr )
+	{
+		DisableSelectionMode();
+		return;
+	}
+
+	MouseLClickMode = (EditConstants::MouseLClickMode)(((int)MouseLClickMode + 1) % (int)EditConstants::MouseLClickMode::EnumOptionsCount);
+
+	switch ( MouseLClickMode )
+	{
+	case EditConstants::MouseLClickMode::None:
+		MouseLButtonTool = ToolBox->GetMouseButtonTool( EditTool_MouseButton_None::TypeName );
+		break;
+	case EditConstants::MouseLClickMode::Insert:
+		MouseLButtonTool = ToolBox->GetMouseButtonTool( EditTool_MouseButton_Insert::TypeName );
+		break;
+	case EditConstants::MouseLClickMode::Select:
+		MouseLButtonTool = ToolBox->GetMouseButtonTool( EditTool_MouseButton_Select::TypeName );
+		break;
+	case EditConstants::MouseLClickMode::Move:
+		MouseLButtonTool = ToolBox->GetMouseButtonTool( EditTool_MouseButton_Move::TypeName );
+		break;
+	default:
+		break;
+	}
+}
+
+void Editor::DisableSelectionMode()
+{
+	if ( MouseLButtonToolSelectionOverrideParked != nullptr )
+	{
+		MouseLButtonTool = MouseLButtonToolSelectionOverrideParked;
+		MouseLButtonToolSelectionOverrideParked = nullptr;
+	}
 }
 
 void Editor::EnableSelectionMode()
@@ -244,34 +213,14 @@ void Editor::EnableSelectionMode()
 		return;
 	}
 
-	if ( MouseLClickMode == EditConstants::MouseLClickMode::Select ) // Already in select mode, this can toggle appending
+	if ( MouseLClickMode != EditConstants::MouseLClickMode::Select )
 	{
-		AppendSelection = true;
+		if ( MouseLButtonToolSelectionOverrideParked == nullptr )
+		{
+			MouseLButtonToolSelectionOverrideParked = MouseLButtonTool;
+		}
+		MouseLButtonTool = ToolBox->GetMouseButtonTool( EditTool_MouseButton_Select::TypeName );
 	}
-	else
-	{
-		SelectionModeOverride = true;
-	}
-}
-
-const Color Editor::GetCellHoverHighlightColour() const
-{
-	return GetCellHoverHighlightColour( GetMouseLClickMode() );
-}
-
-const EditConstants::MouseLClickMode Editor::GetMouseLClickMode() const
-{
-	if ( SelectionModeOverride ) // Forced / overriding selection mode
-	{
-		return EditConstants::MouseLClickMode::Select;
-	}
-
-	return MouseLClickMode;
-}
-
-const EditConstants::SelectionMode Editor::GetSelectionMode() const
-{
-	return SelectionMode;
 }
 
 void Editor::MouseLDrag( const Vei2 & gridLocation )
@@ -281,32 +230,12 @@ void Editor::MouseLDrag( const Vei2 & gridLocation )
 		return;
 	}
 
-	switch ( MouseLClickMode )
-	{
-	case EditConstants::MouseLClickMode::Move:
-	{
-		if ( !MapGrid.HasSelectedCells() )
-		{
-			return;
-		}
-
-		const Vei2 delta = gridLocation - MouseInf.LMouseButtonGridLocationAtLPress;
-		if ( delta.LenSq() == 0 )
-		{
-			return;
-		}
-
-		MapGrid.TemporaryMoveSelectedCells( delta );
-		MouseInf.LMouseButtonGridLocationAtLPress = gridLocation;
-	}
-	default:
-		break;
-	}
+	MouseLButtonTool->MouseMoved();
 }
 
-void Editor::MouseLPress( const Vei2& screenLocation )
+void Editor::MouseLPress( Mouse::Event& me )
 {
-	const Vei2 gridLocation = MapGrid.ScreenToGrid( screenLocation );
+	const Vei2 gridLocation = MapGrid.ScreenToGrid( me.GetPos() );
 	if ( !MapGrid.IsOnGrid( gridLocation ) )
 	{
 		return;
@@ -324,89 +253,96 @@ void Editor::MouseLPress( const Vei2& screenLocation )
 	{
 		// Set this location only when first pressing the left mouse button down (start press location)
 		MouseInf.LMouseButtonGridLocationAtLPress = gridLocation;
-
-		if ( !AppendSelection && (MouseLClickMode != EditConstants::MouseLClickMode::Move || SelectionModeOverride) )
-		{
-			MapGrid.ClearSelectedCells();
-		}
 	}
 
-	switch ( GetMouseLClickMode() )
-	{
-	case EditConstants::MouseLClickMode::Insert:
-		if ( InsertFixture != nullptr )
-		{
-			MapGrid.Fill( gridLocation, InsertFixture );
-		}
-		break;
-	case EditConstants::MouseLClickMode::Select:
-		SelectCell( gridLocation );
-		break;
-	case EditConstants::MouseLClickMode::Move:
-		if ( !MapGrid.HasSelectedCells() )
-		{
-			SelectCell( gridLocation );
-		}
-		break;
-	default:
-		break;
-	}
+	MouseLButtonTool->ButtonPressed();
+
+	me.SetHandled( true );
 }
 
-void Editor::MouseLRelease()
+void Editor::MouseLRelease( Mouse::Event& me )
 {
 	MouseInf.LMouseButtonGridLocation = Vei2( -1, -1 );
 	MouseInf.LMouseButtonGridLocationAtLPress = Vei2( -1, -1 );
 
-	MapGrid.SetTemporarySelectedToSelected();
-	MapGrid.SetTemporaryMovedToMoved();
+	MouseLButtonTool->ButtonReleased();
+
+	me.SetHandled( true );
 }
 
-void Editor::MouseRPress( const Vei2 & screenLocation )
+void Editor::MouseMDrag( Mouse::Event& me )
 {
-	MapGrid.DeleteCell( MapGrid.ScreenToGrid( screenLocation ), true );
+	const Vei2 mousePos = me.GetPos();
+	const Vei2 delta = mousePos - MouseInf.MMouseButtonLocation;
+	MouseInf.MMouseButtonLocation = mousePos;
+	MapGrid.Move( (Vec2)delta );
 }
 
-void Editor::SelectCell( const Vei2& gridLocation )
+void Editor::MouseMove( Mouse::Event& me )
 {
-	if ( !MapGrid.IsOnGrid( gridLocation ) )
+	MouseInf.HoverGridLocation = MapGrid.ScreenToGrid( me.GetPos() );
+
+	if ( me.LeftIsPressed() )
 	{
-		return;
+		MouseLPress( me );
+		MouseLDrag( MouseInf.HoverGridLocation );
 	}
 
-	switch ( GetSelectionMode() )
+	if ( me.MiddleIsPressed() )
 	{
-	case EditConstants::SelectionMode::Rectangle:
-	{
-		if ( !MapGrid.IsOnGrid( MouseInf.LMouseButtonGridLocationAtLPress ) )
-		{
-			return;
-		}
-
-		const RectI rectangle = GetSelectionRectangle( gridLocation );
-
-		MapGrid.TemporarySelectCellsInRectangle( rectangle );
+		//MouseMPress( me ); ?
+		MouseMDrag( me );
 	}
+
+	if ( me.RightIsPressed() )
+	{
+		MouseRPress( me );
+		//MouseRDrag( me ); ?
+	}
+
+	me.SetHandled( true );
+}
+
+void Editor::MouseMPress( Mouse::Event& me )
+{
+	MouseInf.MMouseButtonLocation = me.GetPos();
+	me.SetHandled( true );
+}
+
+void Editor::MouseRPress( Mouse::Event& me )
+{
+	MapGrid.DeleteCell( MapGrid.ScreenToGrid( me.GetPos() ), true );
+	me.SetHandled( true );
+}
+
+void Editor::MouseWheel( Mouse::Event& me )
+{
+	MapGrid.Zoom( (Vec2)me.GetPos(), me.GetType() == Mouse::Event::Type::WheelUp );
+	me.SetHandled( true );
+}
+
+void Editor::SetControlKeys( const unsigned char c, const bool enabled )
+{
+	switch ( c )
+	{
+	case VK_CONTROL:
+		ControlModeEnabled = enabled;
 		break;
-	case EditConstants::SelectionMode::Single:
-		MapGrid.TemporarySelectCell( gridLocation );
+	case VK_SHIFT:
+		ShiftModeEnabled = enabled;
 		break;
 	default:
 		break;
 	}
-
-	if ( GetMouseLClickMode() == EditConstants::MouseLClickMode::Move )
-	{
-		MapGrid.SetTemporarySelectedToSelected();
-	}
 }
 
-void Editor::SetInsertFixture( const MapFixture* const fixture )
+void Editor::SetMouseLButtonTool( EditTool_MouseButton* const tool )
 {
-	InsertFixture = fixture;
+	MouseLButtonTool = tool;
 }
 
-void Editor::SetMouseLClickMode( EditConstants::MouseLClickMode mode )
+void Editor::EditTool_MouseButton_InsertLCallBack::Execute() const
 {
-	MouseLClickMode = mode;
+	((EditTool_MouseButton_Insert*)GetTool())->SetFixture( Fixture );
+	EditTool_MouseButtonLCallBack::Execute();
 }

@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "EditConstants.h"
+#include "EditTool.h"
 #include "Graphics.h"
 #include "Keyboard.h"
 #include "Grid.h"
@@ -12,22 +13,63 @@
 #include "Mouse.h"
 #include "Vec2.h"
 
+class EditTool_MouseButton;
+class EditTool_MouseButton_Insert;
 class MapFixture;
 
 class Editor
 {
 public:
-	class LeftMouseClickEditModeCallBack : public SelectedCallBack
+	static constexpr char EditTool_MouseButton_Left[] = "EditTool_MouseButton_Left";
+
+	class EditTool_MouseButtonCallBack : public SelectedCallBack
 	{
 	public:
-		LeftMouseClickEditModeCallBack( Editor* const editor, EditConstants::MouseLClickMode mode, const MapFixture* const fixture );
+		EditTool_MouseButtonCallBack( Editor* const editor, EditTool_MouseButton* const tool )
+			:
+			_Editor( editor ),
+			Tool( tool )
+		{
+		}
+
+		virtual void Execute() const override = 0;
+
+	protected:
+		Editor* GetEditor() const;
+		EditTool_MouseButton* GetTool() const;
+
+	private:
+		Editor* const _Editor = nullptr;
+		EditTool_MouseButton* const Tool = nullptr;
+	};
+
+	class EditTool_MouseButtonLCallBack : public EditTool_MouseButtonCallBack
+	{
+	public:
+		EditTool_MouseButtonLCallBack( Editor* const editor, EditTool_MouseButton* const tool )
+			:
+			EditTool_MouseButtonCallBack( editor, tool )
+		{
+		}
+
+		void Execute() const override;
+	};
+
+	class EditTool_MouseButton_InsertLCallBack : public EditTool_MouseButtonLCallBack
+	{
+	public:
+		EditTool_MouseButton_InsertLCallBack( Editor* const editor, EditTool_MouseButton* const tool, const MapFixture* const fixture )
+			:
+			EditTool_MouseButtonLCallBack( editor, tool ),
+			Fixture( fixture )
+		{
+		}
 
 		void Execute() const override;
 
 	private:
-		Editor* const _Editor;
-		EditConstants::MouseLClickMode Mode;
-		const MapFixture* const Fixture;
+		Editor* const _Editor = nullptr;
+		const MapFixture* Fixture = nullptr;
 	};
 
 	struct MouseInfo
@@ -46,33 +88,38 @@ public:
 	void DoKeyboardEvents( Keyboard::Event& ke );
 	void DoMouseEvents( Mouse::Event& me );
 	void Draw( Graphics& gfx );
-	const Color GetCellHoverHighlightColour( const EditConstants::MouseLClickMode mode ) const;
+	const bool GetControlModeEnabled() const;
+	Grid& GetMapGrid();
+	MouseInfo& GetMouseInfo();
+	RectI GetSelectionRectangle( const Vei2& gridLocation ) const;
+	const bool GetShiftModeEnabled() const;
+	const EditToolBox& GetToolBox() const;
 
 private:
 	void CycleMouseLClickMode();
-	void DisableSingleSelectionMode();
 	void DisableSelectionMode();
-	RectI GetSelectionRectangle( const Vei2& gridLocation ) const;
-	void EnableSingleSelectionMode();
 	void EnableSelectionMode();
-	const Color GetCellHoverHighlightColour() const;
-	const EditConstants::MouseLClickMode GetMouseLClickMode() const;
-	const EditConstants::SelectionMode GetSelectionMode() const;
 	void MouseLDrag( const Vei2& gridLocation );
-	void MouseLPress( const Vei2& screenLocation );
-	void MouseLRelease();
-	void MouseRPress( const Vei2& screenLocation );
-	void SelectCell( const Vei2& gridLocation );
-	void SetInsertFixture( const MapFixture* const fixture );
-	void SetMouseLClickMode( EditConstants::MouseLClickMode mode );
+	void MouseLPress( Mouse::Event& me );
+	void MouseLRelease( Mouse::Event& me );
+	void MouseMDrag( Mouse::Event& me );
+	void MouseMove( Mouse::Event& me );
+	void MouseMPress( Mouse::Event& me );
+	void MouseRPress( Mouse::Event& me );
+	void MouseWheel( Mouse::Event& me );
+	void SetControlKeys( const unsigned char c, const bool enabled );
+	void SetMouseLButtonTool( EditTool_MouseButton* const tool );
 
-	const MapFixture* InsertFixture = nullptr;
+	EditTool_MouseButton* MouseLButtonTool = nullptr;
+	EditTool_MouseButton* MouseLButtonToolSelectionOverrideParked = nullptr;
 
 	EditConstants::MouseLClickMode MouseLClickMode = EditConstants::MouseLClickMode::None;
-	EditConstants::SelectionMode SelectionMode = EditConstants::SelectionMode::Rectangle;
+
+	std::unique_ptr<EditToolBox> ToolBox = nullptr;
 
 	MouseInfo MouseInf;
-	bool SelectionModeOverride = false;
+	bool ControlModeEnabled = false;
+	bool ShiftModeEnabled = false;
 	bool AppendSelection = false;
 
 	Grid MapGrid;

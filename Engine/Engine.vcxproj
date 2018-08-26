@@ -143,6 +143,7 @@
     <ClInclude Include="DXErr.h" />
     <ClInclude Include="EditConstants.h" />
     <ClInclude Include="Editor.h" />
+    <ClInclude Include="EditTool.h" />
     <ClInclude Include="Font.h" />
     <ClInclude Include="MapFixture.h" />
     <ClInclude Include="Menu.h" />
@@ -165,6 +166,11 @@
   <ItemGroup>
     <ClCompile Include="DXErr.cpp" />
     <ClCompile Include="Editor.cpp" />
+    <ClCompile Include="EditTool.cpp" />
+    <ClCompile Include="EditToolBox.cpp" />
+    <ClCompile Include="EditTool_MouseButton_Insert.cpp" />
+    <ClCompile Include="EditTool_MouseButton_Move.cpp" />
+    <ClCompile Include="EditTool_MouseButton_None.cpp" />
     <ClCompile Include="Font.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Graphics.cpp" />
@@ -177,6 +183,7 @@
     <ClCompile Include="Menu.cpp" />
     <ClCompile Include="Mouse.cpp" />
     <ClCompile Include="PixelEffect.cpp" />
+    <ClCompile Include="EditTool_MouseButton_Select.cpp" />
     <ClCompile Include="Settings.cpp" />
     <ClCompile Include="Surface.cpp" />
     <ClCompile Include="Wall.cpp" />
