@@ -16,8 +16,9 @@ namespace EditConstants
 	public:
 		static constexpr Color InactiveModeHoverColour = Colors::MediumGray;
 		static constexpr Color InsertModeHoverColour = Colors::Green;
+		static constexpr Color DeleteModeHoverColour = Colors::Red;
 		static constexpr Color SelectModeHoverColour = Colors::Yellow;
-		static constexpr Color MoveModeHoverColour = Colors::Red;
+		static constexpr Color MoveModeHoverColour = Colors::Cyan;
 		static constexpr float CellHoverOpacity = 50.0f;
 	};
 
@@ -26,6 +27,7 @@ namespace EditConstants
 		None,
 		Select,
 		Insert,
+		Delete,
 		Move,
 		EnumOptionsCount // This is the size of the enum, don't add things after it
 	};

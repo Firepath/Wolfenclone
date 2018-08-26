@@ -168,6 +168,7 @@
     <ClCompile Include="Editor.cpp" />
     <ClCompile Include="EditTool.cpp" />
     <ClCompile Include="EditToolBox.cpp" />
+    <ClCompile Include="EditTool_MouseButton_Delete.cpp" />
     <ClCompile Include="EditTool_MouseButton_Insert.cpp" />
     <ClCompile Include="EditTool_MouseButton_Move.cpp" />
     <ClCompile Include="EditTool_MouseButton_None.cpp" />

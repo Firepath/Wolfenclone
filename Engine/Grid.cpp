@@ -91,6 +91,14 @@ void Grid::Fill( const Vei2& gridLocation, const MapFixture* const fixture )
 	Fill( gridLocation, Cell( gridLocation, fixture ), wasEnclosed, wasEmpty );
 }
 
+void Grid::FillSelectedCells( const MapFixture* const fixture )
+{
+	for ( const Vei2& cell : SelectedCells )
+	{
+		Fill( cell, fixture );
+	}
+}
+
 Grid::Cell& Grid::GetCell( const Vei2& gridLocation ) const
 {
 	assert( IsOnGrid( gridLocation ) );

@@ -157,6 +157,9 @@ void Game::SetupMenu()
 	insertItem->AddMenuItem( std::move( insertWallItem ) );
 	editMenu->AddMenuItem( std::move( insertItem ) );
 	
+	EditTool_MouseButton* deleteTool = editor->GetToolBox().GetMouseButtonTool( EditTool_MouseButton_Delete::TypeName );
+	editMenu->AddMenuItem( "Delete", std::make_unique<Editor::EditTool_MouseButtonLCallBack>( editor, deleteTool ), deleteTool->GetToolColour() );
+
 	EditTool_MouseButton* selectTool = editor->GetToolBox().GetMouseButtonTool( EditTool_MouseButton_Select::TypeName );
 	editMenu->AddMenuItem( "Select", std::make_unique<Editor::EditTool_MouseButtonLCallBack>( editor, selectTool ), selectTool->GetToolColour() );
 

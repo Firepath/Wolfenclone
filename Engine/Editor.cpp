@@ -25,6 +25,7 @@ Editor::Editor()
 	ToolBox->SetupTools( this );
 
 	MouseLButtonTool = ToolBox->GetMouseButtonTool( EditTool_MouseButton_None::TypeName );
+	MouseRButtonTool = ToolBox->GetMouseButtonTool( EditTool_MouseButton_Delete::TypeName );
 }
 
 void Editor::DoKeyboardEvents( Keyboard::Event& ke )
@@ -185,6 +186,9 @@ void Editor::CycleMouseLClickMode()
 	case EditConstants::MouseLClickMode::Insert:
 		MouseLButtonTool = ToolBox->GetMouseButtonTool( EditTool_MouseButton_Insert::TypeName );
 		break;
+	case EditConstants::MouseLClickMode::Delete:
+		MouseLButtonTool = ToolBox->GetMouseButtonTool( EditTool_MouseButton_Delete::TypeName );
+		break;
 	case EditConstants::MouseLClickMode::Select:
 		MouseLButtonTool = ToolBox->GetMouseButtonTool( EditTool_MouseButton_Select::TypeName );
 		break;
@@ -311,7 +315,7 @@ void Editor::MouseMPress( Mouse::Event& me )
 
 void Editor::MouseRPress( Mouse::Event& me )
 {
-	MapGrid.DeleteCell( MapGrid.ScreenToGrid( me.GetPos() ), true );
+	MouseRButtonTool->ButtonPressed();
 	me.SetHandled( true );
 }
 

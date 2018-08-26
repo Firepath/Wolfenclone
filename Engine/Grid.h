@@ -40,6 +40,7 @@ public:
 	void DeleteSelectedCells();
 	void Draw( Graphics& gfx );
 	void Fill( const Vei2& gridLocation, const MapFixture* const fixture );
+	void FillSelectedCells( const MapFixture* const fixture );
 	Cell& GetCell( const Vei2& gridLocation ) const;
 	const bool HasSelectedCells() const;
 	void HighlightCell( const Vei2& gridLocation, const Color highlightColour, const float highlightOpacity, const bool drawBorder, Graphics& gfx ) const;

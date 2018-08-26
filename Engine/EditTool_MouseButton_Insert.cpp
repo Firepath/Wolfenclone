@@ -8,13 +8,21 @@ void EditTool_MouseButton_Insert::ButtonPressed()
 
 	Editor& editor = GetEditor();
 
-	editor.GetMapGrid().ClearSelectedCells();
-
 	if ( Fixture != nullptr )
 	{
 		Editor::MouseInfo& info = editor.GetMouseInfo();
-		editor.GetMapGrid().Fill( info.HoverGridLocation, Fixture );
+		Grid& mapGrid = editor.GetMapGrid();
+		if ( editor.GetControlModeEnabled() )
+		{
+			mapGrid.FillSelectedCells( Fixture );
+		}
+		else
+		{
+			editor.GetMapGrid().Fill( info.HoverGridLocation, Fixture );
+		}
 	}
+
+	editor.GetMapGrid().ClearSelectedCells();
 }
 
 void EditTool_MouseButton_Insert::ButtonReleased()

@@ -109,6 +109,28 @@ private:
 	const MapFixture* Fixture = nullptr;
 };
 
+class EditTool_MouseButton_Delete : public EditTool_MouseButton
+{
+public:
+	static constexpr char TypeName[] = "EditTool_MouseButton_Delete";
+
+	EditTool_MouseButton_Delete( Editor* const editor )
+		:
+		EditTool_MouseButton( editor )
+	{
+	}
+
+	void ButtonPressed() override;
+	void ButtonReleased() override;
+	const std::string GetTypeName() const
+	{
+		return EditTool_MouseButton_Delete::TypeName;
+	}
+
+	Color GetToolColour() const override;
+	void MouseMoved() override;
+};
+
 class EditTool_MouseButton_Select : public EditTool_MouseButton
 {
 public:

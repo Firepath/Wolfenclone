@@ -112,6 +112,7 @@ private:
 
 	EditTool_MouseButton* MouseLButtonTool = nullptr;
 	EditTool_MouseButton* MouseLButtonToolSelectionOverrideParked = nullptr;
+	EditTool_MouseButton* MouseRButtonTool = nullptr;
 
 	EditConstants::MouseLClickMode MouseLClickMode = EditConstants::MouseLClickMode::None;
 

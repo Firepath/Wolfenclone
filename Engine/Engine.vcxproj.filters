@@ -167,6 +167,9 @@
     <ClCompile Include="EditTool.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="EditTool_MouseButton_Delete.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="FramebufferPS.hlsl">
