@@ -30,6 +30,11 @@ void EditTool_MouseButton_Insert::ButtonReleased()
 	EditTool_MouseButton::ButtonReleased();
 }
 
+const MapFixture* EditTool_MouseButton_Insert::GetFixture() const
+{
+	return Fixture;
+}
+
 Color EditTool_MouseButton_Insert::GetToolColour() const
 {
 	return EditConstants::CellEditing::InsertModeHoverColour;

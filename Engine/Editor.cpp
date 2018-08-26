@@ -124,6 +124,11 @@ void Editor::Draw( Graphics& gfx )
 	// Highlight currently-hovered cell
 	if ( MapGrid.IsOnGrid( MouseInf.HoverGridLocation ) )
 	{
+		if ( typeid(*MouseLButtonTool) == typeid(EditTool_MouseButton_Insert) )
+		{
+			MapGrid.DrawCell( MouseInf.HoverGridLocation, ((EditTool_MouseButton_Insert*)MouseLButtonTool)->GetFixture(), gfx );
+		}
+
 		MapGrid.HighlightCell( MouseInf.HoverGridLocation, MouseLButtonTool->GetToolColour(), EditConstants::CellEditing::CellHoverOpacity, true, gfx );
 	}
 }

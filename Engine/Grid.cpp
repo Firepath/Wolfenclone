@@ -2,6 +2,7 @@
 
 #include "Graphics.h"
 #include "Grid.h"
+#include "MapFixture.h"
 #include "PixelEffect.h"
 #include "Surface.h"
 #include "VectorExtensions.h"
@@ -76,6 +77,17 @@ void Grid::Draw( Graphics& gfx )
 	HighlightSelectedCells( gfx );
 }
 
+void Grid::DrawCell( const Vei2& gridLocation, const MapFixture* const fixture, Graphics& gfx ) const
+{
+	const RectI rect = GetCellScreenRectangle( gridLocation );
+
+	if ( fixture != nullptr )
+	{
+		std::unique_ptr<PixelEffect::Effect> copy = std::make_unique<PixelEffect::Copy>();
+		gfx.DrawSprite( rect, *(fixture->GetTexture()), copy );
+	}
+}
+
 void Grid::Fill( const Vei2& gridLocation, const MapFixture* const fixture )
 {
 	assert( IsOnGrid( gridLocation ) );
@@ -113,11 +125,7 @@ const bool Grid::HasSelectedCells() const
 
 void Grid::HighlightCell( const Vei2& gridLocation, const Color highlightColour, const float highlightOpacity, const bool drawBorder, Graphics & gfx ) const
 {
-	const Vei2 mapScreenLocation = GetScreenLocation();
-	const Vei2 topLeft = mapScreenLocation + Vei2( (int)std::ceil( (float)gridLocation.x * CellSize ), (int)std::ceil( (float)gridLocation.y * CellSize ) );
-	const Vei2 bottomRight = mapScreenLocation + Vei2( (int)std::ceil( (float)(gridLocation.x + 1) * CellSize ) - 1, (int)std::ceil( (float)(gridLocation.y + 1) * CellSize ) - 1 );
-	const RectI rect( topLeft, bottomRight );
-
+	const RectI rect = GetCellScreenRectangle( gridLocation );
 	std::unique_ptr<PixelEffect::Effect> effect = std::make_unique<PixelEffect::Transparency>( highlightOpacity );
 	gfx.DrawBox( rect, highlightColour, effect );
 
@@ -379,7 +387,7 @@ void Grid::DrawCells( Graphics & gfx ) const
 			const Vei2 cellLocation( x, y );
 			if ( IsOnGrid( cellLocation ) && IsCellOccupied( cellLocation ) )
 			{
-				GetCell( cellLocation ).Draw( *this, gfx );
+				DrawCell( cellLocation, Cells->at( cellLocation ).GetFixture(), gfx );
 			}
 		}
 	}
@@ -439,7 +447,7 @@ void Grid::DrawMovingCells( const Vei2 & screenLocation, Graphics & gfx ) const
 {
 	for ( const Cell& cell : TemporarySelectedMovingCells )
 	{
-		cell.Draw( *this, gfx );
+		DrawCell( cell.GetLocation(), cell.GetFixture(), gfx );
 	}
 }
 
@@ -575,6 +583,14 @@ const bool Grid::FindWall( const Vei2& gridLocation, const int xDirection, const
 const int Grid::GetCellBorderThickness() const
 {
 	return std::max( 2, (int)(ZoomLevel / 2.0f) );
+}
+
+const RectI Grid::GetCellScreenRectangle( const Vei2 & gridLocation ) const
+{
+	const Vei2 mapScreenLocation = GetScreenLocation();
+	const Vei2 topLeft = mapScreenLocation + Vei2( (int)std::ceil( (float)gridLocation.x * CellSize ), (int)std::ceil( (float)gridLocation.y * CellSize ) );
+	const Vei2 bottomRight = mapScreenLocation + Vei2( (int)std::ceil( (float)(gridLocation.x + 1) * CellSize ) - 1, (int)std::ceil( (float)(gridLocation.y + 1) * CellSize ) - 1 );
+	return RectI( topLeft, bottomRight );
 }
 
 const Vei2 Grid::GetScreenLocation() const

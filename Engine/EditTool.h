@@ -101,6 +101,7 @@ public:
 		return EditTool_MouseButton_Insert::TypeName;
 	}
 
+	const MapFixture* GetFixture() const;
 	Color GetToolColour() const override;
 	void MouseMoved() override;
 	void SetFixture( const MapFixture* fixture );

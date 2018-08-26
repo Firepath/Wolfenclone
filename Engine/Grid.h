@@ -8,6 +8,7 @@
 #include "Colors.h"
 #include "EditConstants.h"
 #include "Mouse.h"
+#include "Rect.h"
 #include "Vec2.h"
 
 class Graphics;
@@ -22,7 +23,7 @@ public:
 	public:
 		Cell( const Vei2& location, const MapFixture* const fixture );
 
-		void Draw( const Grid& map, Graphics& gfx ) const;
+		const MapFixture* GetFixture() const;
 		const Vei2& GetLocation() const;
 		void SetLocation( const Vei2& location );
 
@@ -39,6 +40,7 @@ public:
 	void DeleteCell( const Vei2& gridLocation, const bool eraseSelection );
 	void DeleteSelectedCells();
 	void Draw( Graphics& gfx );
+	void DrawCell( const Vei2& gridLocation, const MapFixture* const fixture, Graphics& gfx ) const;
 	void Fill( const Vei2& gridLocation, const MapFixture* const fixture );
 	void FillSelectedCells( const MapFixture* const fixture );
 	Cell& GetCell( const Vei2& gridLocation ) const;
@@ -80,6 +82,7 @@ private:
 	const bool FillClosedArea( const Vei2& gridLocation );
 	const bool FindWall( const Vei2& gridLocation, const int xDirection, const int yDirection ) const;
 	const int GetCellBorderThickness() const;
+	const RectI GetCellScreenRectangle( const Vei2& gridLocation ) const;
 	const Vei2 GetScreenLocation() const;
 	const RectI GetSelectedCellExtents() const;
 	const Vei2 GetSize() const;

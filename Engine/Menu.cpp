@@ -66,22 +66,22 @@ void MenuItem::DoKeyboardEvents( Keyboard::Event& ke )
 	}
 
 	const unsigned char c = ke.GetCode();
-	if ( ke.IsPress() )
-	{
-		switch ( c )
-		{
-		default:
-			break;
-		}
-	}
-	else if ( ke.IsRelease() )
-	{
-		switch ( c )
-		{
-		default:
-			break;
-		}
-	}
+	//if ( ke.IsPress() )
+	//{
+	//	switch ( c )
+	//	{
+	//	default:
+	//		break;
+	//	}
+	//}
+	//else if ( ke.IsRelease() )
+	//{
+	//	switch ( c )
+	//	{
+	//	default:
+	//		break;
+	//	}
+	//}
 }
 
 void MenuItem::DoMouseEvents( Mouse::Event& me )
@@ -533,14 +533,14 @@ void MenuBar::DoKeyboardEvents( Keyboard::Event & ke )
 			break;
 		}
 	}
-	else if ( ke.IsRelease() )
-	{
-		switch ( c )
-		{
-		default:
-			break;
-		}
-	}
+	//else if ( ke.IsRelease() )
+	//{
+	//	switch ( c )
+	//	{
+	//	default:
+	//		break;
+	//	}
+	//}
 
 	for ( auto it = Menus.begin(); it != Menus.end() && !ke.IsHandled(); it++ )
 	{
