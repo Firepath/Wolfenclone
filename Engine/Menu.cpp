@@ -23,32 +23,7 @@ MenuItem::MenuItem( std::string text, std::unique_ptr<SelectedCallBack> callback
 
 void MenuItem::AddMenuItem( std::unique_ptr<MenuItem> menuItem )
 {
-	MenuItems.push_back( std::move( menuItem ) );
-
-	bool larger = true;
-	size_t maxWidth = MenuItems.back()->GetWidth();
-	for ( auto it = MenuItems.begin(); it != MenuItems.end(); it++ )
-	{
-		const Vei2 size = it->get()->GetSize();
-		if ( size.x > (int)maxWidth )
-		{
-			maxWidth = size.x;
-			larger = false;
-			break;
-		}
-	}
-
-	if ( larger )
-	{
-		for ( auto it = MenuItems.begin(); it != MenuItems.end(); it++ )
-		{
-			it->get()->SetWidth( maxWidth );
-		}
-	}
-	else
-	{
-		MenuItems.back()->SetWidth( maxWidth );
-	}
+	StackMenuItem( std::move( menuItem ), MenuItems.size() );
 }
 
 void MenuItem::AddMenuItem( std::string text, std::unique_ptr<SelectedCallBack> callback, Color highlightColour )
@@ -143,6 +118,39 @@ const std::string MenuItem::GetText() const
 const size_t MenuItem::GetWidth() const
 {
 	return Width;
+}
+
+void MenuItem::StackMenuItem( std::unique_ptr<MenuItem> menuItem, const size_t position )
+{
+	MenuItem* const currentMenuItem = menuItem.get();
+
+	MenuItems.insert( MenuItems.begin() + position, std::move( menuItem ) );
+
+	bool larger = false;
+	size_t maxWidth = currentMenuItem->GetWidth();
+	for ( auto it = MenuItems.begin(); it != MenuItems.end(); it++ )
+	{
+		const int width = it->get()->GetSize().x;
+		if ( width > (int)maxWidth )
+		{
+			maxWidth = width;
+			larger = true;
+			break;
+		}
+	}
+
+	if ( larger )
+	{
+		for ( auto it = MenuItems.begin(); it != MenuItems.end(); it++ )
+		{
+			it->get()->SetWidth( maxWidth );
+		}
+	}
+	else
+	{
+		// All others are set as larger than this one, set this one too
+		currentMenuItem->SetWidth( maxWidth );
+	}
 }
 
 const bool MenuItem::IsOpen() const
@@ -366,6 +374,7 @@ void MenuItem::ResetSubMenuItems( const Vei2 mousePos )
 		{
 			item.TextColour = MenuItem::DefaultTextColour;
 
+			// not sure why this is checking if not this item???
 			if ( &item != this && item.IsOpen() )
 			{
 				item.SetOpen( false );
@@ -385,16 +394,14 @@ void MenuItem::ShowMenu( const Vei2 location )
 
 	SetOpen( true );
 
-	const Vei2 subMenuSize = GetSubMenuSize();
-
-	const RectI border = RectI( location, Vei2( location.x + subMenuSize.x, location.y + subMenuSize.y ) );
-	const RectI insideBox = border.GetExpanded( -(int)BorderThickness );
+	const RectI subMenuBorder = GetSubMenuArea();
+	const RectI subMenuInnerBorder = subMenuBorder.GetExpanded( -(int)BorderThickness );
 
 	std::unique_ptr<PixelEffect::Effect> boxEffect = std::make_unique<PixelEffect::Transparency>( Opacity );
-	_gfx.DrawBox( insideBox, BoxColour, boxEffect );
-
+	_gfx.DrawBox( subMenuInnerBorder, BoxColour, boxEffect );
+	_gfx.DrawBoxBorder( subMenuBorder, subMenuInnerBorder, BorderColour, boxEffect );
+	
 	ShowSubMenu( location, boxEffect, false );
-	_gfx.DrawBoxBorder( border, insideBox, BorderColour, boxEffect );
 	ShowSubMenu( location, boxEffect, true );
 }
 
@@ -413,6 +420,13 @@ void MenuItem::ShowSubMenu( const Vei2 location, std::unique_ptr<PixelEffect::Ef
 			item.Show( itemLocation, boxEffect );
 			if ( onlyHovering )
 			{
+				// Pretty much should be doing this here
+				// instead of in Show(...) but reset or something
+				// is breaking it
+				//if ( item.IsOpen() )
+				//{
+				//	item.ShowMenu();
+				//}
 				break; // Should only be one...
 			}
 		}
@@ -594,6 +608,7 @@ void MenuBar::Draw() const
 	const RectI border = RectI( Location, Size.x, Size.y );
 	const RectI insideBox = border.GetExpanded( -(int)BorderThickness );
 	_gfx.DrawBox( insideBox, BoxColour, boxEffect );
+	_gfx.DrawBoxBorder( border, insideBox, BorderColour, boxEffect );
 
 	Vei2 location = Location;
 	for (auto it = Menus.begin(); it != Menus.end(); it++)
@@ -604,7 +619,17 @@ void MenuBar::Draw() const
 		location.y += (int)menu->GetWidth();
 	}
 
-	_gfx.DrawBoxBorder( border, insideBox, BorderColour, boxEffect );
+	// Similarly should be doing this but reset or something
+	// is breaking it
+	//for ( auto it = Menus.begin(); it != Menus.end(); it++ )
+	//{
+	//	MenuItem* menu = it->get();
+	//	if ( menu->IsOpen() )
+	//	{
+	//		menu->ShowMenu();
+	//		break; // Should only be one...
+	//	}
+	//}
 }
 
 void MenuBar::CancelMenus()
@@ -632,7 +657,7 @@ void ImageMenuItem::Show( const Vei2 & location, std::unique_ptr<PixelEffect::Ef
 	Location = location;
 	Visible = true;
 
-	const RectI boxRect = RectI( location, (int)Width, (int)Height );
+	const RectI boxRect = RectI( location + Vei2( 1, 1 ), (int)Width - 1, (int)Height - 1 );
 	_gfx.DrawBox( boxRect, BoxColour, effect );
 
 	if ( Image != nullptr )

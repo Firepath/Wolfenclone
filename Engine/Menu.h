@@ -46,6 +46,7 @@ public:
 	const Vei2 GetSize() const;
 	const std::string GetText() const;
 	const size_t GetWidth() const;
+	void StackMenuItem( std::unique_ptr<MenuItem> menuItem, const size_t position = 0 );
 	const bool IsOpen() const;
 	const bool IsVisible() const;
 	void Select();

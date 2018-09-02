@@ -142,19 +142,60 @@ void Game::SetupMenu()
 
 	Color insertToolColour = editor->GetToolBox().GetMouseButtonTool( EditTool_MouseButton_Insert::TypeName )->GetToolColour();
 	std::unique_ptr<MenuItem> insertItem = std::make_unique<MenuItem>( "Insert", nullptr, editMenu.get(), menuFont, gfx, insertToolColour );
-	std::unique_ptr<MenuItem> insertWallItem = std::make_unique<MenuItem>( "Wall", nullptr, insertItem.get(), menuFont, gfx, insertToolColour );
 
-	std::unique_ptr<MenuItem> insertWallDarkItem = std::make_unique<MenuItem>( "Dark", nullptr, insertWallItem.get(), menuFont, gfx, insertToolColour );
-	insertWallDarkItem->SetColumns( 10 );
-	FillFixtureMenuItems( insertWallDarkItem, editor, Settings::ReadMode::Texture_Wall_Dark );
-	insertWallItem->AddMenuItem( std::move( insertWallDarkItem ) );
+	// This whole thing can probably be put in a method (for re-use), and given the insertMenu (or another) as the highest-level item.
 
-	std::unique_ptr<MenuItem> insertWallLightItem = std::make_unique<MenuItem>( "Light", nullptr, insertWallItem.get(), menuFont, gfx, insertToolColour );
-	insertWallLightItem->SetColumns( 10 );
-	FillFixtureMenuItems( insertWallLightItem, editor, Settings::ReadMode::Texture_Wall_Light );
-	insertWallItem->AddMenuItem( std::move( insertWallLightItem ) );
+	std::unordered_map<std::string, std::unique_ptr<MenuItem>, std::hash<std::string>> menuItemCollection;
+	const std::vector<MenuStructure>& structure = _Settings->GetFixtureMenuStructure();
+	for ( auto it = structure.begin(); it != structure.end(); it++ )
+	{
+		if ( menuItemCollection.find( it->Name ) == menuItemCollection.end() )
+		{
+			const MenuItem* parentMenu = insertItem.get();
+			if ( !it->Parent.empty() )
+			{
+				// This logic requires menus be created in genealogical order (parents, then children)
+				parentMenu = menuItemCollection.at( it->Parent ).get();
+			}
 
-	insertItem->AddMenuItem( std::move( insertWallItem ) );
+			menuItemCollection[it->Name] = std::make_unique<MenuItem>( it->Name, nullptr, parentMenu, menuFont, gfx, insertToolColour );
+		}
+
+		MenuItem* const menuItem = menuItemCollection.at( it->Name ).get();
+
+		if ( it->Columns > 1 )
+		{
+			menuItem->SetColumns( it->Columns );
+		}
+
+		if ( it->Items.size() > 0 )
+		{
+			EditTool_MouseButton* tool = editor->GetToolBox().GetMouseButtonTool( EditTool_MouseButton_Insert::TypeName );
+			for ( const std::string& fixtureName : it->Items )
+			{
+				MapFixture* fixture = &(Fixtures->GetItem( fixtureName ));
+
+				std::unique_ptr<MenuItem> subMenuItem = std::make_unique<ImageMenuItem>( fixture->GetTexture(), 64, 64, std::make_unique<Editor::EditTool_MouseButton_InsertLCallBack>( editor, tool, fixture ), menuItem, gfx, tool->GetToolColour() );
+				menuItem->AddMenuItem( std::move( subMenuItem ) );
+			}
+		}
+	}
+
+	for ( auto it = structure.rbegin(); it != structure.rend(); it++ )
+	{
+		std::unique_ptr<MenuItem> child = std::move( menuItemCollection.at( it->Name ) );
+
+		if ( !it->Parent.empty() )
+		{
+			MenuItem* const parent = menuItemCollection.at( it->Parent ).get();
+			parent->StackMenuItem( std::move( child ) );
+		}
+		else
+		{
+			insertItem->AddMenuItem( std::move( child ) );
+		}
+	}
+
 	editMenu->AddMenuItem( std::move( insertItem ) );
 	
 	EditTool_MouseButton* deleteTool = editor->GetToolBox().GetMouseButtonTool( EditTool_MouseButton_Delete::TypeName );

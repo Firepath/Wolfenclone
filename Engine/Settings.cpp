@@ -10,11 +10,17 @@ Settings::Settings()
 	SettingsLists[Settings::TextureWallLight] = std::make_unique<std::unordered_map<std::string, std::string, std::hash<std::string>>>();
 	SettingsLists[Settings::MapFixtureWallDark] = std::make_unique<std::unordered_map<std::string, std::string, std::hash<std::string>>>();
 	SettingsLists[Settings::MapFixtureWallLight] = std::make_unique<std::unordered_map<std::string, std::string, std::hash<std::string>>>();
+	SettingsLists[Settings::MapFixtureMenu] = std::make_unique<std::unordered_map<std::string, std::string, std::hash<std::string>>>();
 }
 
 const std::unordered_map<std::string, std::string, std::hash<std::string>>& Settings::GetSettingList( ReadMode mode )
 {
 	return *(SettingsLists.at( GetReadModeText( mode ) ).get());
+}
+
+const std::vector<MenuStructure>& Settings::GetFixtureMenuStructure()
+{
+	return FixtureMenuStructure;
 }
 
 void Settings::LoadSettings( const std::string& filename )
@@ -34,6 +40,34 @@ void Settings::FinaliseSettings()
 {
 	// Ensure all settings are within acceptable bounds (which will also default any un-initialised settings).
 	//StartingNumberOfTargets = std::min( MaxStartingNumberOfTargets, std::max( MinStartingNumberOfTargets, StartingNumberOfTargets ) );
+}
+
+std::string Settings::FindFirstInLineTextAndRemoveAndReturn( std::string& line, const char startDelimiter, const char endDelimiter, bool includeDelimiters )
+{
+	size_t start = line.find( startDelimiter );
+	size_t end = line.find( endDelimiter );
+	if ( start == std::string::npos ||
+		end == std::string::npos ||
+		end == 0 ||
+		start >= end ) // Equal-to if same delimiter for start and end
+	{
+		return std::string();
+	}
+
+	if ( !includeDelimiters )
+	{
+		start += 1;
+	}
+	else
+	{
+		end += 1;
+	}
+
+	end -= start;
+	
+	std::string text = line.substr( start, end );
+	line = line.substr( end + 2, line.size() - (end + 2) );
+	return text;
 }
 
 void Settings::_LoadSettings( const std::string& filename )
@@ -100,6 +134,36 @@ void Settings::ReadSetting( const std::string& line )
 		list[name] = textureName;
 	}
 		break;
+	case ReadMode::Map_Fixture_Menu:
+	{
+		std::string lineCopy = line;
+		const std::string name = FindFirstInLineTextAndRemoveAndReturn( lineCopy, '(', ')' );
+		const std::string parent = FindFirstInLineTextAndRemoveAndReturn( lineCopy, '(', ')' );
+		const std::string fixtureList = FindFirstInLineTextAndRemoveAndReturn( lineCopy, '[', ']', true );
+		const std::string columns = FindFirstInLineTextAndRemoveAndReturn( lineCopy, '[', ']' );
+
+		if ( std::find( FixtureMenuStructure.begin(), FixtureMenuStructure.end(), name ) == FixtureMenuStructure.end() )
+		{
+			FixtureMenuStructure.emplace_back( name, parent );
+		}
+		
+		MenuStructure& menu = *(std::find( FixtureMenuStructure.begin(), FixtureMenuStructure.end(), name ));
+
+		if ( !columns.empty() )
+		{
+			menu.Columns = std::stoi( columns );
+		}
+
+		if ( !fixtureList.empty() )
+		{
+			auto& list = *(SettingsLists.at( fixtureList ).get());
+			for ( auto it = list.begin(); it != list.end(); it++ )
+			{
+				menu.Items.push_back( it->first );
+			}
+		}
+	}
+		break;
 	}
 }
 
@@ -119,6 +183,8 @@ std::string Settings::GetReadModeText( const ReadMode mode ) const
 		return Settings::MapFixtureWallDark;
 	case ReadMode::Map_Fixture_Wall_Light:
 		return Settings::MapFixtureWallLight;
+	case ReadMode::Map_Fixture_Menu:
+		return Settings::MapFixtureMenu;
 	}
 
 	// Make sure we ALWAYS handle each mode's text.

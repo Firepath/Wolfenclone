@@ -108,12 +108,8 @@ WAL00098 WAL00098
 WAL00100 WAL00100
 WAL00102 WAL00102
 WAL00104 WAL00104
-'[Fixture Menu]
-''{(Menu Name)}
-''{(Menu Name)} {(Parent Menu Name)}
-''{(Menu Name)} {[Fixture Type]}
-'(Wall)
-'(Dark) (Wall)
-'(Light) (Wall)
-'(Dark) [Fixture Wall Dark]
-'(Light) [Fixture Wall Light]
+[Fixture Menu]
+'{(Menu Name)} [{(Parent Menu Name)} {[Fixture Type]} {[Number of Columns]}]
+(Wall)
+(Darke) (Wall) [Fixture Wall Dark] [8]
+(Light) (Wall) [Fixture Wall Light] [10]
