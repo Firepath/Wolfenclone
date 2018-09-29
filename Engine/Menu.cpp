@@ -238,7 +238,10 @@ void MenuItem::ShowMenu()
 
 void MenuItem::DoHovering( const bool hovering, const bool hoveringOnChild )
 {
-	if ( !IsOpen() && hovering && MenuItems.size() > 0 && typeid(*this) == typeid(MenuItem) )
+	if ( !IsOpen() &&
+		MenuItems.size() > 0 &&
+		(hovering || hoveringOnChild) &&
+		(typeid(*this) == typeid(MenuItem) ) )
 	{
 		SetOpen( true );
 	}
@@ -374,8 +377,7 @@ void MenuItem::ResetSubMenuItems( const Vei2 mousePos )
 		{
 			item.TextColour = MenuItem::DefaultTextColour;
 
-			// not sure why this is checking if not this item???
-			if ( &item != this && item.IsOpen() )
+			if ( item.IsOpen() )
 			{
 				item.SetOpen( false );
 			}
@@ -590,11 +592,7 @@ void MenuBar::DoMouseEvents( Mouse::Event& me )
 		case Mouse::Event::Type::LPress:
 		case Mouse::Event::Type::MPress:
 		case Mouse::Event::Type::RPress:
-			for ( auto it = Menus.begin(); it != Menus.end(); it++ )
-			{
-				// Hide all the open menus
-				it->get()->SetOpen( false );
-			}
+			CancelMenus();
 			break;
 		default:
 			break;
@@ -638,6 +636,7 @@ void MenuBar::CancelMenus()
 	{
 		if ( it->get()->IsOpen() )
 		{
+			// Hide all the open menus
 			it->get()->SetOpen( false );
 		}
 	}
