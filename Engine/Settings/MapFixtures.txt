@@ -111,5 +111,5 @@ WAL00104 WAL00104
 [Fixture Menu]
 '{(Menu Name)} [{(Parent Menu Name)} {[Fixture Type]} {[Number of Columns]}]
 (Wall)
-(Darke) (Wall) [Fixture Wall Dark] [8]
+(Dark) (Wall) [Fixture Wall Dark] [8]
 (Light) (Wall) [Fixture Wall Light] [10]
