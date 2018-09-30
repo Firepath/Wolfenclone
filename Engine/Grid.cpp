@@ -79,12 +79,10 @@ void Grid::Draw( Graphics& gfx )
 
 void Grid::DrawCell( const Vei2& gridLocation, const MapFixture* const fixture, Graphics& gfx ) const
 {
-	const RectI rect = GetCellScreenRectangle( gridLocation );
-
 	if ( fixture != nullptr )
 	{
-		std::unique_ptr<PixelEffect::Effect> effect = std::make_unique<PixelEffect::Chroma>();
-		gfx.DrawSprite( rect, *(fixture->GetTexture()), effect );
+		const RectI rect = GetCellScreenRectangle( gridLocation );
+		fixture->Draw( rect, gfx );
 	}
 }
 
