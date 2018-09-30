@@ -47,10 +47,6 @@ WAL00091 WAL00091
 WAL00093 WAL00093
 WAL00095 WAL00095
 WAL00097 WAL00097
-WAL00099 WAL00099
-WAL00101 WAL00101
-WAL00103 WAL00103
-WAL00105 WAL00105
 [Fixture Wall Light]
 '{Fixture Name} {Texture Name}
 WAL00000 WAL00000
@@ -104,12 +100,21 @@ WAL00090 WAL00090
 WAL00092 WAL00092
 WAL00094 WAL00094
 WAL00096 WAL00096
+[Fixture Door Dark]
+'{Fixture Name} {Texture Name}
+WAL00099 WAL00099
+WAL00103 WAL00103
+WAL00105 WAL00105
+[Fixture Door Light]
+'{Fixture Name} {Texture Name}
 WAL00098 WAL00098
-WAL00100 WAL00100
 WAL00102 WAL00102
 WAL00104 WAL00104
 [Fixture Menu]
 '{(Menu Name)} [{(Parent Menu Name)} {[Fixture Type]} {[Number of Columns]}]
+(Door)
+(Dark) (Door) [Fixture Door Dark] [2]
+(Light) (Door) [Fixture Door Light] [2]
 (Wall)
 (Dark) (Wall) [Fixture Wall Dark] [8]
-(Light) (Wall) [Fixture Wall Light] [10]
+(Light) (Wall) [Fixture Wall Light] [8]

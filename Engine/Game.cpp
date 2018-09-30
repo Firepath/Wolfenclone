@@ -77,19 +77,6 @@ void Game::DoMouseEvents()
 	}
 }
 
-void Game::FillFixtureMenuItems( std::unique_ptr<MenuItem>& menuItem, Editor* const editor, const Settings::ReadMode fixtureContents )
-{
-	EditTool_MouseButton* tool = editor->GetToolBox().GetMouseButtonTool( EditTool_MouseButton_Insert::TypeName );
-	auto& listFixtures = _Settings->GetSettingList( fixtureContents );
-	for ( auto it = listFixtures.begin(); it != listFixtures.end(); it++ )
-	{
-		MapFixture* fixture = &(Fixtures->GetItem( it->first ));
-
-		std::unique_ptr<MenuItem> subMenuItem = std::make_unique<ImageMenuItem>( fixture->GetTexture(), 64, 64, std::make_unique<Editor::EditTool_MouseButton_InsertLCallBack>( editor, tool, fixture ), menuItem.get(), gfx, tool->GetToolColour() );
-		menuItem->AddMenuItem( std::move( subMenuItem ) );
-	}
-}
-
 void Game::LoadFonts()
 {
 	Fonts->AddItem( "Font_Fixedsys16x28", std::make_unique<Font>( Surfaces->GetItem( "Font_Fixedsys16x28" ), Colors::White, 14, Colors::White ) );
@@ -97,6 +84,8 @@ void Game::LoadFonts()
 
 void Game::LoadFixtures()
 {
+	LoadFixtures( Settings::ReadMode::Texture_Door_Dark );
+	LoadFixtures( Settings::ReadMode::Texture_Door_Light );
 	LoadFixtures( Settings::ReadMode::Texture_Wall_Dark );
 	LoadFixtures( Settings::ReadMode::Texture_Wall_Light );
 }
@@ -115,6 +104,8 @@ void Game::LoadFixtures( const Settings::ReadMode contents )
 void Game::LoadTextures()
 {
 	Surfaces->AddItem( "Font_Fixedsys16x28", std::make_unique<Surface>( "Textures\\Fonts\\Fixedsys16x28.bmp" ) );
+	LoadTextures( Settings::ReadMode::Texture_Door_Dark );
+	LoadTextures( Settings::ReadMode::Texture_Door_Light );
 	LoadTextures( Settings::ReadMode::Texture_Wall_Dark );
 	LoadTextures( Settings::ReadMode::Texture_Wall_Light );
 }
@@ -158,7 +149,7 @@ void Game::SetupMenu()
 				parentMenu = menuItemCollection.at( it->Parent ).get();
 			}
 
-			menuItemCollection[it->Name] = std::make_unique<MenuItem>( it->Name, nullptr, parentMenu, menuFont, gfx, insertToolColour );
+			menuItemCollection[it->Name] = std::make_unique<MenuItem>( it->Text, nullptr, parentMenu, menuFont, gfx, insertToolColour );
 		}
 
 		MenuItem* const menuItem = menuItemCollection.at( it->Name ).get();

@@ -47,10 +47,6 @@ WAL00091 Textures\Walls\Dark\WAL00091.bmp
 WAL00093 Textures\Walls\Dark\WAL00093.bmp
 WAL00095 Textures\Walls\Dark\WAL00095.bmp
 WAL00097 Textures\Walls\Dark\WAL00097.bmp
-WAL00099 Textures\Walls\Dark\WAL00099.bmp
-WAL00101 Textures\Walls\Dark\WAL00101.bmp
-WAL00103 Textures\Walls\Dark\WAL00103.bmp
-WAL00105 Textures\Walls\Dark\WAL00105.bmp
 [Texture Wall Light]
 '{Texture Name} {Relative File Path}
 WAL00000 Textures\Walls\Light\WAL00000.bmp
@@ -104,7 +100,15 @@ WAL00090 Textures\Walls\Light\WAL00090.bmp
 WAL00092 Textures\Walls\Light\WAL00092.bmp
 WAL00094 Textures\Walls\Light\WAL00094.bmp
 WAL00096 Textures\Walls\Light\WAL00096.bmp
-WAL00098 Textures\Walls\Light\WAL00098.bmp
-WAL00100 Textures\Walls\Light\WAL00100.bmp
-WAL00102 Textures\Walls\Light\WAL00102.bmp
-WAL00104 Textures\Walls\Light\WAL00104.bmp
+[Texture Door Dark]
+'{Texture Name} {Relative File Path}
+WAL00099 Textures\Doors\Dark\WAL00099.bmp
+WAL00101 Textures\Doors\Dark\WAL00101.bmp
+WAL00103 Textures\Doors\Dark\WAL00103.bmp
+WAL00105 Textures\Doors\Dark\WAL00105.bmp
+[Texture Door Light]
+'{Texture Name} {Relative File Path}
+WAL00098 Textures\Doors\Light\WAL00098.bmp
+WAL00100 Textures\Doors\Light\WAL00100.bmp
+WAL00102 Textures\Doors\Light\WAL00102.bmp
+WAL00104 Textures\Doors\Light\WAL00104.bmp

@@ -44,7 +44,6 @@ private:
 	/*  User Functions              */
 	void DoKeyboardEvents();
 	void DoMouseEvents();
-	void FillFixtureMenuItems( std::unique_ptr<MenuItem>& menuItem, Editor* const editor, const Settings::ReadMode fixtureContents );
 	void LoadFonts();
 	void LoadFixtures();
 	void LoadFixtures( const Settings::ReadMode contents );

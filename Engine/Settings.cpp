@@ -6,8 +6,12 @@
 Settings::Settings()
 {
 	SettingsLists[Settings::ListFiles] = std::make_unique<std::unordered_map<std::string, std::string, std::hash<std::string>>>();
+	SettingsLists[Settings::TextureDoorDark] = std::make_unique<std::unordered_map<std::string, std::string, std::hash<std::string>>>();
+	SettingsLists[Settings::TextureDoorLight] = std::make_unique<std::unordered_map<std::string, std::string, std::hash<std::string>>>();
 	SettingsLists[Settings::TextureWallDark] = std::make_unique<std::unordered_map<std::string, std::string, std::hash<std::string>>>();
 	SettingsLists[Settings::TextureWallLight] = std::make_unique<std::unordered_map<std::string, std::string, std::hash<std::string>>>();
+	SettingsLists[Settings::MapFixtureDoorDark] = std::make_unique<std::unordered_map<std::string, std::string, std::hash<std::string>>>();
+	SettingsLists[Settings::MapFixtureDoorLight] = std::make_unique<std::unordered_map<std::string, std::string, std::hash<std::string>>>();
 	SettingsLists[Settings::MapFixtureWallDark] = std::make_unique<std::unordered_map<std::string, std::string, std::hash<std::string>>>();
 	SettingsLists[Settings::MapFixtureWallLight] = std::make_unique<std::unordered_map<std::string, std::string, std::hash<std::string>>>();
 	SettingsLists[Settings::MapFixtureMenu] = std::make_unique<std::unordered_map<std::string, std::string, std::hash<std::string>>>();
@@ -112,6 +116,8 @@ void Settings::ReadSetting( const std::string& line )
 	switch ( Mode )
 	{
 	case ReadMode::List_Files:
+	case ReadMode::Texture_Door_Dark:
+	case ReadMode::Texture_Door_Light:
 	case ReadMode::Texture_Wall_Dark:
 	case ReadMode::Texture_Wall_Light:
 	{
@@ -123,6 +129,8 @@ void Settings::ReadSetting( const std::string& line )
 		list[name] = filename;
 	}
 		break;
+	case ReadMode::Map_Fixture_Door_Dark:
+	case ReadMode::Map_Fixture_Door_Light:
 	case ReadMode::Map_Fixture_Wall_Dark:
 	case ReadMode::Map_Fixture_Wall_Light:
 	{
@@ -137,14 +145,15 @@ void Settings::ReadSetting( const std::string& line )
 	case ReadMode::Map_Fixture_Menu:
 	{
 		std::string lineCopy = line;
-		const std::string name = FindFirstInLineTextAndRemoveAndReturn( lineCopy, '(', ')' );
+		const std::string text = FindFirstInLineTextAndRemoveAndReturn( lineCopy, '(', ')' );
 		const std::string parent = FindFirstInLineTextAndRemoveAndReturn( lineCopy, '(', ')' );
 		const std::string fixtureList = FindFirstInLineTextAndRemoveAndReturn( lineCopy, '[', ']', true );
 		const std::string columns = FindFirstInLineTextAndRemoveAndReturn( lineCopy, '[', ']' );
+		const std::string name = parent + text;
 
 		if ( std::find( FixtureMenuStructure.begin(), FixtureMenuStructure.end(), name ) == FixtureMenuStructure.end() )
 		{
-			FixtureMenuStructure.emplace_back( name, parent );
+			FixtureMenuStructure.emplace_back( name, text, parent );
 		}
 		
 		MenuStructure& menu = *(std::find( FixtureMenuStructure.begin(), FixtureMenuStructure.end(), name ));
@@ -175,10 +184,18 @@ std::string Settings::GetReadModeText( const ReadMode mode ) const
 		return Settings::None;
 	case ReadMode::List_Files:
 		return Settings::ListFiles;
+	case ReadMode::Texture_Door_Dark:
+		return Settings::TextureDoorDark;
+	case ReadMode::Texture_Door_Light:
+		return Settings::TextureDoorLight;
 	case ReadMode::Texture_Wall_Dark:
 		return Settings::TextureWallDark;
 	case ReadMode::Texture_Wall_Light:
 		return Settings::TextureWallLight;
+	case ReadMode::Map_Fixture_Door_Dark:
+		return Settings::MapFixtureDoorDark;
+	case ReadMode::Map_Fixture_Door_Light:
+		return Settings::MapFixtureDoorLight;
 	case ReadMode::Map_Fixture_Wall_Dark:
 		return Settings::MapFixtureWallDark;
 	case ReadMode::Map_Fixture_Wall_Light:
