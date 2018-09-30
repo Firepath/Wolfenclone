@@ -659,15 +659,15 @@ void ImageMenuItem::Show( const Vei2 & location, std::unique_ptr<PixelEffect::Ef
 	{
 		RectI imageRect = boxRect.GetExpanded( -(int)BoxPadding );
 
+		std::unique_ptr<PixelEffect::Effect> effect = std::make_unique<PixelEffect::Chroma>();
+
 		if ( IsHovering() )
 		{
 			const RectI highlightRect = boxRect.GetExpanded( std::max( (int)BoxPadding, boxRect.GetWidth() / 4 ) );
 			imageRect = highlightRect.GetExpanded( -(int)BoxPadding );
-			std::unique_ptr<PixelEffect::Effect> copy = std::make_unique<PixelEffect::Copy>();
-			_gfx.DrawBoxBorder( highlightRect, imageRect, HighlightColour, copy );
+			_gfx.DrawBoxBorder( highlightRect, imageRect, HighlightColour, effect );
 		}
 
-		std::unique_ptr<PixelEffect::Effect> copy = std::make_unique<PixelEffect::Copy>();
-		_gfx.DrawSprite( imageRect, *Image, copy );
+		_gfx.DrawSprite( imageRect, *Image, effect );
 	}
 }

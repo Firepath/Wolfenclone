@@ -83,8 +83,8 @@ void Grid::DrawCell( const Vei2& gridLocation, const MapFixture* const fixture, 
 
 	if ( fixture != nullptr )
 	{
-		std::unique_ptr<PixelEffect::Effect> copy = std::make_unique<PixelEffect::Copy>();
-		gfx.DrawSprite( rect, *(fixture->GetTexture()), copy );
+		std::unique_ptr<PixelEffect::Effect> effect = std::make_unique<PixelEffect::Chroma>();
+		gfx.DrawSprite( rect, *(fixture->GetTexture()), effect );
 	}
 }
 
