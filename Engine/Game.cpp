@@ -86,7 +86,7 @@ void Game::LoadFixtures()
 {
 	LoadFixtures<Wall>( Settings::ReadMode::Map_Fixture_Door_Dark );
 	LoadFixtures<Wall>( Settings::ReadMode::Map_Fixture_Door_Light );
-	LoadFixtures<Wall>( Settings::ReadMode::Map_Fixture_Treasure );
+	LoadFixtures<Treasure>( Settings::ReadMode::Map_Fixture_Treasure );
 	LoadFixtures<Wall>( Settings::ReadMode::Map_Fixture_Wall_Dark );
 	LoadFixtures<Wall>( Settings::ReadMode::Map_Fixture_Wall_Light );
 }

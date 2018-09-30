@@ -147,10 +147,12 @@
     <ClInclude Include="Font.h" />
     <ClInclude Include="MapFixture.h" />
     <ClInclude Include="Menu.h" />
+    <ClInclude Include="Pickup.h" />
     <ClInclude Include="Rect.h" />
     <ClInclude Include="Settings.h" />
     <ClInclude Include="StringKeyRepository.h" />
     <ClInclude Include="Surface.h" />
+    <ClInclude Include="Treasure.h" />
     <ClInclude Include="VectorExtensions.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="Graphics.h" />
@@ -183,10 +185,12 @@
     <ClCompile Include="MapFixture.cpp" />
     <ClCompile Include="Menu.cpp" />
     <ClCompile Include="Mouse.cpp" />
+    <ClCompile Include="Pickup.cpp" />
     <ClCompile Include="PixelEffect.cpp" />
     <ClCompile Include="EditTool_MouseButton_Select.cpp" />
     <ClCompile Include="Settings.cpp" />
     <ClCompile Include="Surface.cpp" />
+    <ClCompile Include="Treasure.cpp" />
     <ClCompile Include="Wall.cpp" />
   </ItemGroup>
   <ItemGroup>

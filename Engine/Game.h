@@ -25,9 +25,11 @@
 #include "Graphics.h"
 
 #include "Editor.h"
+#include "MapFixture.h"
 #include "Menu.h"
 #include "Settings.h"
 #include "StringKeyRepository.h"
+#include "Treasure.h"
 #include "Wall.h"
 
 class Game
@@ -47,7 +49,7 @@ private:
 	void LoadFonts();
 	void LoadFixtures();
 	
-	template<typename T>
+	template<class T>
 	void LoadFixtures( const Settings::ReadMode contents )
 	{
 		auto& listFixtures = _Settings->GetSettingList( contents );
@@ -58,7 +60,7 @@ private:
 			Fixtures->AddItem( it->first, std::move( fixture ) );
 		}
 	}
-	
+
 	void LoadTextures();
 	void LoadTextures( const Settings::ReadMode contents );
 	void SetupMenu();
