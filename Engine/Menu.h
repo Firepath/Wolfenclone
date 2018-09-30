@@ -65,17 +65,12 @@ public:
 		RectI boxRect = RectI( location, (int)Width, (int)Height );
 		std::unique_ptr<PixelEffect::Effect> fontEffect = std::make_unique<PixelEffect::Substitution>( TextColour, _Font->GetColour() );
 		_Font->DrawString( GetText(), location + Vei2( (int)BoxPadding, (int)BoxPadding ), boxRect, fontEffect, _gfx );
-
-		if ( IsOpen() )
-		{
-			ShowMenu();
-		}
 	}
 
 	virtual void ShowMenu();
 
 protected:
-	void DoHovering( const bool hovering, const bool hoveringOnChild );
+	void DoHovering( const bool hovering );
 	void DoSubMenuMouseEvents( Mouse::Event& me );
 	const RectI GetSubMenuArea() const;
 	virtual const Vei2 GetSubMenuLocation() const;

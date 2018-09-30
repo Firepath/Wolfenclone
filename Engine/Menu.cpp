@@ -64,9 +64,8 @@ void MenuItem::DoMouseEvents( Mouse::Event& me )
 	const Vei2 mousePos = me.GetPos();
 	const bool mouseIsOnMenuItem = IsHovering( mousePos, true );
 
+	DoHovering( IsHovering( mousePos, false ) );
 	ResetSubMenuItems( mousePos );
-
-	DoHovering( mouseIsOnMenuItem, IsHovering( mousePos, false ) );
 
 	// Something else has already handled this
 	if ( me.IsHandled() )
@@ -172,9 +171,9 @@ void MenuItem::Select()
 	}
 	else if ( MenuItems.size() > 0 )
 	{
-		if ( !IsOpen() )
+		if ( !IsOpen() && MenuItems.size() > 0 )
 		{
-			ShowMenu();
+			SetOpen( true );
 		}
 	}
 }
@@ -236,18 +235,20 @@ void MenuItem::ShowMenu()
 	ShowMenu( topLeft );
 }
 
-void MenuItem::DoHovering( const bool hovering, const bool hoveringOnChild )
+void MenuItem::DoHovering( const bool hovering )
 {
+	SetHovering( hovering );
+
 	if ( !IsOpen() &&
 		MenuItems.size() > 0 &&
-		(hovering || hoveringOnChild) &&
+		hovering &&
 		(typeid(*this) == typeid(MenuItem) ) )
 	{
 		SetOpen( true );
 	}
 
 	TextColour = MenuItem::DefaultTextColour;
-	if ( hovering || hoveringOnChild )
+	if ( IsHovering() )
 	{
 		TextColour = HighlightColour;
 	}
@@ -393,8 +394,7 @@ void MenuItem::SetHovering( bool hovering )
 void MenuItem::ShowMenu( const Vei2 location )
 {
 	assert( MenuItems.size() > 0 );
-
-	SetOpen( true );
+	assert( IsOpen() );
 
 	const RectI subMenuBorder = GetSubMenuArea();
 	const RectI subMenuInnerBorder = subMenuBorder.GetExpanded( -(int)BorderThickness );
@@ -422,13 +422,10 @@ void MenuItem::ShowSubMenu( const Vei2 location, std::unique_ptr<PixelEffect::Ef
 			item.Show( itemLocation, boxEffect );
 			if ( onlyHovering )
 			{
-				// Pretty much should be doing this here
-				// instead of in Show(...) but reset or something
-				// is breaking it
-				//if ( item.IsOpen() )
-				//{
-				//	item.ShowMenu();
-				//}
+				if ( item.IsOpen() )
+				{
+					item.ShowMenu();
+				}
 				break; // Should only be one...
 			}
 		}
@@ -460,10 +457,9 @@ void Menu::DoMouseEvents( Mouse::Event & me )
 {
 	const Vei2 mousePos = me.GetPos();
 	const bool mouseIsOnMenuItem = IsHovering( mousePos, true );
-
+	
+	DoHovering( IsHovering( mousePos, false ) );
 	ResetSubMenuItems( mousePos );
-
-	DoHovering( mouseIsOnMenuItem, IsHovering( mousePos, false ) );
 
 	// Something else has already handled this
 	if ( me.IsHandled() )
@@ -619,15 +615,15 @@ void MenuBar::Draw() const
 
 	// Similarly should be doing this but reset or something
 	// is breaking it
-	//for ( auto it = Menus.begin(); it != Menus.end(); it++ )
-	//{
-	//	MenuItem* menu = it->get();
-	//	if ( menu->IsOpen() )
-	//	{
-	//		menu->ShowMenu();
-	//		break; // Should only be one...
-	//	}
-	//}
+	for ( auto it = Menus.begin(); it != Menus.end(); it++ )
+	{
+		MenuItem* menu = it->get();
+		if ( menu->IsOpen() )
+		{
+			menu->ShowMenu();
+			break; // Should only be one...
+		}
+	}
 }
 
 void MenuBar::CancelMenus()
@@ -673,10 +669,5 @@ void ImageMenuItem::Show( const Vei2 & location, std::unique_ptr<PixelEffect::Ef
 
 		std::unique_ptr<PixelEffect::Effect> copy = std::make_unique<PixelEffect::Copy>();
 		_gfx.DrawSprite( imageRect, *Image, copy );
-	}
-
-	if ( IsOpen() )
-	{
-		ShowMenu();
 	}
 }
