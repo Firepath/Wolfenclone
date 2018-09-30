@@ -46,7 +46,19 @@ private:
 	void DoMouseEvents();
 	void LoadFonts();
 	void LoadFixtures();
-	void LoadFixtures( const Settings::ReadMode contents );
+	
+	template<typename T>
+	void LoadFixtures( const Settings::ReadMode contents )
+	{
+		auto& listFixtures = _Settings->GetSettingList( contents );
+		for ( auto it = listFixtures.begin(); it != listFixtures.end(); it++ )
+		{
+			const Surface* texture = &(Surfaces->GetItem( it->second ));
+			std::unique_ptr<MapFixture> fixture = std::make_unique<T>( texture );
+			Fixtures->AddItem( it->first, std::move( fixture ) );
+		}
+	}
+	
 	void LoadTextures();
 	void LoadTextures( const Settings::ReadMode contents );
 	void SetupMenu();

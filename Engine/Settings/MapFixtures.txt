@@ -1,3 +1,16 @@
+[Fixture Door Dark]
+'{Fixture Name} {Texture Name}
+WAL00099 WAL00099
+WAL00103 WAL00103
+WAL00105 WAL00105
+[Fixture Door Light]
+'{Fixture Name} {Texture Name}
+WAL00098 WAL00098
+WAL00102 WAL00102
+WAL00104 WAL00104
+[Fixture Treasure]
+'{Fixture Name} {Texture Name}
+SPR00031 SPR00031
 [Fixture Wall Dark]
 '{Fixture Name} {Texture Name}
 WAL00001 WAL00001
@@ -100,21 +113,12 @@ WAL00090 WAL00090
 WAL00092 WAL00092
 WAL00094 WAL00094
 WAL00096 WAL00096
-[Fixture Door Dark]
-'{Fixture Name} {Texture Name}
-WAL00099 WAL00099
-WAL00103 WAL00103
-WAL00105 WAL00105
-[Fixture Door Light]
-'{Fixture Name} {Texture Name}
-WAL00098 WAL00098
-WAL00102 WAL00102
-WAL00104 WAL00104
 [Fixture Menu]
-'{(Menu Name)} [{(Parent Menu Name)} {[Fixture Type]} {[Number of Columns]}]
+'[(Menu Name)] {(Parent Menu Name)} {[Fixture Type]} {[Number of Columns]}
 (Door)
 (Dark) (Door) [Fixture Door Dark] [2]
 (Light) (Door) [Fixture Door Light] [2]
+(Treasure) [Fixture Treasure] [4]
 (Wall)
 (Dark) (Wall) [Fixture Wall Dark] [8]
 (Light) (Wall) [Fixture Wall Light] [8]

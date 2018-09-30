@@ -84,21 +84,11 @@ void Game::LoadFonts()
 
 void Game::LoadFixtures()
 {
-	LoadFixtures( Settings::ReadMode::Texture_Door_Dark );
-	LoadFixtures( Settings::ReadMode::Texture_Door_Light );
-	LoadFixtures( Settings::ReadMode::Texture_Wall_Dark );
-	LoadFixtures( Settings::ReadMode::Texture_Wall_Light );
-}
-
-void Game::LoadFixtures( const Settings::ReadMode contents )
-{
-	auto& listFixtures = _Settings->GetSettingList( contents );
-	for ( auto it = listFixtures.begin(); it != listFixtures.end(); it++ )
-	{
-		const Surface* texture = &(Surfaces->GetItem( it->first ));
-		std::unique_ptr<MapFixture> wall = std::make_unique<Wall>( texture );
-		Fixtures->AddItem( it->first, std::move( wall ) );
-	}
+	LoadFixtures<Wall>( Settings::ReadMode::Map_Fixture_Door_Dark );
+	LoadFixtures<Wall>( Settings::ReadMode::Map_Fixture_Door_Light );
+	LoadFixtures<Wall>( Settings::ReadMode::Map_Fixture_Treasure );
+	LoadFixtures<Wall>( Settings::ReadMode::Map_Fixture_Wall_Dark );
+	LoadFixtures<Wall>( Settings::ReadMode::Map_Fixture_Wall_Light );
 }
 
 void Game::LoadTextures()
@@ -106,6 +96,7 @@ void Game::LoadTextures()
 	Surfaces->AddItem( "Font_Fixedsys16x28", std::make_unique<Surface>( "Textures\\Fonts\\Fixedsys16x28.bmp" ) );
 	LoadTextures( Settings::ReadMode::Texture_Door_Dark );
 	LoadTextures( Settings::ReadMode::Texture_Door_Light );
+	LoadTextures( Settings::ReadMode::Texture_Treasure );
 	LoadTextures( Settings::ReadMode::Texture_Wall_Dark );
 	LoadTextures( Settings::ReadMode::Texture_Wall_Light );
 }
@@ -165,8 +156,9 @@ void Game::SetupMenu()
 			for ( const std::string& fixtureName : it->Items )
 			{
 				MapFixture* fixture = &(Fixtures->GetItem( fixtureName ));
+				const Surface* surface = fixture->GetTexture();
 
-				std::unique_ptr<MenuItem> subMenuItem = std::make_unique<ImageMenuItem>( fixture->GetTexture(), 64, 64, std::make_unique<Editor::EditTool_MouseButton_InsertLCallBack>( editor, tool, fixture ), menuItem, gfx, tool->GetToolColour() );
+				std::unique_ptr<MenuItem> subMenuItem = std::make_unique<ImageMenuItem>( surface, surface->GetHeight(), surface->GetWidth(), std::make_unique<Editor::EditTool_MouseButton_InsertLCallBack>( editor, tool, fixture ), menuItem, gfx, tool->GetToolColour() );
 				menuItem->AddMenuItem( std::move( subMenuItem ) );
 			}
 		}
@@ -183,7 +175,7 @@ void Game::SetupMenu()
 		}
 		else
 		{
-			insertItem->AddMenuItem( std::move( child ) );
+			insertItem->StackMenuItem( std::move( child ) );
 		}
 	}
 

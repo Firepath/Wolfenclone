@@ -38,10 +38,12 @@ public:
 		List_Files,
 		Texture_Door_Dark,
 		Texture_Door_Light,
+		Texture_Treasure,
 		Texture_Wall_Dark,
 		Texture_Wall_Light,
 		Map_Fixture_Door_Dark,
 		Map_Fixture_Door_Light,
+		Map_Fixture_Treasure,
 		Map_Fixture_Wall_Dark,
 		Map_Fixture_Wall_Light,
 		Map_Fixture_Menu,
@@ -54,10 +56,12 @@ public:
 	static constexpr char ListFiles[] = "[List Files]";
 	static constexpr char TextureDoorDark[] = "[Texture Door Dark]";
 	static constexpr char TextureDoorLight[] = "[Texture Door Light]";
+	static constexpr char TextureTreasure[] = "[Texture Treasure]";
 	static constexpr char TextureWallDark[] = "[Texture Wall Dark]";
 	static constexpr char TextureWallLight[] = "[Texture Wall Light]";
 	static constexpr char MapFixtureDoorDark[] = "[Fixture Door Dark]";
 	static constexpr char MapFixtureDoorLight[] = "[Fixture Door Light]";
+	static constexpr char MapFixtureTreasure[] = "[Fixture Treasure]";
 	static constexpr char MapFixtureWallDark[] = "[Fixture Wall Dark]";
 	static constexpr char MapFixtureWallLight[] = "[Fixture Wall Light]";
 	static constexpr char MapFixtureMenu[] = "[Fixture Menu]";
