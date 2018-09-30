@@ -1,3 +1,6 @@
+[Texture Font]
+'{Texture Name} {Relative File Path}
+Font_Fixedsys16x28 Textures\Fonts\Fixedsys16x28.bmp
 [Texture Door Dark]
 '{Texture Name} {Relative File Path}
 WAL00099 Textures\Doors\Dark\WAL00099.bmp

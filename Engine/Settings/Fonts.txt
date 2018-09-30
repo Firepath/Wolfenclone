@@ -1,0 +1,3 @@
+[Font]
+'{Font Name} {Texture Name}
+MenuFont Font_Fixedsys16x28

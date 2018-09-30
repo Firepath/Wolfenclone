@@ -1,4 +1,6 @@
 [List Files]
 '{List Name} {Relative File Path}
 Textures Settings\Textures.txt
-MapFixtures Settings\MapFixtures.txt
+Fonts Settings\Fonts.txt
+Fixtures Settings\MapFixtures.txt
+Menus Settings\Menus.txt

@@ -55,6 +55,12 @@
     <Filter Include="Source Files\Map\Fixtures">
       <UniqueIdentifier>{126da4c6-b994-4f45-b5e7-3f265511183f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Loading">
+      <UniqueIdentifier>{dadea37e-ce81-4697-8a2a-405c4530c1b2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Loading">
+      <UniqueIdentifier>{0075b142-d64a-4473-bd8c-25e4c722aff2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ChiliWin.h">
@@ -73,9 +79,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ChiliMath.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Settings.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Editor.h">
@@ -141,6 +144,27 @@
     <ClInclude Include="Grid.h">
       <Filter>Header Files\Map</Filter>
     </ClInclude>
+    <ClInclude Include="Loader.h">
+      <Filter>Header Files\Loading</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureLoader.h">
+      <Filter>Header Files\Loading</Filter>
+    </ClInclude>
+    <ClInclude Include="LoadConstants.h">
+      <Filter>Header Files\Loading</Filter>
+    </ClInclude>
+    <ClInclude Include="FontLoader.h">
+      <Filter>Header Files\Loading</Filter>
+    </ClInclude>
+    <ClInclude Include="FixtureLoader.h">
+      <Filter>Header Files\Loading</Filter>
+    </ClInclude>
+    <ClInclude Include="MenuLoader.h">
+      <Filter>Header Files\Loading</Filter>
+    </ClInclude>
+    <ClInclude Include="FileListLoader.h">
+      <Filter>Header Files\Loading</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Game.cpp">
@@ -150,9 +174,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="MainWindow.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Settings.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="EditToolBox.cpp">
@@ -220,6 +241,24 @@
     </ClCompile>
     <ClCompile Include="DXErr.cpp">
       <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Loader.cpp">
+      <Filter>Source Files\Loading</Filter>
+    </ClCompile>
+    <ClCompile Include="TextureLoader.cpp">
+      <Filter>Source Files\Loading</Filter>
+    </ClCompile>
+    <ClCompile Include="FontLoader.cpp">
+      <Filter>Source Files\Loading</Filter>
+    </ClCompile>
+    <ClCompile Include="FixtureLoader.cpp">
+      <Filter>Source Files\Loading</Filter>
+    </ClCompile>
+    <ClCompile Include="MenuLoader.cpp">
+      <Filter>Source Files\Loading</Filter>
+    </ClCompile>
+    <ClCompile Include="FileListLoader.cpp">
+      <Filter>Source Files\Loading</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -1,0 +1,9 @@
+[Fixture Menu]
+'[(Menu Name)] {(Parent Menu Name)} {[Fixture Type]} {[Number of Columns]}
+(Door)
+(Dark) (Door) [Fixture Door Dark] [2]
+(Light) (Door) [Fixture Door Light] [2]
+(Treasure) [Fixture Treasure] [4]
+(Wall)
+(Dark) (Wall) [Fixture Wall Dark] [8]
+(Light) (Wall) [Fixture Wall Light] [8]

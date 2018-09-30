@@ -27,10 +27,10 @@
 #include "Editor.h"
 #include "MapFixture.h"
 #include "Menu.h"
-#include "Settings.h"
 #include "StringKeyRepository.h"
-#include "Treasure.h"
-#include "Wall.h"
+#include "Surface.h"
+
+class Font;
 
 class Game
 {
@@ -46,24 +46,6 @@ private:
 	/*  User Functions              */
 	void DoKeyboardEvents();
 	void DoMouseEvents();
-	void LoadFonts();
-	void LoadFixtures();
-	
-	template<class T>
-	void LoadFixtures( const Settings::ReadMode contents )
-	{
-		auto& listFixtures = _Settings->GetSettingList( contents );
-		for ( auto it = listFixtures.begin(); it != listFixtures.end(); it++ )
-		{
-			const Surface* texture = &(Surfaces->GetItem( it->second ));
-			std::unique_ptr<MapFixture> fixture = std::make_unique<T>( texture );
-			Fixtures->AddItem( it->first, std::move( fixture ) );
-		}
-	}
-
-	void LoadTextures();
-	void LoadTextures( const Settings::ReadMode contents );
-	void SetupMenu();
 	/********************************/
 private:
 	MainWindow& wnd;
@@ -71,10 +53,9 @@ private:
 	/********************************/
 	/*  User Variables              */
 	std::unique_ptr<Editor> _Editor = nullptr;
-	std::unique_ptr<StringKeyRepository<Surface>> Surfaces = nullptr;
+	std::unique_ptr<StringKeyRepository<StringKeyRepository<MapFixture>>> Fixtures = nullptr;
 	std::unique_ptr<StringKeyRepository<Font>> Fonts = nullptr;
 	std::unique_ptr<MenuBar> MainMenuBar = nullptr;
-	std::unique_ptr<StringKeyRepository<MapFixture>> Fixtures = nullptr;
-	std::unique_ptr<Settings> _Settings = nullptr;
+	std::unique_ptr<StringKeyRepository<Surface>> Surfaces = nullptr;
 	/********************************/
 };
