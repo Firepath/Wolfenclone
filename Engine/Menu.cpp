@@ -570,7 +570,7 @@ void MenuBar::DoMouseEvents( Mouse::Event& me )
 
 	const Vei2 mousePos = me.GetPos();
 
-	for ( auto it = Menus.begin(); it != Menus.end() && !me.IsHandled(); it++ )
+	for ( auto it = Menus.begin(); it != Menus.end(); it++ )
 	{
 		if ( it->get()->IsVisible() )
 		{
@@ -610,7 +610,7 @@ void MenuBar::Draw() const
 		MenuItem* menu = it->get();
 		std::unique_ptr<PixelEffect::Effect> copy = std::make_unique<PixelEffect::Copy>();
 		menu->Show( location, copy );
-		location.y += (int)menu->GetWidth();
+		location.x += (int)menu->GetWidth();
 	}
 
 	// Similarly should be doing this but reset or something
