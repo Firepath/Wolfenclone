@@ -2,7 +2,7 @@
 
 #include "Graphics.h"
 #include "Grid.h"
-#include "MapFixture.h"
+#include "Fixture.h"
 #include "PixelEffect.h"
 #include "Surface.h"
 #include "VectorExtensions.h"
@@ -77,7 +77,7 @@ void Grid::Draw( Graphics& gfx )
 	HighlightSelectedCells( gfx );
 }
 
-void Grid::DrawCell( const Vei2& gridLocation, const MapFixture* const fixture, Graphics& gfx ) const
+void Grid::DrawCell( const Vei2& gridLocation, const Fixture* const fixture, Graphics& gfx ) const
 {
 	if ( fixture != nullptr )
 	{
@@ -86,7 +86,7 @@ void Grid::DrawCell( const Vei2& gridLocation, const MapFixture* const fixture, 
 	}
 }
 
-void Grid::Fill( const Vei2& gridLocation, const MapFixture* const fixture )
+void Grid::Fill( const Vei2& gridLocation, const Fixture* const fixture )
 {
 	assert( IsOnGrid( gridLocation ) );
 
@@ -101,7 +101,7 @@ void Grid::Fill( const Vei2& gridLocation, const MapFixture* const fixture )
 	Fill( gridLocation, Cell( gridLocation, fixture ), wasEnclosed, wasEmpty );
 }
 
-void Grid::FillSelectedCells( const MapFixture* const fixture )
+void Grid::FillSelectedCells( const Fixture* const fixture )
 {
 	for ( const Vei2& cell : SelectedCells )
 	{
@@ -594,7 +594,7 @@ const int Grid::GetCellBorderThickness() const
 	return std::max( 2, (int)(ZoomLevel / 2.0f) );
 }
 
-const RectI Grid::GetCellScreenRectangle( const Vei2 & gridLocation ) const
+const RectI Grid::GetCellScreenRectangle( const Vei2& gridLocation ) const
 {
 	const Vei2 mapScreenLocation = GetScreenLocation();
 	const Vei2 topLeft = mapScreenLocation + Vei2( (int)std::ceil( (float)gridLocation.x * CellSize ), (int)std::ceil( (float)gridLocation.y * CellSize ) );

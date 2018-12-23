@@ -1,8 +1,8 @@
 #pragma once
 
-#include "MapFixture.h"
+#include "Fixture.h"
 
-class Pickup : public MapFixture
+class Pickup : public Fixture
 {
 public:
 	Pickup( const std::string name, const std::string type, const Surface* const texture );

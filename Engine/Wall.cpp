@@ -5,7 +5,7 @@
 
 Wall::Wall( const std::string name, const std::string type, const Surface* const texture )
 	:
-	MapFixture( name, type, texture )
+	Fixture( name, type, texture )
 {
 }
 

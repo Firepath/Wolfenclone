@@ -79,6 +79,9 @@
     <Filter Include="Source Files\IO\Sound">
       <UniqueIdentifier>{f0e1e28c-7682-4932-bd83-e5f321d45944}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Notes">
+      <UniqueIdentifier>{402edc82-d00f-4b86-aa5c-ffd4f9a4ba57}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ChiliWin.h">
@@ -110,9 +113,6 @@
     </ClInclude>
     <ClInclude Include="Menu.h">
       <Filter>Header Files\Menu</Filter>
-    </ClInclude>
-    <ClInclude Include="MapFixture.h">
-      <Filter>Header Files\Map\Fixtures</Filter>
     </ClInclude>
     <ClInclude Include="Wall.h">
       <Filter>Header Files\Map\Fixtures</Filter>
@@ -207,6 +207,9 @@
     <ClInclude Include="MapSaver.h">
       <Filter>Header Files\IO\Saving</Filter>
     </ClInclude>
+    <ClInclude Include="Fixture.h">
+      <Filter>Header Files\Map\Fixtures</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Game.cpp">
@@ -253,9 +256,6 @@
     </ClCompile>
     <ClCompile Include="Keyboard.cpp">
       <Filter>Source Files\IO\Input</Filter>
-    </ClCompile>
-    <ClCompile Include="MapFixture.cpp">
-      <Filter>Source Files\Map\Fixtures</Filter>
     </ClCompile>
     <ClCompile Include="PixelEffect.cpp">
       <Filter>Source Files\IO\Graphics</Filter>
@@ -320,6 +320,9 @@
     <ClCompile Include="MapSaver.cpp">
       <Filter>Source Files\IO\Saving</Filter>
     </ClCompile>
+    <ClCompile Include="Fixture.cpp">
+      <Filter>Source Files\Map\Fixtures</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="FramebufferPS.hlsl">
@@ -338,5 +341,10 @@
     <Image Include="Chili.ico">
       <Filter>Resource Files</Filter>
     </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Fixtures.txt">
+      <Filter>Notes</Filter>
+    </Text>
   </ItemGroup>
 </Project>

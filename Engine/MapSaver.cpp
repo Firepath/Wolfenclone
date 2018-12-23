@@ -4,7 +4,7 @@
 
 #include "Grid.h"
 #include "Map.h"
-#include "MapFixture.h"
+#include "Fixture.h"
 #include "Vec2.h"
 
 MapSaver::MapSaver( const Map& map )
@@ -43,7 +43,7 @@ void MapSaver::WriteLine( const std::string& line, std::ofstream& out )
 void MapSaver::WriteMapGridCell( const Grid::Cell& cell, std::ofstream& out ) const
 {
 	const Vei2 location = cell.GetLocation();
-	const MapFixture& fixture = *(cell.GetFixture());
+	const Fixture& fixture = *(cell.GetFixture());
 
 	out << location.x << "," << location.y << " " << fixture.GetType() << " " << fixture.GetName() << std::endl;
 }

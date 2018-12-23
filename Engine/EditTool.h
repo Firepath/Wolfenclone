@@ -6,7 +6,7 @@
 #include "StringKeyRepository.h"
 
 class Editor;
-class MapFixture;
+class Fixture;
 
 class EditTool
 {
@@ -87,10 +87,10 @@ class EditTool_MouseButton_Insert : public EditTool_MouseButton
 public:
 	static constexpr char TypeName[] = "EditTool_MouseButton_Insert";
 
-	EditTool_MouseButton_Insert( Editor* const editor, MapFixture* const fixture )
+	EditTool_MouseButton_Insert( Editor* const editor, Fixture* const fixture )
 		:
 		EditTool_MouseButton( editor ),
-		Fixture( fixture )
+		_Fixture( fixture )
 	{
 	}
 
@@ -101,13 +101,13 @@ public:
 		return EditTool_MouseButton_Insert::TypeName;
 	}
 
-	const MapFixture* GetFixture() const;
+	const Fixture* GetFixture() const;
 	Color GetToolColour() const override;
 	void MouseMoved() override;
-	void SetFixture( const MapFixture* fixture );
+	void SetFixture( const Fixture* fixture );
 
 private:
-	const MapFixture* Fixture = nullptr;
+	const Fixture* _Fixture = nullptr;
 };
 
 class EditTool_MouseButton_Delete : public EditTool_MouseButton

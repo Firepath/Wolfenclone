@@ -1,15 +1,15 @@
 #include "Grid.h"
 
-Grid::Cell::Cell( const Vei2& location, const MapFixture* const fixture )
+Grid::Cell::Cell( const Vei2& location, const Fixture* const fixture )
 	:
 	Location( location ),
-	Fixture( fixture )
+	_Fixture( fixture )
 {
 }
 
-const MapFixture* Grid::Cell::GetFixture() const
+const Fixture* Grid::Cell::GetFixture() const
 {
-	return Fixture;
+	return _Fixture;
 }
 
 const Vei2& Grid::Cell::GetLocation() const

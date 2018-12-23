@@ -12,7 +12,7 @@
 #include "Vec2.h"
 
 class Graphics;
-class MapFixture;
+class Fixture;
 class Surface;
 
 class Grid
@@ -21,14 +21,14 @@ public:
 	class Cell
 	{
 	public:
-		Cell( const Vei2& location, const MapFixture* const fixture );
+		Cell( const Vei2& location, const Fixture* const fixture );
 
-		const MapFixture* GetFixture() const;
+		const Fixture* GetFixture() const;
 		const Vei2& GetLocation() const;
 		void SetLocation( const Vei2& location );
 
 	private:
-		const MapFixture* Fixture = nullptr;
+		const Fixture* _Fixture = nullptr;
 		Vei2 Location;
 		bool Enclosed = false;
 	};
@@ -40,9 +40,9 @@ public:
 	void DeleteCell( const Vei2& gridLocation, const bool eraseSelection );
 	void DeleteSelectedCells();
 	void Draw( Graphics& gfx );
-	void DrawCell( const Vei2& gridLocation, const MapFixture* const fixture, Graphics& gfx ) const;
-	void Fill( const Vei2& gridLocation, const MapFixture* const fixture );
-	void FillSelectedCells( const MapFixture* const fixture );
+	void DrawCell( const Vei2& gridLocation, const Fixture* const fixture, Graphics& gfx ) const;
+	void Fill( const Vei2& gridLocation, const Fixture* const fixture );
+	void FillSelectedCells( const Fixture* const fixture );
 	Cell& GetCell( const Vei2& gridLocation ) const;
 	const Vei2 GetSize() const;
 	const bool HasSelectedCells() const;

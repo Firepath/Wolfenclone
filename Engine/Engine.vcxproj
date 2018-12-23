@@ -153,7 +153,7 @@
     <ClInclude Include="Map.h" />
     <ClInclude Include="MapLoader.h" />
     <ClInclude Include="FileIOConstants.h" />
-    <ClInclude Include="MapFixture.h" />
+    <ClInclude Include="Fixture.h" />
     <ClInclude Include="MapSaver.h" />
     <ClInclude Include="Menu.h" />
     <ClInclude Include="MenuLoader.h" />
@@ -201,7 +201,7 @@
     <ClCompile Include="Grid.cpp" />
     <ClCompile Include="Grid_Cell.cpp" />
     <ClCompile Include="Map.cpp" />
-    <ClCompile Include="MapFixture.cpp" />
+    <ClCompile Include="Fixture.cpp" />
     <ClCompile Include="MapLoader.cpp" />
     <ClCompile Include="MapSaver.cpp" />
     <ClCompile Include="Menu.cpp" />
@@ -285,6 +285,9 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="Chili.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Fixtures.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

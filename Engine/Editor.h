@@ -16,7 +16,7 @@
 
 class EditTool_MouseButton;
 class EditTool_MouseButton_Insert;
-class MapFixture;
+class Fixture;
 
 class Editor
 {
@@ -59,7 +59,7 @@ public:
 	class EditTool_MouseButton_InsertLCallBack : public EditTool_MouseButtonLCallBack
 	{
 	public:
-		EditTool_MouseButton_InsertLCallBack( Editor* const editor, EditTool_MouseButton* const tool, const MapFixture* const fixture )
+		EditTool_MouseButton_InsertLCallBack( Editor* const editor, EditTool_MouseButton* const tool, const Fixture* const fixture )
 			:
 			EditTool_MouseButtonLCallBack( editor, tool ),
 			Fixture( fixture )
@@ -70,7 +70,7 @@ public:
 
 	private:
 		Editor* const _Editor = nullptr;
-		const MapFixture* Fixture = nullptr;
+		const Fixture* Fixture = nullptr;
 	};
 
 	struct MouseInfo

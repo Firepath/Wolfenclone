@@ -25,7 +25,7 @@
 #include "Graphics.h"
 
 #include "Editor.h"
-#include "MapFixture.h"
+#include "Fixture.h"
 #include "Menu.h"
 #include "StringKeyRepository.h"
 #include "Surface.h"
@@ -53,7 +53,7 @@ private:
 	/********************************/
 	/*  User Variables              */
 	std::unique_ptr<Editor> _Editor = nullptr;
-	std::unique_ptr<StringKeyRepository<StringKeyRepository<MapFixture>>> Fixtures = nullptr;
+	std::unique_ptr<StringKeyRepository<StringKeyRepository<Fixture>>> Fixtures = nullptr;
 	std::unique_ptr<StringKeyRepository<Font>> Fonts = nullptr;
 	std::unique_ptr<MenuBar> MainMenuBar = nullptr;
 	std::unique_ptr<StringKeyRepository<Surface>> Surfaces = nullptr;

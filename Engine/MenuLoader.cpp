@@ -4,11 +4,11 @@
 #include "Editor.h"
 #include "EditTool.h"
 #include "Graphics.h"
-#include "MapFixture.h"
+#include "Fixture.h"
 #include "Menu.h"
 #include "Vec2.h"
 
-MenuLoader::MenuLoader( Editor* editor, StringKeyRepository<Font>& fonts, StringKeyRepository<StringKeyRepository<MapFixture>>& fixtures, Graphics & gfx )
+MenuLoader::MenuLoader( Editor* editor, StringKeyRepository<Font>& fonts, StringKeyRepository<StringKeyRepository<Fixture>>& fixtures, Graphics & gfx )
 	:
 	_Editor( editor ),
 	Fonts( fonts ),
@@ -72,7 +72,7 @@ void MenuLoader::Load( const std::string& filename )
 			EditTool_MouseButton* tool = editor->GetToolBox().GetMouseButtonTool( EditTool_MouseButton_Insert::TypeName );
 			for ( const std::string& fixtureName : it->Items->GetKeys() )
 			{
-				MapFixture* fixture = &(it->Items->GetItem( fixtureName ));
+				Fixture* fixture = &(it->Items->GetItem( fixtureName ));
 				const Surface* surface = fixture->GetTexture();
 
 				std::unique_ptr<MenuItem> subMenuItem = std::make_unique<ImageMenuItem>( surface, surface->GetHeight(), surface->GetWidth(), std::make_unique<Editor::EditTool_MouseButton_InsertLCallBack>( editor, tool, fixture ), menuItem, _Graphics, tool->GetToolColour() );
@@ -132,7 +132,7 @@ void MenuLoader::ReadLine( const std::string& line )
 				cols = std::stoi( columns );
 			}
 
-			StringKeyRepository<MapFixture>* fixture = nullptr;
+			StringKeyRepository<Fixture>* fixture = nullptr;
 			if ( !fixtureList.empty() )
 			{
 				fixture = &(Fixtures.GetItem( fixtureList ));

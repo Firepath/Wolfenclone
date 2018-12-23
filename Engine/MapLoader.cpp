@@ -3,7 +3,7 @@
 #include "Map.h"
 #include "Vec2.h"
 
-MapLoader::MapLoader( StringKeyRepository<StringKeyRepository<MapFixture>>& fixtures )
+MapLoader::MapLoader( StringKeyRepository<StringKeyRepository<Fixture>>& fixtures )
 	:
 	Fixtures( fixtures )
 {

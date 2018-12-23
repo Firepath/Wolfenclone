@@ -8,17 +8,17 @@ void EditTool_MouseButton_Insert::ButtonPressed()
 
 	Editor& editor = GetEditor();
 
-	if ( Fixture != nullptr )
+	if ( _Fixture != nullptr )
 	{
 		Editor::MouseInfo& info = editor.GetMouseInfo();
 		Grid& mapGrid = editor.GetMap().GetGrid();
 		if ( editor.GetControlModeEnabled() )
 		{
-			mapGrid.FillSelectedCells( Fixture );
+			mapGrid.FillSelectedCells( _Fixture );
 		}
 		else
 		{
-			editor.GetMap().GetGrid().Fill( info.HoverGridLocation, Fixture );
+			editor.GetMap().GetGrid().Fill( info.HoverGridLocation, _Fixture );
 		}
 	}
 
@@ -30,9 +30,9 @@ void EditTool_MouseButton_Insert::ButtonReleased()
 	EditTool_MouseButton::ButtonReleased();
 }
 
-const MapFixture* EditTool_MouseButton_Insert::GetFixture() const
+const Fixture* EditTool_MouseButton_Insert::GetFixture() const
 {
-	return Fixture;
+	return _Fixture;
 }
 
 Color EditTool_MouseButton_Insert::GetToolColour() const
@@ -44,7 +44,7 @@ void EditTool_MouseButton_Insert::MouseMoved()
 {
 }
 
-void EditTool_MouseButton_Insert::SetFixture( const MapFixture* fixture )
+void EditTool_MouseButton_Insert::SetFixture( const Fixture* fixture )
 {
-	Fixture = fixture;
+	_Fixture = fixture;
 }

@@ -1,0 +1,46 @@
+
+Fixture
+ - BlocksMovement
+ - InteractionEffect
+ - PlayerEffect
+ - RenderingStyle
+
+
+ ->	Wall
+	 - BlocksMovement
+	 - RenderingStyle
+
+	 ->	SecretWall
+		 - InteractionEffect
+
+
+ ->	Door
+	 - BlocksMovement
+	 - InteractionEffect
+	 - RenderingStyle
+
+	 ->	LockedDoor
+		 - InteractionEffect
+
+
+ ->	Decoration
+	 - BlocksMovement
+	 - RenderingStyle
+
+	 ->	Pickup
+		 - BlocksMovement
+
+	 These could be different payloads inside a pickup, or just different types of pickups.
+	 There doesn't seem to be any real advantage to either way, except extra separation, but no idea why that is beneficial.
+
+		 ->	Ammo
+			 - PlayerEffect
+
+		 ->	Health
+			 - PlayerEffect
+
+		 ->	Treasure
+			 - PlayerEffect
+
+ 		 ->	Weapon
+			 - PlayerEffect

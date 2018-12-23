@@ -9,14 +9,14 @@ FixtureLoader::FixtureLoader( StringKeyRepository<Surface>& surfaces )
 {
 }
 
-std::unique_ptr<StringKeyRepository<StringKeyRepository<MapFixture>>> FixtureLoader::GetFixtures()
+std::unique_ptr<StringKeyRepository<StringKeyRepository<Fixture>>> FixtureLoader::GetFixtures()
 {
 	return std::move( Fixtures );
 }
 
 void FixtureLoader::InitialiseAccess()
 {
-	Fixtures = std::make_unique<StringKeyRepository<StringKeyRepository<MapFixture>>>();
+	Fixtures = std::make_unique<StringKeyRepository<StringKeyRepository<Fixture>>>();
 }
 
 void FixtureLoader::ReadLine( const std::string & line )
@@ -35,7 +35,7 @@ void FixtureLoader::ReadLine( const std::string & line )
 		const std::string textureName = line.substr( split + 1, line.length() - split );
 
 		const Surface* texture = &(Surfaces.GetItem( textureName ));
-		std::unique_ptr<MapFixture> fixture = nullptr;
+		std::unique_ptr<Fixture> fixture = nullptr;
 
 		switch ( Mode )
 		{
@@ -58,10 +58,10 @@ void FixtureLoader::ReadLine( const std::string & line )
 			const std::string fixtureType = FileIOConstants::GetIOModeText( Mode );
 			if ( !Fixtures->Contains( fixtureType ) )
 			{
-				Fixtures->AddItem( fixtureType, std::make_unique<StringKeyRepository<MapFixture>>() );
+				Fixtures->AddItem( fixtureType, std::make_unique<StringKeyRepository<Fixture>>() );
 			}
 
-			StringKeyRepository<MapFixture>& fixtures = Fixtures->GetItem( fixtureType );
+			StringKeyRepository<Fixture>& fixtures = Fixtures->GetItem( fixtureType );
 			fixtures.AddItem( name, std::move( fixture ) );
 		}
 		break;

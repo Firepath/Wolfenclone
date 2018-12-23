@@ -6,13 +6,13 @@
 #include "Loader.h"
 #include "StringKeyRepository.h"
 
-class MapFixture;
+class Fixture;
 class Map;
 
 class MapLoader : public Loader
 {
 public:
-	MapLoader( StringKeyRepository<StringKeyRepository<MapFixture>>& fixtures );
+	MapLoader( StringKeyRepository<StringKeyRepository<Fixture>>& fixtures );
 
 	std::unique_ptr<Map> GetMap();
 
@@ -21,5 +21,5 @@ private:
 	void ReadLine( const std::string& line ) override;
 
 	std::unique_ptr<Map> _Map = nullptr;
-	StringKeyRepository<StringKeyRepository<MapFixture>>& Fixtures;
+	StringKeyRepository<StringKeyRepository<Fixture>>& Fixtures;
 };

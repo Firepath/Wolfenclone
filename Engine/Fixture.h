@@ -7,12 +7,19 @@
 
 class Surface;
 
-class MapFixture
+class Fixture
 {
 public:
-	MapFixture( const std::string name, const std::string type, const Surface* const texture );
+	enum class RenderStyle
+	{
+		Edge3D,		// Walls
+		Centre3D,	// Doors
+		Centre2D	// Pickups (Guns, Ammo, Health, Treasure) / Decorations (Furniture, etc.)
+	};
 
-	~MapFixture() = default;
+	Fixture( const std::string name, const std::string type, const Surface* const texture );
+
+	~Fixture() = default;
 
 	virtual void Draw( const RectI area, Graphics& gfx ) const = 0;
 	const std::string GetName() const;
