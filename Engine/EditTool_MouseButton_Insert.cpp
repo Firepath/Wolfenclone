@@ -11,18 +11,18 @@ void EditTool_MouseButton_Insert::ButtonPressed()
 	if ( Fixture != nullptr )
 	{
 		Editor::MouseInfo& info = editor.GetMouseInfo();
-		Grid& mapGrid = editor.GetMapGrid();
+		Grid& mapGrid = editor.GetMap().GetGrid();
 		if ( editor.GetControlModeEnabled() )
 		{
 			mapGrid.FillSelectedCells( Fixture );
 		}
 		else
 		{
-			editor.GetMapGrid().Fill( info.HoverGridLocation, Fixture );
+			editor.GetMap().GetGrid().Fill( info.HoverGridLocation, Fixture );
 		}
 	}
 
-	editor.GetMapGrid().ClearSelectedCells();
+	editor.GetMap().GetGrid().ClearSelectedCells();
 }
 
 void EditTool_MouseButton_Insert::ButtonReleased()

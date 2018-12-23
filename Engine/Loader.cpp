@@ -1,3 +1,4 @@
+#include "FileIOConstants.h"
 #include "Loader.h"
 
 #include <algorithm>
@@ -5,36 +6,81 @@
 
 void Loader::Load( const std::string& filename )
 {
-	InitialiseLoad();
-	_Load( filename );
-	FinaliseLoad();
+	AccessFile( filename );
 }
 
-void Loader::InitialiseLoad()
+std::string Loader::FindFirstInLineTextAndRemoveAndReturn( std::string& line, const char startDelimiter, const char endDelimiter, bool includeDelimiters )
+{
+	size_t start = line.find( startDelimiter );
+	size_t end = line.find( endDelimiter );
+	if ( start == std::string::npos ||
+		end == std::string::npos ||
+		end == 0 ||
+		start >= end ) // Equal-to if same delimiter for start and end
+	{
+		return std::string();
+	}
+
+	if ( !includeDelimiters )
+	{
+		start += 1;
+		end -= 1;
+	}
+
+	const size_t length = end - (start - 1);
+
+	std::string text = line.substr( start, length );
+
+	size_t lineStart = end + 1;
+	if ( !includeDelimiters )
+	{
+		lineStart += 1;
+	}
+
+	size_t lineLength = line.size() - lineStart;
+
+	line = line.substr( lineStart, lineLength );
+
+	if ( line.find( " " ) == 0 )
+	{
+		line = line.substr( 1, line.length() - 1 );
+	}
+
+	return text;
+}
+
+void Loader::FinaliseAccess()
+{
+	// Ensure all settings are within acceptable bounds (which will also default any un-initialised settings).
+	//StartingNumberOfTargets = std::min( MaxStartingNumberOfTargets, std::max( MinStartingNumberOfTargets, StartingNumberOfTargets ) );
+}
+
+void Loader::InitialiseAccess()
 {
 }
 
-void Loader::_Load( const std::string& filename )
+void Loader::ProcessFile( const std::string& filename )
 {
-	Mode = LoadConstants::ReadMode::None;
+	Mode = FileIOConstants::IOMode::None;
 
 	std::string line;
-	std::ifstream in( filename.c_str() );
-	while ( std::getline( in, line ).good() )
+	std::ifstream in( filename );
+	if ( !in.good() )
 	{
-		if ( LoadConstants::UpdateReadMode( line, Mode ) )
+		// TODO: More than just return - let someone know.
+		return;
+	}
+
+	while ( in.good() )
+	{
+		std::getline( in, line );
+		if ( UpdateIOMode( line ) )
 		{
 			continue;
 		}
 
-		ReadSetting( line );
+		ReadLine( line );
 	}
 
-	Mode = LoadConstants::ReadMode::None;
-}
-
-void Loader::FinaliseLoad()
-{
-	// Ensure all settings are within acceptable bounds (which will also default any un-initialised settings).
-	//StartingNumberOfTargets = std::min( MaxStartingNumberOfTargets, std::max( MinStartingNumberOfTargets, StartingNumberOfTargets ) );
+	Mode = FileIOConstants::IOMode::None;
 }

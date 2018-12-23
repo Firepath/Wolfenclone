@@ -116,6 +116,11 @@ Grid::Cell& Grid::GetCell( const Vei2& gridLocation ) const
 	return Cells->at( gridLocation );
 }
 
+const Vei2 Grid::GetSize() const
+{
+	return Vei2( Width, Height );
+}
+
 const bool Grid::HasSelectedCells() const
 {
 	return SelectedCells.size() > 0;
@@ -131,6 +136,12 @@ void Grid::HighlightCell( const Vei2& gridLocation, const Color highlightColour,
 	{
 		gfx.DrawBoxBorder( rect, highlightColour, effect, GetCellBorderThickness() );
 	}
+}
+
+const bool Grid::IsCellOccupied( const Vei2 & gridLocation ) const
+{
+	assert( IsOnGrid( gridLocation ) );
+	return Cells->find( gridLocation ) != Cells->end();
 }
 
 bool Grid::IsOnGrid( const Vei2& gridLocation ) const
@@ -613,11 +624,6 @@ const RectI Grid::GetSelectedCellExtents() const
 	return extents;
 }
 
-const Vei2 Grid::GetSize() const
-{
-	return Vei2( Width, Height );
-}
-
 const RectI Grid::GetVisibleGridCells() const
 {
 	return RectI( ScreenToGrid( { 0, 0 } ), ScreenToGrid( { Graphics::ScreenWidth, Graphics::ScreenHeight } ) );
@@ -677,12 +683,6 @@ const bool Grid::IsCellEnclosed( const Vei2 & gridLocation ) const
 {
 	assert( IsOnGrid( gridLocation ) );
 	return EnclosedCells->find( gridLocation ) != EnclosedCells->end();
-}
-
-const bool Grid::IsCellOccupied( const Vei2 & gridLocation ) const
-{
-	assert( IsOnGrid( gridLocation ) );
-	return Cells->find( gridLocation ) != Cells->end();
 }
 
 bool Grid::IsJointFormed( const Vei2& gridLocation ) const

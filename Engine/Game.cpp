@@ -21,11 +21,12 @@
 #include "MainWindow.h"
 #include "Game.h"
 
+#include "FileIOConstants.h"
 #include "FileListLoader.h"
 #include "FixtureLoader.h"
 #include "FontLoader.h"
+#include "MapLoader.h"
 #include "MenuLoader.h"
-#include "LoadConstants.h"
 #include "TextureLoader.h"
 
 Game::Game( MainWindow& wnd )
@@ -38,20 +39,24 @@ Game::Game( MainWindow& wnd )
 	fileListLoader.Load( "Settings\\Settings.txt" );
 
 	TextureLoader textureLoader;
-	textureLoader.Load( fileListLoader.GetFileList().at( LoadConstants::TextureList ) );
+	textureLoader.Load( fileListLoader.GetFileList().at( FileIOConstants::TextureList ) );
 	Surfaces = textureLoader.GetTextures();
 
 	FontLoader fontLoader( *Surfaces );
-	fontLoader.Load( fileListLoader.GetFileList().at( LoadConstants::FontList ) );
+	fontLoader.Load( fileListLoader.GetFileList().at( FileIOConstants::FontList ) );
 	Fonts = fontLoader.GetFonts();
 
 	FixtureLoader fixtureLoader( *Surfaces );
-	fixtureLoader.Load( fileListLoader.GetFileList().at( LoadConstants::FixtureList ) );
+	fixtureLoader.Load( fileListLoader.GetFileList().at( FileIOConstants::FixtureList ) );
 	Fixtures = fixtureLoader.GetFixtures();
 
 	MenuLoader menuLoader( _Editor.get(), *Fonts, *Fixtures, gfx );
-	menuLoader.Load( fileListLoader.GetFileList().at( LoadConstants::MenuList ) );
+	menuLoader.Load( fileListLoader.GetFileList().at( FileIOConstants::MenuList ) );
 	MainMenuBar = menuLoader.GetMainMenuBar();
+
+	MapLoader mapLoader( *Fixtures );
+	mapLoader.Load( "Maps\\Map1.txt" );
+	_Editor->SetMap( mapLoader.GetMap() );
 }
 
 void Game::Go()

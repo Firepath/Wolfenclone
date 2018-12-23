@@ -1,3 +1,4 @@
+#include "Menu.h"
 #include "MenuLoader.h"
 #include "Colors.h"
 #include "Editor.h"
@@ -25,8 +26,13 @@ void MenuLoader::Load( const std::string& filename )
 {
 	MainMenuBar = std::make_unique<MenuBar>( Vei2( 0, 0 ), Vei2( Graphics::ScreenWidth, 10 ), _Graphics );
 
-	Font* menuFont = &(Fonts.GetItem( LoadConstants::MenuFont ));
+	Font* menuFont = &(Fonts.GetItem( FileIOConstants::MenuFont ));
 	Editor* editor = _Editor;
+
+	std::unique_ptr<MenuItem> fileMenu = std::make_unique<Menu>( "File", menuFont, _Graphics );
+	std::unique_ptr<MenuItem> saveItem = std::make_unique<MenuItem>( "Save", std::make_unique<Menu::Menu_FileSaveItemSelectedCallBack>( saveItem.get(), editor ), fileMenu.get(), menuFont, _Graphics );
+	fileMenu->AddMenuItem( std::move( saveItem ) );
+	MainMenuBar->AddMenu( std::move( fileMenu ) );
 
 	std::unique_ptr<MenuItem> editMenu = std::make_unique<Menu>( "Edit", menuFont, _Graphics );
 
@@ -105,39 +111,11 @@ void MenuLoader::Load( const std::string& filename )
 	MainMenuBar->AddMenu( std::move( editMenu ) );
 }
 
-std::string MenuLoader::FindFirstInLineTextAndRemoveAndReturn( std::string& line, const char startDelimiter, const char endDelimiter, bool includeDelimiters )
-{
-	size_t start = line.find( startDelimiter );
-	size_t end = line.find( endDelimiter );
-	if ( start == std::string::npos ||
-		end == std::string::npos ||
-		end == 0 ||
-		start >= end ) // Equal-to if same delimiter for start and end
-	{
-		return std::string();
-	}
-
-	if ( !includeDelimiters )
-	{
-		start += 1;
-	}
-	else
-	{
-		end += 1;
-	}
-
-	end -= start;
-
-	std::string text = line.substr( start, end );
-	line = line.substr( end + 2, line.size() - (end + 2) );
-	return text;
-}
-
-void MenuLoader::ReadSetting( const std::string& line )
+void MenuLoader::ReadLine( const std::string& line )
 {
 	switch ( Mode )
 	{
-	case LoadConstants::ReadMode::Fixture_Menu:
+	case FileIOConstants::IOMode::Fixture_Menu:
 	{
 		std::string lineCopy = line;
 		const std::string text = FindFirstInLineTextAndRemoveAndReturn( lineCopy, '(', ')' );
@@ -162,7 +140,7 @@ void MenuLoader::ReadSetting( const std::string& line )
 
 			FixtureMenuStructure.emplace_back( name, text, parent, fixture, cols );
 		}
+		break;
 	}
-	break;
 	}
 }

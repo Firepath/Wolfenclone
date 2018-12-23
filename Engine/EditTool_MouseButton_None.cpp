@@ -6,7 +6,7 @@ void EditTool_MouseButton_None::ButtonPressed()
 {
 	EditTool_MouseButton::ButtonPressed();
 	
-	GetEditor().GetMapGrid().ClearSelectedCells();
+	GetEditor().GetMap().GetGrid().ClearSelectedCells();
 }
 
 void EditTool_MouseButton_None::ButtonReleased()

@@ -11,7 +11,7 @@ void EditTool_MouseButton::ButtonReleased()
 	ButtonIsPressed = false;
 
 	Editor& editor = GetEditor();
-	Grid& mapGrid = editor.GetMapGrid();
+	Grid& mapGrid = editor.GetMap().GetGrid();
 	mapGrid.SetTemporarySelectedToSelected();
 	mapGrid.SetTemporaryMovedToMoved();
 }

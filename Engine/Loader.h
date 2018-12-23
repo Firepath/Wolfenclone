@@ -3,19 +3,20 @@
 #include <fstream>
 #include <string>
 
-#include "LoadConstants.h"
+#include "FileAccesser.h"
+#include "FileIOConstants.h"
 
-class Loader
+class Loader : public FileAccesser
 {
 public:
 	virtual void Load( const std::string& filename );
 
 protected:
-	LoadConstants::ReadMode Mode = LoadConstants::ReadMode::None;
+	std::string FindFirstInLineTextAndRemoveAndReturn( std::string& line, const char startDelimiter, const char endDelimiter, bool includeDelimiters = false );
 
 private:
-	void _Load( const std::string& filename );
-	virtual void FinaliseLoad();
-	virtual void InitialiseLoad();
-	virtual void ReadSetting( const std::string& line ) = 0;
+	virtual void FinaliseAccess() override;
+	virtual void InitialiseAccess() override;
+	virtual void ProcessFile( const std::string& filename ) override;
+	virtual void ReadLine( const std::string& line ) = 0;
 };

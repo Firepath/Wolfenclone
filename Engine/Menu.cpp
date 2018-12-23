@@ -1,9 +1,22 @@
 #pragma once
 
 #include "EditConstants.h"
+#include "Editor.h"
 #include "Graphics.h"
+#include "MapSaver.h"
 #include "Menu.h"
 #include "PixelEffect.h"
+
+MenuItem* MenuItem::Menu_ItemSelectedCallBack::GetMenuItem() const
+{
+	return _MenuItem;
+}
+
+void MenuItem::Menu_FileSaveItemSelectedCallBack::Execute() const
+{
+	MapSaver saver( _Editor->GetMap() );
+	saver.Save( "Maps\\Map1.txt" ); // TODO: Use map name from editor
+}
 
 MenuItem::MenuItem( std::string text, std::unique_ptr<SelectedCallBack> callback, const MenuItem* const menu, const Font* const font, Graphics& gfx, const Color highlightColour )
 	:
@@ -457,7 +470,7 @@ void Menu::DoMouseEvents( Mouse::Event & me )
 {
 	const Vei2 mousePos = me.GetPos();
 	const bool mouseIsOnMenuItem = IsHovering( mousePos, true );
-	
+
 	DoHovering( IsHovering( mousePos, false ) );
 	ResetSubMenuItems( mousePos );
 

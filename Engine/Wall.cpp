@@ -1,9 +1,11 @@
 #include "Wall.h"
+
+#include "FileIOConstants.h"
 #include "PixelEffect.h"
 
-Wall::Wall( const Surface* const texture )
+Wall::Wall( const std::string name, const std::string type, const Surface* const texture )
 	:
-	MapFixture( texture )
+	MapFixture( name, type, texture )
 {
 }
 

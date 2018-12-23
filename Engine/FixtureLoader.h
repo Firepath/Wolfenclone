@@ -3,7 +3,6 @@
 #include <fstream>
 #include <string>
 
-#include "LoadConstants.h"
 #include "Loader.h"
 #include "StringKeyRepository.h"
 
@@ -18,8 +17,8 @@ public:
 	std::unique_ptr<StringKeyRepository<StringKeyRepository<MapFixture>>> GetFixtures();
 
 private:
-	void InitialiseLoad() override;
-	void ReadSetting( const std::string& line );
+	void InitialiseAccess() override;
+	void ReadLine( const std::string& line ) override;
 
 	std::unique_ptr<StringKeyRepository<StringKeyRepository<MapFixture>>> Fixtures = nullptr;
 	StringKeyRepository<Surface>& Surfaces;

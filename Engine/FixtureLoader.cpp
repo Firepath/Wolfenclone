@@ -1,3 +1,4 @@
+#include "FileIOConstants.h"
 #include "FixtureLoader.h"
 #include "Treasure.h"
 #include "Wall.h"
@@ -13,23 +14,24 @@ std::unique_ptr<StringKeyRepository<StringKeyRepository<MapFixture>>> FixtureLoa
 	return std::move( Fixtures );
 }
 
-void FixtureLoader::InitialiseLoad()
+void FixtureLoader::InitialiseAccess()
 {
 	Fixtures = std::make_unique<StringKeyRepository<StringKeyRepository<MapFixture>>>();
 }
 
-void FixtureLoader::ReadSetting( const std::string & line )
+void FixtureLoader::ReadLine( const std::string & line )
 {
 	switch ( Mode )
 	{
-	case LoadConstants::ReadMode::Fixture_Door_Dark:
-	case LoadConstants::ReadMode::Fixture_Door_Light:
-	case LoadConstants::ReadMode::Fixture_Treasure:
-	case LoadConstants::ReadMode::Fixture_Wall_Dark:
-	case LoadConstants::ReadMode::Fixture_Wall_Light:
+	case FileIOConstants::IOMode::Fixture_Door_Dark:
+	case FileIOConstants::IOMode::Fixture_Door_Light:
+	case FileIOConstants::IOMode::Fixture_Treasure:
+	case FileIOConstants::IOMode::Fixture_Wall_Dark:
+	case FileIOConstants::IOMode::Fixture_Wall_Light:
 	{
 		const size_t split = line.find( " " );
 		const std::string name = line.substr( 0, split );
+		std::string type = FileIOConstants::GetIOModeText( Mode );
 		const std::string textureName = line.substr( split + 1, line.length() - split );
 
 		const Surface* texture = &(Surfaces.GetItem( textureName ));
@@ -37,14 +39,15 @@ void FixtureLoader::ReadSetting( const std::string & line )
 
 		switch ( Mode )
 		{
-		case LoadConstants::ReadMode::Fixture_Door_Dark:
-		case LoadConstants::ReadMode::Fixture_Door_Light:
-		case LoadConstants::ReadMode::Fixture_Wall_Dark:
-		case LoadConstants::ReadMode::Fixture_Wall_Light:
-			fixture = std::make_unique<Wall>( texture );
+		case FileIOConstants::IOMode::Fixture_Door_Dark:
+		case FileIOConstants::IOMode::Fixture_Door_Light:
+			// TODO: Door type
+		case FileIOConstants::IOMode::Fixture_Wall_Dark:
+		case FileIOConstants::IOMode::Fixture_Wall_Light:
+			fixture = std::make_unique<Wall>( name, type, texture );
 			break;
-		case LoadConstants::ReadMode::Fixture_Treasure:
-			fixture = std::make_unique<Treasure>( texture );
+		case FileIOConstants::IOMode::Fixture_Treasure:
+			fixture = std::make_unique<Treasure>( name, type, texture );
 			break;
 		default:
 			break;
@@ -52,7 +55,7 @@ void FixtureLoader::ReadSetting( const std::string & line )
 
 		if ( fixture != nullptr )
 		{
-			const std::string fixtureType = LoadConstants::GetReadModeText( Mode );
+			const std::string fixtureType = FileIOConstants::GetIOModeText( Mode );
 			if ( !Fixtures->Contains( fixtureType ) )
 			{
 				Fixtures->AddItem( fixtureType, std::make_unique<StringKeyRepository<MapFixture>>() );
@@ -61,6 +64,7 @@ void FixtureLoader::ReadSetting( const std::string & line )
 			StringKeyRepository<MapFixture>& fixtures = Fixtures->GetItem( fixtureType );
 			fixtures.AddItem( name, std::move( fixture ) );
 		}
+		break;
 	}
 	}
 }

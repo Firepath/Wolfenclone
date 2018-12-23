@@ -3,7 +3,6 @@
 #include <fstream>
 #include <string>
 
-#include "LoadConstants.h"
 #include "Loader.h"
 #include "StringKeyRepository.h"
 
@@ -15,8 +14,8 @@ public:
 	std::unique_ptr<StringKeyRepository<Surface>> GetTextures();
 
 private:
-	void InitialiseLoad() override;
-	void ReadSetting( const std::string& line ) override;
+	void InitialiseAccess() override;
+	void ReadLine( const std::string& line ) override;
 
 	std::unique_ptr<StringKeyRepository<Surface>> Surfaces = nullptr;
 };

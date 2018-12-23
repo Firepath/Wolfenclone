@@ -9,6 +9,7 @@
 #include "Graphics.h"
 #include "Keyboard.h"
 #include "Grid.h"
+#include "Map.h"
 #include "Menu.h"
 #include "Mouse.h"
 #include "Vec2.h"
@@ -89,11 +90,12 @@ public:
 	void DoMouseEvents( Mouse::Event& me );
 	void Draw( Graphics& gfx );
 	const bool GetControlModeEnabled() const;
-	Grid& GetMapGrid();
+	Map& GetMap();
 	MouseInfo& GetMouseInfo();
 	RectI GetSelectionRectangle( const Vei2& gridLocation ) const;
 	const bool GetShiftModeEnabled() const;
 	const EditToolBox& GetToolBox() const;
+	void SetMap( std::unique_ptr<Map> map );
 
 private:
 	void CycleMouseLClickMode();
@@ -123,5 +125,5 @@ private:
 	bool ShiftModeEnabled = false;
 	bool AppendSelection = false;
 
-	Grid MapGrid;
+	std::unique_ptr<Map> _Map = nullptr;
 };

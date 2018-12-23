@@ -5,5 +5,5 @@
 class Treasure : public Pickup
 {
 public:
-	Treasure( const Surface* const texture );
+	Treasure( const std::string name, const std::string type, const Surface* const texture );
 };

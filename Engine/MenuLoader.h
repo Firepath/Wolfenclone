@@ -4,7 +4,6 @@
 #include <vector>
 #include <string>
 
-#include "LoadConstants.h"
 #include "Loader.h"
 #include "StringKeyRepository.h"
 
@@ -50,8 +49,7 @@ public:
 	void Load( const std::string& filename ) override;
 
 private:
-	std::string FindFirstInLineTextAndRemoveAndReturn( std::string& line, const char startDelimiter, const char endDelimiter, bool includeDelimiters = false );
-	void ReadSetting( const std::string& line );
+	void ReadLine( const std::string& line );
 
 	Editor* _Editor;
 	StringKeyRepository<Font>& Fonts;

@@ -44,8 +44,10 @@ public:
 	void Fill( const Vei2& gridLocation, const MapFixture* const fixture );
 	void FillSelectedCells( const MapFixture* const fixture );
 	Cell& GetCell( const Vei2& gridLocation ) const;
+	const Vei2 GetSize() const;
 	const bool HasSelectedCells() const;
 	void HighlightCell( const Vei2& gridLocation, const Color highlightColour, const float highlightOpacity, const bool drawBorder, Graphics& gfx ) const;
+	const bool IsCellOccupied( const Vei2& gridLocation ) const;
 	bool IsOnGrid( const Vei2& gridLocation ) const;
 	void Move( const Vec2& delta );
 	const Vei2 ScreenToGrid( const Vei2& screenLocation ) const;
@@ -85,12 +87,10 @@ private:
 	const RectI GetCellScreenRectangle( const Vei2& gridLocation ) const;
 	const Vei2 GetScreenLocation() const;
 	const RectI GetSelectedCellExtents() const;
-	const Vei2 GetSize() const;
 	const RectI GetVisibleGridCells() const;
 	void HighlightSelectedCells( Graphics& gfx ) const;
 	const bool IsCellAlreadyEnclosed( const Vei2& gridLocation ) const;
 	const bool IsCellEnclosed( const Vei2& gridLocation ) const;
-	const bool IsCellOccupied( const Vei2& gridLocation ) const;
 	bool IsJointFormed( const Vei2& gridLocation ) const;
 
 	float ZoomLevel = 1.0f;

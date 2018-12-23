@@ -9,7 +9,7 @@ void EditTool_MouseButton_Move::ButtonPressed()
 
 	Editor& editor = GetEditor();
 	const Editor::MouseInfo& info = editor.GetMouseInfo();
-	Grid& mapGrid = editor.GetMapGrid();
+	Grid& mapGrid = editor.GetMap().GetGrid();
 	if ( !buttonIsAlreadyPressed && !mapGrid.HasSelectedCells() )
 	{
 		mapGrid.TemporarySelectCell( info.HoverGridLocation );
@@ -30,7 +30,7 @@ Color EditTool_MouseButton_Move::GetToolColour() const
 void EditTool_MouseButton_Move::MouseMoved()
 {
 	Editor& editor = GetEditor();
-	if ( !editor.GetMapGrid().HasSelectedCells() )
+	if ( !editor.GetMap().GetGrid().HasSelectedCells() )
 	{
 		return;
 	}
@@ -42,6 +42,6 @@ void EditTool_MouseButton_Move::MouseMoved()
 		return;
 	}
 
-	editor.GetMapGrid().TemporaryMoveSelectedCells( delta );
+	editor.GetMap().GetGrid().TemporaryMoveSelectedCells( delta );
 	info.LMouseButtonGridLocationAtLPress = info.HoverGridLocation;
 }

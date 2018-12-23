@@ -1,9 +1,9 @@
 #include "Pickup.h"
 #include "PixelEffect.h"
 
-Pickup::Pickup( const Surface* const texture )
+Pickup::Pickup( const std::string name, const std::string type, const Surface* const texture )
 	:
-	MapFixture( texture )
+	MapFixture( name, type, texture )
 {
 }
 

@@ -8,7 +8,7 @@ void EditTool_MouseButton_Select::ButtonPressed()
 
 	Editor& editor = GetEditor();
 	Editor::MouseInfo& info = editor.GetMouseInfo();
-	Grid& mapGrid = editor.GetMapGrid();
+	Grid& mapGrid = editor.GetMap().GetGrid();
 
 	if ( !AppendSelection() )
 	{

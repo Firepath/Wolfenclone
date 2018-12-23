@@ -12,6 +12,7 @@
 #include "Surface.h"
 #include "Vec2.h"
 
+class Editor;
 class Graphics;
 
 class SelectedCallBack
@@ -34,6 +35,40 @@ public:
 	static constexpr size_t DefaultMaxWidth = 300u;
 	static constexpr float DefaultOpacity = 95.0f;
 	static constexpr Color DefaultTextColour = Colors::White;
+
+	class Menu_ItemSelectedCallBack : public SelectedCallBack
+	{
+	public:
+		Menu_ItemSelectedCallBack( MenuItem* const menuItem )
+			:
+			_MenuItem( menuItem )
+		{
+		}
+
+		virtual void Execute() const override = 0;
+
+	protected:
+		MenuItem* GetMenuItem() const;
+
+	private:
+		MenuItem* const _MenuItem = nullptr;
+	};
+
+	class Menu_FileSaveItemSelectedCallBack : public Menu_ItemSelectedCallBack
+	{
+	public:
+		Menu_FileSaveItemSelectedCallBack( MenuItem* const menuItem, Editor* const editor )
+			:
+			Menu_ItemSelectedCallBack( menuItem ),
+			_Editor( editor )
+		{
+		}
+
+		void Execute() const override;
+
+	private:
+		Editor* const _Editor = nullptr;
+	};
 
 	MenuItem( std::string text, std::unique_ptr<SelectedCallBack> callback, const MenuItem* const menu, const Font* const font, Graphics& gfx, const Color highlightColour = MenuItem::DefaultHoverTextColour );
 

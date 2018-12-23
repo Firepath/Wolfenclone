@@ -18,14 +18,14 @@ EditTool_MouseButton* Editor::EditTool_MouseButtonCallBack::GetTool() const
 }
 
 Editor::Editor()
-	:
-	MapGrid( 256, 256, Vec2( 0.0f, 0.0f ) )
 {
 	ToolBox = std::make_unique<EditToolBox>();
 	ToolBox->SetupTools( this );
 
 	MouseLButtonTool = ToolBox->GetMouseButtonTool( EditTool_MouseButton_None::TypeName );
 	MouseRButtonTool = ToolBox->GetMouseButtonTool( EditTool_MouseButton_Delete::TypeName );
+
+	_Map = std::make_unique<Map>( "" );
 }
 
 void Editor::DoKeyboardEvents( Keyboard::Event& ke )
@@ -44,11 +44,11 @@ void Editor::DoKeyboardEvents( Keyboard::Event& ke )
 		{
 		case VK_BACK:
 		case VK_DELETE:
-			MapGrid.DeleteSelectedCells();
+			_Map->GetGrid().DeleteSelectedCells();
 			ke.SetHandled( true );
 			break;
 		case VK_ESCAPE:
-			MapGrid.ClearSelectedCells();
+			_Map->GetGrid().ClearSelectedCells();
 			ke.SetHandled( true );
 			break;
 		case VK_SHIFT:
@@ -68,7 +68,7 @@ void Editor::DoKeyboardEvents( Keyboard::Event& ke )
 		{
 		case '`':
 		case '~':
-			MapGrid.ToggleGridDrawing();
+			_Map->GetGrid().ToggleGridDrawing();
 			ke.SetHandled( true );
 			break;
 		default:
@@ -119,17 +119,17 @@ void Editor::DoMouseEvents( Mouse::Event& me )
 
 void Editor::Draw( Graphics& gfx )
 {
-	MapGrid.Draw( gfx );
+	_Map->GetGrid().Draw( gfx );
 
 	// Highlight currently-hovered cell
-	if ( MapGrid.IsOnGrid( MouseInf.HoverGridLocation ) )
+	if ( _Map->GetGrid().IsOnGrid( MouseInf.HoverGridLocation ) )
 	{
 		if ( typeid(*MouseLButtonTool) == typeid(EditTool_MouseButton_Insert) )
 		{
-			MapGrid.DrawCell( MouseInf.HoverGridLocation, ((EditTool_MouseButton_Insert*)MouseLButtonTool)->GetFixture(), gfx );
+			_Map->GetGrid().DrawCell( MouseInf.HoverGridLocation, ((EditTool_MouseButton_Insert*)MouseLButtonTool)->GetFixture(), gfx );
 		}
 
-		MapGrid.HighlightCell( MouseInf.HoverGridLocation, MouseLButtonTool->GetToolColour(), EditConstants::CellEditing::CellHoverOpacity, true, gfx );
+		_Map->GetGrid().HighlightCell( MouseInf.HoverGridLocation, MouseLButtonTool->GetToolColour(), EditConstants::CellEditing::CellHoverOpacity, true, gfx );
 	}
 }
 
@@ -138,9 +138,9 @@ const bool Editor::GetControlModeEnabled() const
 	return ControlModeEnabled;
 }
 
-Grid& Editor::GetMapGrid()
+Map& Editor::GetMap()
 {
-	return MapGrid;
+	return *_Map;
 }
 
 Editor::MouseInfo& Editor::GetMouseInfo()
@@ -165,6 +165,11 @@ const bool Editor::GetShiftModeEnabled() const
 const EditToolBox & Editor::GetToolBox() const
 {
 	return *ToolBox;
+}
+
+void Editor::SetMap( std::unique_ptr<Map> map )
+{
+	_Map = std::move( map );
 }
 
 void Editor::CycleMouseLClickMode()
@@ -216,7 +221,7 @@ void Editor::DisableSelectionMode()
 
 void Editor::EnableSelectionMode()
 {
-	if ( MapGrid.IsOnGrid( MouseInf.LMouseButtonGridLocationAtLPress ) )
+	if ( _Map->GetGrid().IsOnGrid( MouseInf.LMouseButtonGridLocationAtLPress ) )
 	{
 		// Already have left mouse button down, only do toggling beforehand
 		return;
@@ -234,7 +239,7 @@ void Editor::EnableSelectionMode()
 
 void Editor::MouseLDrag( const Vei2 & gridLocation )
 {
-	if ( !MapGrid.IsOnGrid( gridLocation ) )
+	if ( !_Map->GetGrid().IsOnGrid( gridLocation ) )
 	{
 		return;
 	}
@@ -244,8 +249,8 @@ void Editor::MouseLDrag( const Vei2 & gridLocation )
 
 void Editor::MouseLPress( Mouse::Event& me )
 {
-	const Vei2 gridLocation = MapGrid.ScreenToGrid( me.GetPos() );
-	if ( !MapGrid.IsOnGrid( gridLocation ) )
+	const Vei2 gridLocation = _Map->GetGrid().ScreenToGrid( me.GetPos() );
+	if ( !_Map->GetGrid().IsOnGrid( gridLocation ) )
 	{
 		return;
 	}
@@ -258,7 +263,7 @@ void Editor::MouseLPress( Mouse::Event& me )
 
 	MouseInf.LMouseButtonGridLocation = gridLocation;
 
-	if ( !MapGrid.IsOnGrid( MouseInf.LMouseButtonGridLocationAtLPress ) )
+	if ( !_Map->GetGrid().IsOnGrid( MouseInf.LMouseButtonGridLocationAtLPress ) )
 	{
 		// Set this location only when first pressing the left mouse button down (start press location)
 		MouseInf.LMouseButtonGridLocationAtLPress = gridLocation;
@@ -284,12 +289,12 @@ void Editor::MouseMDrag( Mouse::Event& me )
 	const Vei2 mousePos = me.GetPos();
 	const Vei2 delta = mousePos - MouseInf.MMouseButtonLocation;
 	MouseInf.MMouseButtonLocation = mousePos;
-	MapGrid.Move( (Vec2)delta );
+	_Map->GetGrid().Move( (Vec2)delta );
 }
 
 void Editor::MouseMove( Mouse::Event& me )
 {
-	MouseInf.HoverGridLocation = MapGrid.ScreenToGrid( me.GetPos() );
+	MouseInf.HoverGridLocation = _Map->GetGrid().ScreenToGrid( me.GetPos() );
 
 	if ( me.LeftIsPressed() )
 	{
@@ -326,7 +331,7 @@ void Editor::MouseRPress( Mouse::Event& me )
 
 void Editor::MouseWheel( Mouse::Event& me )
 {
-	MapGrid.Zoom( (Vec2)me.GetPos(), me.GetType() == Mouse::Event::Type::WheelUp );
+	_Map->GetGrid().Zoom( (Vec2)me.GetPos(), me.GetType() == Mouse::Event::Type::WheelUp );
 	me.SetHandled( true );
 }
 

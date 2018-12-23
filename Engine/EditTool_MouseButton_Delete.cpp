@@ -8,7 +8,7 @@ void EditTool_MouseButton_Delete::ButtonPressed()
 
 	Editor& editor = GetEditor();
 	const Editor::MouseInfo& info = editor.GetMouseInfo();
-	Grid& mapGrid = editor.GetMapGrid();
+	Grid& mapGrid = editor.GetMap().GetGrid();
 
 	if ( editor.GetControlModeEnabled() )
 	{

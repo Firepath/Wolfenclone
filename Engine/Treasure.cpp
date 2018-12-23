@@ -1,7 +1,7 @@
 #include "Treasure.h"
 
-Treasure::Treasure( const Surface* const texture )
+Treasure::Treasure( const std::string name, const std::string type, const Surface* const texture )
 	:
-	Pickup( texture )
+	Pickup( name, type, texture )
 {
 }
