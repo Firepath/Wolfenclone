@@ -296,6 +296,12 @@ public:
 		assert( clippingRect.top >= 0 );
 		assert( clippingRect.bottom < Graphics::ScreenHeight );
 
+		if ( destinationRect.GetWidth() <= 0 ||
+			destinationRect.GetHeight() <= 0 )
+		{
+			return;
+		}
+
 		const RectI originalDestination = destinationRect;
 		const float scaleX = (float)destinationRect.GetWidth() / (float)sourceRect.GetWidth();
 		const float scaleInvX = 1.0f / scaleX;
