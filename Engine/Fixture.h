@@ -5,26 +5,24 @@
 #include "Graphics.h"
 #include "Rect.h"
 
+class Player;
 class Surface;
 
 class Fixture
 {
 public:
-	enum class RenderStyle
-	{
-		Edge3D,		// Walls
-		Centre3D,	// Doors
-		Centre2D	// Pickups (Guns, Ammo, Health, Treasure) / Decorations (Furniture, etc.)
-	};
-
 	Fixture( const std::string name, const std::string type, const Surface* const texture );
 
 	~Fixture() = default;
 
-	virtual void Draw( const RectI area, Graphics& gfx ) const = 0;
+	virtual const bool BlocksMovement() const;
+	virtual void Draw( const RectI area, Graphics& gfx ) const;
+	virtual const bool Enclosing() const;
 	const std::string GetName() const;
 	const std::string GetType() const;
 	const Surface* GetTexture() const;
+	virtual void InteractionEffect();
+	virtual const bool PlayerEffect( Player& player ) const;
 
 protected:
 	const std::string Name;

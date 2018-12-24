@@ -95,7 +95,7 @@ void Grid::Fill( const Vei2& gridLocation, const Fixture* const fixture )
 	if ( IsCellOccupied( gridLocation ) )
 	{
 		EraseCell( gridLocation );
-		wasEmpty = false;
+		wasEmpty = !IsCellOccupiedWithEnclosingFixture( gridLocation );
 	}
 
 	Fill( gridLocation, Cell( gridLocation, fixture ), wasEnclosed, wasEmpty );
@@ -318,16 +318,16 @@ void Grid::CheckForClosingArea( const Vei2& gridLocation )
 
 const bool Grid::CheckIfCellIsEnclosed( const Vei2& gridLocation ) const
 {
-	bool enclosed = FindWall( gridLocation, -1, 0 );
+	bool enclosed = FindEnclosingFixture( gridLocation, -1, 0 );
 	if ( enclosed )
 	{
-		enclosed &= FindWall( gridLocation, 1, 0 );
+		enclosed &= FindEnclosingFixture( gridLocation, 1, 0 );
 		if ( enclosed )
 		{
-			enclosed &= FindWall( gridLocation, 0, -1 );
+			enclosed &= FindEnclosingFixture( gridLocation, 0, -1 );
 			if ( enclosed )
 			{
-				enclosed &= FindWall( gridLocation, 0, 1 );
+				enclosed &= FindEnclosingFixture( gridLocation, 0, 1 );
 			}
 		}
 	}
@@ -491,18 +491,34 @@ void Grid::Fill( const Vei2 & gridLocation, const Cell&& cell, const bool wasEnc
 		CheckForClosingArea( gridLocation );
 	}
 
-	if ( wasEnclosed )
+	if ( wasEnclosed && cell.GetFixture()->Enclosing() )
 	{
+		// Erase this cell from the enclosed list if it was enclosed and we are putting in a fixture that encloses
 		EraseEnclosedCell( gridLocation );
+	}
+
+	if ( checkForEnclosing && !cell.GetFixture()->Enclosing() )
+	{
+		// If this cell is not enclosing
+
+		if ( IsCellAlreadyEnclosed( gridLocation ) )
+		{
+			EnclosedCells->emplace( gridLocation, true );
+		}
+		else
+		{
+			// Check for, and clear enclosedness on surrounding cells
+			ClearEnclosedCells( gridLocation );
+		}
 	}
 }
 
 const bool Grid::FillClosedArea( const Vei2& gridLocation )
 {
-	if ( !IsOnGrid( gridLocation ) || IsCellOccupied( gridLocation ) )
+	if ( !IsOnGrid( gridLocation ) || IsCellOccupiedWithEnclosingFixture( gridLocation ) )
 	{
 		// Not on the grid, nothing to do
-		// Or it is a filled cell, not an empty one being enclosed
+		// Or it is a filled cell, not an "empty" one being enclosed
 		return false;
 	}
 
@@ -513,7 +529,7 @@ const bool Grid::FillClosedArea( const Vei2& gridLocation )
 
 	auto AddToListIfNeedsToBeChecked = [this]( const Vei2& location, std::unique_ptr<std::vector<Vei2>>& checked, std::unique_ptr<std::vector<Vei2>>& toBeChecked )
 	{
-		if ( !IsCellOccupied( location ) && // Already a wall if not empty
+		if ( !IsCellOccupiedWithEnclosingFixture( location ) && // Already a wall if not empty
 			!VectorExtension::Contains( checked, location ) && // Not already checked
 			!VectorExtension::Contains( toBeChecked, location ) ) // Not already in the list to be checked
 		{
@@ -554,7 +570,7 @@ const bool Grid::FillClosedArea( const Vei2& gridLocation )
 	return closed;
 }
 
-const bool Grid::FindWall( const Vei2& gridLocation, const int xDirection, const int yDirection ) const
+const bool Grid::FindEnclosingFixture( const Vei2& gridLocation, const int xDirection, const int yDirection ) const
 {
 	// One of either direction must be zero and the other not zero
 	assert( xDirection != 0 && yDirection == 0 || yDirection != 0 && xDirection == 0 );
@@ -567,7 +583,7 @@ const bool Grid::FindWall( const Vei2& gridLocation, const int xDirection, const
 		for ( int y = gridLocation.y + yDirection; y >= 0 && y < Height; y += yDirection )
 		{
 			const Vei2 location( x, y );
-			if ( IsCellOccupied( location ) )
+			if ( IsCellOccupiedWithEnclosingFixture( location ) )
 			{
 				// We found one that could create an enclosing space
 				found = true;
@@ -672,7 +688,7 @@ const bool Grid::IsCellAlreadyEnclosed( const Vei2 & gridLocation ) const
 	auto checkCell = [this]( const Vei2& location )
 	{
 		return
-			IsOnGrid( location ) && ( IsCellOccupied( location ) || IsCellEnclosed( location ) );
+			IsOnGrid( location ) && ( IsCellOccupiedWithEnclosingFixture( location ) || IsCellEnclosed( location ) );
 	};
 
 	return
@@ -685,8 +701,25 @@ const bool Grid::IsCellEnclosed( const Vei2 & gridLocation ) const
 	return EnclosedCells->find( gridLocation ) != EnclosedCells->end();
 }
 
+const bool Grid::IsCellOccupiedWithEnclosingFixture( const Vei2 & gridLocation ) const
+{
+	assert( IsOnGrid( gridLocation ) );
+	auto cell = Cells->find( gridLocation );
+	if ( cell == Cells->end() )
+	{
+		return false;
+	}
+
+	return cell->second.GetFixture()->Enclosing();
+}
+
 bool Grid::IsJointFormed( const Vei2& gridLocation ) const
 {
+	if ( !IsCellOccupiedWithEnclosingFixture( gridLocation ) )
+	{
+		return false;
+	}
+
 	const int startX = std::max( 0, std::min( Width - 1, gridLocation.x - 1 ) );
 	const int startY = std::max( 0, std::min( Height - 1, gridLocation.y - 1 ) );
 	const int endX = std::max( 0, std::min( Width - 1, gridLocation.x + 1 ) );
@@ -701,7 +734,7 @@ bool Grid::IsJointFormed( const Vei2& gridLocation ) const
 		for ( int i = startY; i <= endY; i++ )
 		{
 			const Vei2 location( startX, i );
-			if ( IsCellOccupied( location ) )
+			if ( IsCellOccupiedWithEnclosingFixture( location ) )
 			{
 				left = true;
 				break;
@@ -713,7 +746,7 @@ bool Grid::IsJointFormed( const Vei2& gridLocation ) const
 			for ( int i = startY; i <= endY; i++ )
 			{
 				const Vei2 location( endX, i );
-				if ( IsCellOccupied( location ) )
+				if ( IsCellOccupiedWithEnclosingFixture( location ) )
 				{
 					found = true;
 					break;
@@ -730,7 +763,7 @@ bool Grid::IsJointFormed( const Vei2& gridLocation ) const
 		for ( int i = startX; i <= endX; i++ )
 		{
 			const Vei2 location( i, startY );
-			if ( IsCellOccupied( location ) )
+			if ( IsCellOccupiedWithEnclosingFixture( location ) )
 			{
 				top = true;
 				break;
@@ -742,7 +775,7 @@ bool Grid::IsJointFormed( const Vei2& gridLocation ) const
 			for ( int i = startX; i <= endX; i++ )
 			{
 				const Vei2 location( i, endY );
-				if ( IsCellOccupied( location ) )
+				if ( IsCellOccupiedWithEnclosingFixture( location ) )
 				{
 					found = true;
 					break;

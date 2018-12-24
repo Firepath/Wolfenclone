@@ -141,6 +141,7 @@
     <ClInclude Include="ChiliWin.h" />
     <ClInclude Include="Colors.h" />
     <ClInclude Include="ComManager.h" />
+    <ClInclude Include="Decoration.h" />
     <ClInclude Include="DXErr.h" />
     <ClInclude Include="EditConstants.h" />
     <ClInclude Include="Editor.h" />
@@ -158,6 +159,7 @@
     <ClInclude Include="Menu.h" />
     <ClInclude Include="MenuLoader.h" />
     <ClInclude Include="Pickup.h" />
+    <ClInclude Include="Player.h" />
     <ClInclude Include="Rect.h" />
     <ClInclude Include="Loader.h" />
     <ClInclude Include="Saver.h" />
@@ -180,6 +182,7 @@
     <ClInclude Include="Wall.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Decoration.cpp" />
     <ClCompile Include="DXErr.cpp" />
     <ClCompile Include="Editor.cpp" />
     <ClCompile Include="EditTool.cpp" />

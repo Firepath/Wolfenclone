@@ -9,6 +9,9 @@
 class Surface
 {
 public:
+	static constexpr int DefaultTextureHeight = 64;
+	static constexpr int DefaultTextureWidth = 64;
+
 	Surface() = default;
 	Surface( const std::string& filename );
 	Surface( const int width, const int height );

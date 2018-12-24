@@ -17,3 +17,8 @@ void Wall::Draw( const RectI area, Graphics & gfx ) const
 		gfx.DrawSprite( area, *Texture, effect );
 	}
 }
+
+const bool Wall::Enclosing() const
+{
+	return true;
+}

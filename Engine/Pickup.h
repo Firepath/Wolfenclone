@@ -1,11 +1,9 @@
 #pragma once
 
-#include "Fixture.h"
+#include "Decoration.h"
 
-class Pickup : public Fixture
+class Pickup : public Decoration
 {
 public:
 	Pickup( const std::string name, const std::string type, const Surface* const texture );
-
-	void Draw( const RectI area, Graphics& gfx ) const override;
 };

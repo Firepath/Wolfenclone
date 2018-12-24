@@ -243,6 +243,7 @@ Map1
 55,15 [Fixture Wall Light] WAL00050
 60,15 [Fixture Wall Light] WAL00050
 20,16 [Fixture Wall Light] WAL00000
+25,16 [Fixture Treasure] SPR00031
 30,16 [Fixture Wall Light] WAL00000
 31,16 [Fixture Wall Light] WAL00050
 35,16 [Fixture Wall Light] WAL00050
@@ -253,6 +254,7 @@ Map1
 55,16 [Fixture Wall Light] WAL00050
 60,16 [Fixture Wall Light] WAL00050
 20,17 [Fixture Wall Light] WAL00000
+25,17 [Fixture Treasure] SPR00031
 30,17 [Fixture Wall Light] WAL00000
 31,17 [Fixture Wall Light] WAL00050
 32,17 [Fixture Wall Light] WAL00050
@@ -281,14 +283,19 @@ Map1
 55,17 [Fixture Wall Light] WAL00050
 60,17 [Fixture Wall Light] WAL00046
 20,18 [Fixture Wall Light] WAL00000
+24,18 [Fixture Treasure] SPR00031
+25,18 [Fixture Treasure] SPR00031
+26,18 [Fixture Treasure] SPR00031
 30,18 [Fixture Wall Light] WAL00002
 31,18 [Fixture Wall Light] WAL00050
 60,18 [Fixture Wall Light] WAL00046
 20,19 [Fixture Wall Light] WAL00000
+25,19 [Fixture Treasure] SPR00031
 30,19 [Fixture Wall Light] WAL00002
 31,19 [Fixture Wall Light] WAL00050
 60,19 [Fixture Wall Light] WAL00046
 20,20 [Fixture Wall Light] WAL00000
+25,20 [Fixture Treasure] SPR00031
 30,20 [Fixture Wall Light] WAL00002
 31,20 [Fixture Wall Light] WAL00050
 60,20 [Fixture Wall Light] WAL00046
@@ -297,9 +304,11 @@ Map1
 31,21 [Fixture Wall Light] WAL00050
 60,21 [Fixture Wall Light] WAL00050
 20,22 [Fixture Wall Light] WAL00000
+23,22 [Fixture Treasure] SPR00031
 24,22 [Fixture Treasure] SPR00031
 25,22 [Fixture Treasure] SPR00031
 26,22 [Fixture Treasure] SPR00031
+27,22 [Fixture Treasure] SPR00031
 30,22 [Fixture Wall Light] WAL00000
 31,22 [Fixture Wall Light] WAL00050
 60,22 [Fixture Wall Light] WAL00046

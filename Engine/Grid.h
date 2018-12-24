@@ -82,7 +82,7 @@ private:
 	void EraseSelectedCell( const Vei2& gridLocation );
 	void Fill( const Vei2& gridLocation, const Cell&& cell, const bool wasEnclosed, const bool checkForEnclosing );
 	const bool FillClosedArea( const Vei2& gridLocation );
-	const bool FindWall( const Vei2& gridLocation, const int xDirection, const int yDirection ) const;
+	const bool FindEnclosingFixture( const Vei2& gridLocation, const int xDirection, const int yDirection ) const;
 	const int GetCellBorderThickness() const;
 	const RectI GetCellScreenRectangle( const Vei2& gridLocation ) const;
 	const Vei2 GetScreenLocation() const;
@@ -91,6 +91,7 @@ private:
 	void HighlightSelectedCells( Graphics& gfx ) const;
 	const bool IsCellAlreadyEnclosed( const Vei2& gridLocation ) const;
 	const bool IsCellEnclosed( const Vei2& gridLocation ) const;
+	const bool IsCellOccupiedWithEnclosingFixture( const Vei2& gridLocation ) const;
 	bool IsJointFormed( const Vei2& gridLocation ) const;
 
 	float ZoomLevel = 1.0f;
