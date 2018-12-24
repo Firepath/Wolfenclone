@@ -1,10 +1,26 @@
 [Texture Font]
 '{Texture Name} {Relative File Path}
 Font_Fixedsys16x28 Textures\Fonts\Fixedsys16x28.bmp
+[Texture Ammo]
+'{Texture Name} {Relative File Path}
+SPR00028 Textures\Decorations\Pickups\Ammo\SPR00028.bmp
 [Texture Decoration]
 '{Texture Name} {Relative File Path}
 SPR00002 Textures\Decorations\Misc\SPR00002.bmp
 SPR00006 Textures\Decorations\Misc\SPR00006.bmp
+SPR00011 Textures\Decorations\Misc\SPR00011.bmp
+SPR00016 Textures\Decorations\Misc\SPR00016.bmp
+SPR00017 Textures\Decorations\Misc\SPR00017.bmp
+SPR00021 Textures\Decorations\Misc\SPR00021.bmp
+SPR00025 Textures\Decorations\Misc\SPR00025.bmp
+SPR00036 Textures\Decorations\Misc\SPR00036.bmp
+SPR00040 Textures\Decorations\Misc\SPR00040.bmp
+SPR00042 Textures\Decorations\Misc\SPR00042.bmp
+SPR00043 Textures\Decorations\Misc\SPR00043.bmp
+SPR00044 Textures\Decorations\Misc\SPR00044.bmp
+SPR00045 Textures\Decorations\Misc\SPR00045.bmp
+SPR00046 Textures\Decorations\Misc\SPR00046.bmp
+SPR00049 Textures\Decorations\Misc\SPR00049.bmp
 [Texture Door Dark]
 '{Texture Name} {Relative File Path}
 WAL00099 Textures\Doors\Dark\WAL00099.bmp
@@ -23,12 +39,38 @@ SPR00003 Textures\Decorations\Furniture\SPR00003.bmp
 SPR00004 Textures\Decorations\Furniture\SPR00004.bmp
 SPR00005 Textures\Decorations\Furniture\SPR00005.bmp
 SPR00007 Textures\Decorations\Furniture\SPR00007.bmp
+SPR00009 Textures\Decorations\Furniture\SPR00009.bmp
+SPR00010 Textures\Decorations\Furniture\SPR00010.bmp
+SPR00012 Textures\Decorations\Furniture\SPR00012.bmp
+SPR00013 Textures\Decorations\Furniture\SPR00013.bmp
+SPR00014 Textures\Decorations\Furniture\SPR00014.bmp
+SPR00015 Textures\Decorations\Furniture\SPR00015.bmp
+SPR00018 Textures\Decorations\Furniture\SPR00018.bmp
+SPR00019 Textures\Decorations\Furniture\SPR00019.bmp
+SPR00020 Textures\Decorations\Furniture\SPR00020.bmp
+SPR00024 Textures\Decorations\Furniture\SPR00024.bmp
+SPR00037 Textures\Decorations\Furniture\SPR00037.bmp
+SPR00038 Textures\Decorations\Furniture\SPR00038.bmp
+SPR00039 Textures\Decorations\Furniture\SPR00039.bmp
+SPR00041 Textures\Decorations\Furniture\SPR00041.bmp
+SPR00047 Textures\Decorations\Furniture\SPR00047.bmp
+SPR00048 Textures\Decorations\Furniture\SPR00048.bmp
 [Texture Health]
 '{Texture Name} {Relative File Path}
 SPR00008 Textures\Decorations\Pickups\Health\SPR00008.bmp
+SPR00026 Textures\Decorations\Pickups\Health\SPR00026.bmp
+SPR00027 Textures\Decorations\Pickups\Health\SPR00027.bmp
+[Texture Key]
+'{Texture Name} {Relative File Path}
+SPR00022 Textures\Decorations\Pickups\Keys\SPR00022.bmp
+SPR00023 Textures\Decorations\Pickups\Keys\SPR00023.bmp
 [Texture Treasure]
 '{Texture Name} {Relative File Path}
 SPR00031 Textures\Decorations\Pickups\Treasure\SPR00031.bmp
+SPR00032 Textures\Decorations\Pickups\Treasure\SPR00032.bmp
+SPR00033 Textures\Decorations\Pickups\Treasure\SPR00033.bmp
+SPR00034 Textures\Decorations\Pickups\Treasure\SPR00034.bmp
+SPR00035 Textures\Decorations\Pickups\Treasure\SPR00035.bmp
 [Texture Wall Dark]
 '{Texture Name} {Relative File Path}
 WAL00001 Textures\Walls\Dark\WAL00001.bmp
@@ -131,3 +173,7 @@ WAL00090 Textures\Walls\Light\WAL00090.bmp
 WAL00092 Textures\Walls\Light\WAL00092.bmp
 WAL00094 Textures\Walls\Light\WAL00094.bmp
 WAL00096 Textures\Walls\Light\WAL00096.bmp
+[Texture Weapon]
+'{Texture Name} {Relative File Path}
+SPR00029 Textures\Decorations\Pickups\Weapons\SPR00029.bmp
+SPR00030 Textures\Decorations\Pickups\Weapons\SPR00030.bmp

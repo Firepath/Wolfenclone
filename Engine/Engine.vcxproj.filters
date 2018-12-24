@@ -225,6 +225,15 @@
     <ClInclude Include="Health.h">
       <Filter>Header Files\Map\Fixtures</Filter>
     </ClInclude>
+    <ClInclude Include="Ammo.h">
+      <Filter>Header Files\Map\Fixtures</Filter>
+    </ClInclude>
+    <ClInclude Include="Key.h">
+      <Filter>Header Files\Map\Fixtures</Filter>
+    </ClInclude>
+    <ClInclude Include="Weapon.h">
+      <Filter>Header Files\Map\Fixtures</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Game.cpp">
@@ -348,6 +357,15 @@
       <Filter>Source Files\Map\Fixtures</Filter>
     </ClCompile>
     <ClCompile Include="Health.cpp">
+      <Filter>Source Files\Map\Fixtures</Filter>
+    </ClCompile>
+    <ClCompile Include="Ammo.cpp">
+      <Filter>Source Files\Map\Fixtures</Filter>
+    </ClCompile>
+    <ClCompile Include="Key.cpp">
+      <Filter>Source Files\Map\Fixtures</Filter>
+    </ClCompile>
+    <ClCompile Include="Weapon.cpp">
       <Filter>Source Files\Map\Fixtures</Filter>
     </ClCompile>
   </ItemGroup>

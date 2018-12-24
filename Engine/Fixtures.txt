@@ -50,6 +50,9 @@ defined differently to its parent.
 			 ->	Health
 				 - PlayerEffect
 
+			 -> Key
+				 - PlayerEffect
+
 			 ->	Treasure
 				 - PlayerEffect
 

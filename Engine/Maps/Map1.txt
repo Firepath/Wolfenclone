@@ -59,7 +59,8 @@ Map1
 4,3 [Fixture Wall Light] WAL00058
 5,3 [Fixture Wall Light] WAL00058
 6,3 [Fixture Furniture] SPR00003
-7,3 [Fixture Decoration] SPR00002
+7,3 [Fixture Furniture] SPR00037
+8,3 [Fixture Furniture] SPR00012
 9,3 [Fixture Furniture] SPR00003
 10,3 [Fixture Wall Light] WAL00002
 20,3 [Fixture Wall Light] WAL00050
@@ -67,20 +68,28 @@ Map1
 60,3 [Fixture Wall Light] WAL00046
 2,4 [Fixture Wall Light] WAL00056
 5,4 [Fixture Wall Light] WAL00058
+7,4 [Fixture Decoration] SPR00049
 9,4 [Fixture Furniture] SPR00003
 10,4 [Fixture Wall Light] WAL00002
 20,4 [Fixture Wall Light] WAL00046
+30,4 [Fixture Furniture] SPR00020
+37,4 [Fixture Furniture] SPR00020
+44,4 [Fixture Furniture] SPR00020
 60,4 [Fixture Wall Light] WAL00050
 2,5 [Fixture Wall Light] WAL00056
+3,5 [Fixture Decoration] SPR00049
+4,5 [Fixture Decoration] SPR00049
 5,5 [Fixture Wall Light] WAL00056
 9,5 [Fixture Decoration] SPR00002
 10,5 [Fixture Wall Light] WAL00000
 20,5 [Fixture Wall Light] WAL00050
+40,5 [Fixture Decoration] SPR00040
 60,5 [Fixture Wall Light] WAL00050
 2,6 [Fixture Wall Light] WAL00056
 3,6 [Fixture Wall Light] WAL00056
 4,6 [Fixture Wall Light] WAL00056
 5,6 [Fixture Wall Light] WAL00056
+7,6 [Fixture Decoration] SPR00040
 10,6 [Fixture Wall Light] WAL00002
 20,6 [Fixture Wall Light] WAL00050
 60,6 [Fixture Wall Light] WAL00046
@@ -135,6 +144,7 @@ Map1
 60,7 [Fixture Wall Light] WAL00046
 5,8 [Fixture Wall Light] WAL00002
 6,8 [Fixture Decoration] SPR00002
+9,8 [Fixture Decoration] SPR00040
 10,8 [Fixture Wall Light] WAL00000
 30,8 [Fixture Wall Light] WAL00000
 31,8 [Fixture Wall Light] WAL00050
@@ -176,16 +186,24 @@ Map1
 10,11 [Fixture Wall Light] WAL00002
 30,11 [Fixture Wall Light] WAL00000
 31,11 [Fixture Wall Light] WAL00050
+34,11 [Fixture Furniture] SPR00024
 35,11 [Fixture Wall Light] WAL00050
+38,11 [Fixture Furniture] SPR00024
 39,11 [Fixture Wall Light] WAL00050
+42,11 [Fixture Furniture] SPR00024
 43,11 [Fixture Wall Light] WAL00050
+46,11 [Fixture Furniture] SPR00024
 47,11 [Fixture Wall Light] WAL00046
+50,11 [Fixture Furniture] SPR00024
 51,11 [Fixture Wall Light] WAL00050
+54,11 [Fixture Furniture] SPR00024
 55,11 [Fixture Wall Light] WAL00046
+57,11 [Fixture Decoration] SPR00040
 60,11 [Fixture Wall Light] WAL00046
 5,12 [Fixture Wall Light] WAL00002
 6,12 [Fixture Furniture] SPR00003
 7,12 [Fixture Furniture] SPR00003
+8,12 [Fixture Furniture] SPR00037
 10,12 [Fixture Wall Light] WAL00002
 30,12 [Fixture Wall Light] WAL00000
 31,12 [Fixture Wall Light] WAL00050
@@ -232,18 +250,25 @@ Map1
 20,13 [Fixture Wall Light] WAL00000
 30,13 [Fixture Wall Light] WAL00000
 31,13 [Fixture Wall Light] WAL00050
+32,13 [Fixture Furniture] SPR00024
 34,13 [Fixture Furniture] SPR00007
 35,13 [Fixture Wall Light] WAL00050
+36,13 [Fixture Furniture] SPR00024
 39,13 [Fixture Wall Light] WAL00050
+40,13 [Fixture Furniture] SPR00024
+42,13 [Fixture Decoration] SPR00011
 43,13 [Fixture Wall Light] WAL00050
+44,13 [Fixture Furniture] SPR00024
 47,13 [Fixture Wall Light] WAL00050
-48,13 [Fixture Decoration] SPR00002
+48,13 [Fixture Furniture] SPR00024
 49,13 [Fixture Health] SPR00008
 51,13 [Fixture Wall Light] WAL00046
+52,13 [Fixture Furniture] SPR00024
 55,13 [Fixture Wall Light] WAL00046
 58,13 [Fixture Decoration] SPR00002
 60,13 [Fixture Wall Light] WAL00050
 20,14 [Fixture Wall Light] WAL00000
+21,14 [Fixture Furniture] SPR00037
 30,14 [Fixture Wall Light] WAL00002
 31,14 [Fixture Wall Light] WAL00050
 32,14 [Fixture Health] SPR00008
@@ -257,23 +282,28 @@ Map1
 55,14 [Fixture Wall Light] WAL00046
 60,14 [Fixture Wall Light] WAL00050
 20,15 [Fixture Wall Light] WAL00000
+21,15 [Fixture Furniture] SPR00037
 30,15 [Fixture Wall Light] WAL00000
 31,15 [Fixture Wall Light] WAL00050
 35,15 [Fixture Wall Light] WAL00046
 39,15 [Fixture Wall Light] WAL00050
+41,15 [Fixture Decoration] SPR00040
 42,15 [Fixture Health] SPR00008
 43,15 [Fixture Wall Light] WAL00050
 47,15 [Fixture Wall Light] WAL00050
+48,15 [Fixture Decoration] SPR00011
 51,15 [Fixture Wall Light] WAL00050
 55,15 [Fixture Wall Light] WAL00050
 60,15 [Fixture Wall Light] WAL00050
 20,16 [Fixture Wall Light] WAL00000
+21,16 [Fixture Furniture] SPR00037
 25,16 [Fixture Treasure] SPR00031
 30,16 [Fixture Wall Light] WAL00000
 31,16 [Fixture Wall Light] WAL00050
 35,16 [Fixture Wall Light] WAL00050
 39,16 [Fixture Wall Light] WAL00050
 43,16 [Fixture Wall Light] WAL00050
+45,16 [Fixture Decoration] SPR00040
 47,16 [Fixture Wall Light] WAL00050
 51,16 [Fixture Wall Light] WAL00046
 55,16 [Fixture Wall Light] WAL00050
@@ -320,6 +350,7 @@ Map1
 25,19 [Fixture Treasure] SPR00031
 30,19 [Fixture Wall Light] WAL00002
 31,19 [Fixture Wall Light] WAL00050
+44,19 [Fixture Decoration] SPR00040
 54,19 [Fixture Decoration] SPR00002
 60,19 [Fixture Wall Light] WAL00046
 20,20 [Fixture Wall Light] WAL00000
@@ -330,6 +361,7 @@ Map1
 20,21 [Fixture Wall Light] WAL00000
 30,21 [Fixture Wall Light] WAL00000
 31,21 [Fixture Wall Light] WAL00050
+38,21 [Fixture Decoration] SPR00040
 44,21 [Fixture Decoration] SPR00002
 60,21 [Fixture Wall Light] WAL00050
 20,22 [Fixture Wall Light] WAL00000
@@ -379,6 +411,7 @@ Map1
 51,24 [Fixture Wall Light] WAL00050
 52,24 [Fixture Health] SPR00008
 55,24 [Fixture Wall Light] WAL00050
+59,24 [Fixture Decoration] SPR00040
 60,24 [Fixture Wall Light] WAL00046
 20,25 [Fixture Wall Light] WAL00000
 24,25 [Fixture Wall Light] WAL00022
@@ -392,6 +425,7 @@ Map1
 43,25 [Fixture Wall Light] WAL00050
 47,25 [Fixture Wall Light] WAL00046
 51,25 [Fixture Wall Light] WAL00050
+54,25 [Fixture Decoration] SPR00040
 55,25 [Fixture Wall Light] WAL00050
 60,25 [Fixture Wall Light] WAL00050
 20,26 [Fixture Wall Light] WAL00000
@@ -406,8 +440,10 @@ Map1
 43,26 [Fixture Wall Light] WAL00050
 47,26 [Fixture Wall Light] WAL00050
 48,26 [Fixture Furniture] SPR00007
+50,26 [Fixture Decoration] SPR00011
 51,26 [Fixture Wall Light] WAL00046
 55,26 [Fixture Wall Light] WAL00050
+57,26 [Fixture Decoration] SPR00040
 58,26 [Fixture Decoration] SPR00002
 59,26 [Fixture Furniture] SPR00003
 60,26 [Fixture Wall Light] WAL00046
@@ -416,12 +452,19 @@ Map1
 26,27 [Fixture Wall Light] WAL00022
 30,27 [Fixture Wall Light] WAL00002
 31,27 [Fixture Wall Light] WAL00050
+34,27 [Fixture Furniture] SPR00024
 35,27 [Fixture Wall Light] WAL00050
+38,27 [Fixture Furniture] SPR00024
 39,27 [Fixture Wall Light] WAL00050
+42,27 [Fixture Furniture] SPR00024
 43,27 [Fixture Wall Light] WAL00046
+46,27 [Fixture Furniture] SPR00024
 47,27 [Fixture Wall Light] WAL00050
+50,27 [Fixture Furniture] SPR00024
 51,27 [Fixture Wall Light] WAL00050
+54,27 [Fixture Furniture] SPR00024
 55,27 [Fixture Wall Light] WAL00046
+56,27 [Fixture Furniture] SPR00037
 59,27 [Fixture Furniture] SPR00003
 60,27 [Fixture Wall Light] WAL00050
 20,28 [Fixture Wall Light] WAL00000
@@ -490,9 +533,15 @@ Map1
 42,29 [Fixture Wall Light] WAL00000
 43,29 [Fixture Wall Light] WAL00000
 7,30 [Fixture Wall Light] WAL00000
+8,30 [Fixture Furniture] SPR00013
+12,30 [Fixture Furniture] SPR00013
+16,30 [Fixture Furniture] SPR00013
 19,30 [Fixture Furniture] SPR00005
 25,30 [Fixture Wall Light] WAL00020
 31,30 [Fixture Furniture] SPR00005
+34,30 [Fixture Furniture] SPR00013
+38,30 [Fixture Furniture] SPR00013
+42,30 [Fixture Furniture] SPR00013
 43,30 [Fixture Wall Light] WAL00000
 7,31 [Fixture Wall Light] WAL00000
 43,31 [Fixture Wall Light] WAL00000
@@ -500,6 +549,8 @@ Map1
 8,32 [Fixture Furniture] SPR00004
 11,32 [Fixture Decoration] SPR00006
 16,32 [Fixture Decoration] SPR00006
+22,32 [Fixture Furniture] SPR00009
+28,32 [Fixture Furniture] SPR00009
 34,32 [Fixture Decoration] SPR00006
 39,32 [Fixture Decoration] SPR00006
 42,32 [Fixture Furniture] SPR00004
@@ -547,6 +598,7 @@ Map1
 43,38 [Fixture Wall Light] WAL00000
 7,39 [Fixture Wall Light] WAL00000
 16,39 [Fixture Wall Light] WAL00032
+33,39 [Fixture Key] SPR00023
 34,39 [Fixture Wall Light] WAL00032
 43,39 [Fixture Wall Light] WAL00000
 7,40 [Fixture Wall Light] WAL00000
@@ -562,18 +614,23 @@ Map1
 34,40 [Fixture Wall Light] WAL00032
 43,40 [Fixture Wall Light] WAL00000
 7,41 [Fixture Wall Light] WAL00002
+17,41 [Fixture Furniture] SPR00014
 19,41 [Fixture Furniture] SPR00005
 20,41 [Fixture Wall Light] WAL00032
 30,41 [Fixture Wall Light] WAL00032
 31,41 [Fixture Furniture] SPR00005
+33,41 [Fixture Furniture] SPR00014
 43,41 [Fixture Wall Light] WAL00000
 7,42 [Fixture Wall Light] WAL00000
+19,42 [Fixture Weapon] SPR00029
 20,42 [Fixture Wall Light] WAL00032
 30,42 [Fixture Wall Light] WAL00032
 43,42 [Fixture Wall Light] WAL00000
 7,43 [Fixture Wall Light] WAL00002
+19,43 [Fixture Ammo] SPR00028
 20,43 [Fixture Wall Light] WAL00032
 30,43 [Fixture Wall Light] WAL00032
+31,43 [Fixture Ammo] SPR00028
 43,43 [Fixture Wall Light] WAL00000
 7,44 [Fixture Wall Light] WAL00010
 8,44 [Fixture Furniture] SPR00004

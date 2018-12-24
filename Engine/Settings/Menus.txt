@@ -4,10 +4,13 @@
 (Dark) (Door) [Fixture Door Dark] [2]
 (Light) (Door) [Fixture Door Light] [2]
 (Decoration)
+(Ammo) (Decoration) [Fixture Ammo] [4]
 (Furniture) (Decoration) [Fixture Furniture] [4]
 (Health) (Decoration) [Fixture Health] [4]
+(Keys) (Decoration) [Fixture Key] [4]
 (Misc) (Decoration) [Fixture Decoration] [4]
 (Treasure) (Decoration) [Fixture Treasure] [4]
+(Weapons) (Decoration) [Fixture Weapon] [4]
 (Wall)
 (Dark) (Wall) [Fixture Wall Dark] [8]
 (Light) (Wall) [Fixture Wall Light] [8]

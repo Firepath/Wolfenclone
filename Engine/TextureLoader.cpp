@@ -16,15 +16,18 @@ void TextureLoader::ReadLine( const std::string& line )
 {
 	switch ( Mode )
 	{
+	case FileIOConstants::IOMode::Texture_Ammo:
 	case FileIOConstants::IOMode::Texture_Decoration:
 	case FileIOConstants::IOMode::Texture_Door_Dark:
 	case FileIOConstants::IOMode::Texture_Door_Light:
 	case FileIOConstants::IOMode::Texture_Font:
 	case FileIOConstants::IOMode::Texture_Furniture:
 	case FileIOConstants::IOMode::Texture_Health:
+	case FileIOConstants::IOMode::Texture_Key:
 	case FileIOConstants::IOMode::Texture_Treasure:
 	case FileIOConstants::IOMode::Texture_Wall_Dark:
 	case FileIOConstants::IOMode::Texture_Wall_Light:
+	case FileIOConstants::IOMode::Texture_Weapon:
 	{
 		const size_t split = line.find( " " );
 		const std::string name = line.substr( 0, split );

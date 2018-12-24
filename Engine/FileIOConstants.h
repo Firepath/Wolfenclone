@@ -10,24 +10,30 @@ public:
 	{
 		None,
 		List_Files,
+		Texture_Ammo,
 		Texture_Decoration,
 		Texture_Door_Dark,
 		Texture_Door_Light,
 		Texture_Font,
 		Texture_Furniture,
 		Texture_Health,
+		Texture_Key,
 		Texture_Treasure,
 		Texture_Wall_Dark,
 		Texture_Wall_Light,
+		Texture_Weapon,
 		Font,
+		Fixture_Ammo,
 		Fixture_Decoration,
 		Fixture_Door_Dark,
 		Fixture_Door_Light,
 		Fixture_Furniture,
 		Fixture_Health,
+		Fixture_Key,
 		Fixture_Treasure,
 		Fixture_Wall_Dark,
 		Fixture_Wall_Light,
+		Fixture_Weapon,
 		Fixture_Menu,
 		Map_Name,
 		Map_Cell_Content,
@@ -47,21 +53,26 @@ public:
 	static constexpr char FixtureList[] = "Fixtures";
 	static constexpr char MenuList[] = "Menus";
 
+	static constexpr char TextureAmmo[] = "[Texture Ammo]";
 	static constexpr char TextureDecoration[] = "[Texture Decoration]";
 	static constexpr char TextureDoorDark[] = "[Texture Door Dark]";
 	static constexpr char TextureDoorLight[] = "[Texture Door Light]";
 	static constexpr char TextureFont[] = "[Texture Font]";
 	static constexpr char TextureFurniture[] = "[Texture Furniture]";
 	static constexpr char TextureHealth[] = "[Texture Health]";
+	static constexpr char TextureKey[] = "[Texture Key]";
 	static constexpr char TextureTreasure[] = "[Texture Treasure]";
 	static constexpr char TextureWallDark[] = "[Texture Wall Dark]";
 	static constexpr char TextureWallLight[] = "[Texture Wall Light]";
+	static constexpr char TextureWeapon[] = "[Texture Weapon]";
 	static constexpr char TextureComment[] = "'{Texture Name} {Relative File Path}";
 
 	static constexpr char Font[] = "[Font]";
 	static constexpr char FontComment[] = "'{Font Name} {Texture Name}";
 	static constexpr char MenuFont[] = "MenuFont";
 
+	static constexpr char FixtureAmmo[] = "[Fixture Ammo]";
+	static constexpr char FixtureAmmoComment[] = "'{Fixture Name} {Texture Name}";
 	static constexpr char FixtureDecoration[] = "[Fixture Decoration]";
 	static constexpr char FixtureDecorationComment[] = "'{Fixture Name} {Texture Name}";
 	static constexpr char FixtureDoorDark[] = "[Fixture Door Dark]";
@@ -71,11 +82,15 @@ public:
 	static constexpr char FixtureFurnitureComment[] = "'{Fixture Name} {Texture Name}";
 	static constexpr char FixtureHealth[] = "[Fixture Health]";
 	static constexpr char FixtureHealthComment[] = "'{Fixture Name} {Texture Name}";
+	static constexpr char FixtureKey[] = "[Fixture Key]";
+	static constexpr char FixtureKeyComment[] = "'{Fixture Name} {Texture Name}";
 	static constexpr char FixtureTreasure[] = "[Fixture Treasure]";
 	static constexpr char FixtureTreasureComment[] = "'{Fixture Name} {Texture Name}";
 	static constexpr char FixtureWallDark[] = "[Fixture Wall Dark]";
 	static constexpr char FixtureWallLight[] = "[Fixture Wall Light]";
 	static constexpr char FixtureWallComment[] = "'{Fixture Name} {Texture Name}";
+	static constexpr char FixtureWeapon[] = "[Fixture Weapon]";
+	static constexpr char FixtureWeaponComment[] = "'{Fixture Name} {Texture Name}";
 
 	static constexpr char FixtureMenu[] = "[Fixture Menu]";
 	static constexpr char FixtureMenuComment[] = "'[(Menu Name)] {(Parent Menu Name)} {[Fixture Type]} {[Number of Columns]}";
@@ -93,6 +108,8 @@ public:
 			return FileIOConstants::None;
 		case IOMode::List_Files:
 			return FileIOConstants::ListFiles;
+		case IOMode::Texture_Ammo:
+			return FileIOConstants::TextureAmmo;
 		case IOMode::Texture_Decoration:
 			return FileIOConstants::TextureDecoration;
 		case IOMode::Texture_Door_Dark:
@@ -105,14 +122,20 @@ public:
 			return FileIOConstants::TextureFurniture;
 		case IOMode::Texture_Health:
 			return FileIOConstants::TextureHealth;
+		case IOMode::Texture_Key:
+			return FileIOConstants::TextureKey;
 		case IOMode::Texture_Treasure:
 			return FileIOConstants::TextureTreasure;
 		case IOMode::Texture_Wall_Dark:
 			return FileIOConstants::TextureWallDark;
 		case IOMode::Texture_Wall_Light:
 			return FileIOConstants::TextureWallLight;
+		case IOMode::Texture_Weapon:
+			return FileIOConstants::TextureWeapon;
 		case IOMode::Font:
 			return FileIOConstants::Font;
+		case IOMode::Fixture_Ammo:
+			return FileIOConstants::FixtureAmmo;
 		case IOMode::Fixture_Decoration:
 			return FileIOConstants::FixtureDecoration;
 		case IOMode::Fixture_Door_Dark:
@@ -123,12 +146,16 @@ public:
 			return FileIOConstants::FixtureFurniture;
 		case IOMode::Fixture_Health:
 			return FileIOConstants::FixtureHealth;
+		case IOMode::Fixture_Key:
+			return FileIOConstants::FixtureKey;
 		case IOMode::Fixture_Treasure:
 			return FileIOConstants::FixtureTreasure;
 		case IOMode::Fixture_Wall_Dark:
 			return FileIOConstants::FixtureWallDark;
 		case IOMode::Fixture_Wall_Light:
 			return FileIOConstants::FixtureWallLight;
+		case IOMode::Fixture_Weapon:
+			return FileIOConstants::FixtureWeapon;
 		case IOMode::Fixture_Menu:
 			return FileIOConstants::FixtureMenu;
 		case IOMode::Map_Name:
@@ -151,18 +178,23 @@ public:
 			return FileIOConstants::None;
 		case IOMode::List_Files:
 			return FileIOConstants::ListFilesComment;
+		case IOMode::Texture_Ammo:
 		case IOMode::Texture_Decoration:
 		case IOMode::Texture_Door_Dark:
 		case IOMode::Texture_Door_Light:
 		case IOMode::Texture_Font:
 		case IOMode::Texture_Furniture:
 		case IOMode::Texture_Health:
+		case IOMode::Texture_Key:
 		case IOMode::Texture_Treasure:
 		case IOMode::Texture_Wall_Dark:
 		case IOMode::Texture_Wall_Light:
+		case IOMode::Texture_Weapon:
 			return FileIOConstants::TextureComment;
 		case IOMode::Font:
 			return FileIOConstants::FontComment;
+		case IOMode::Fixture_Ammo:
+			return FileIOConstants::FixtureAmmoComment;
 		case IOMode::Fixture_Decoration:
 			return FileIOConstants::FixtureDecorationComment;
 		case IOMode::Fixture_Door_Dark:
@@ -172,11 +204,15 @@ public:
 			return FileIOConstants::FixtureFurnitureComment;
 		case IOMode::Fixture_Health:
 			return FileIOConstants::FixtureHealthComment;
+		case IOMode::Fixture_Key:
+			return FileIOConstants::FixtureKeyComment;
 		case IOMode::Fixture_Treasure:
 			return FileIOConstants::FixtureTreasureComment;
 		case IOMode::Fixture_Wall_Dark:
 		case IOMode::Fixture_Wall_Light:
 			return FileIOConstants::FixtureWallComment;
+		case IOMode::Fixture_Weapon:
+			return FileIOConstants::FixtureWeaponComment;
 		case IOMode::Fixture_Menu:
 			return FileIOConstants::FixtureMenuComment;
 		case IOMode::Map_Name:
