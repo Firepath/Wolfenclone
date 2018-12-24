@@ -216,6 +216,9 @@
     <ClInclude Include="Decoration.h">
       <Filter>Header Files\Map\Fixtures</Filter>
     </ClInclude>
+    <ClInclude Include="Door.h">
+      <Filter>Header Files\Map\Fixtures</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Game.cpp">
@@ -330,7 +333,10 @@
       <Filter>Source Files\Map\Fixtures</Filter>
     </ClCompile>
     <ClCompile Include="Decoration.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Map\Fixtures</Filter>
+    </ClCompile>
+    <ClCompile Include="Door.cpp">
+      <Filter>Source Files\Map\Fixtures</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

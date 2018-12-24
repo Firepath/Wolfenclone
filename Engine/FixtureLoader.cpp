@@ -1,5 +1,7 @@
-#include "FileIOConstants.h"
 #include "FixtureLoader.h"
+
+#include "Door.h"
+#include "FileIOConstants.h"
 #include "Treasure.h"
 #include "Wall.h"
 
@@ -41,7 +43,8 @@ void FixtureLoader::ReadLine( const std::string & line )
 		{
 		case FileIOConstants::IOMode::Fixture_Door_Dark:
 		case FileIOConstants::IOMode::Fixture_Door_Light:
-			// TODO: Door type
+			fixture = std::make_unique<Door>( name, type, texture );
+			break;
 		case FileIOConstants::IOMode::Fixture_Wall_Dark:
 		case FileIOConstants::IOMode::Fixture_Wall_Light:
 			fixture = std::make_unique<Wall>( name, type, texture );

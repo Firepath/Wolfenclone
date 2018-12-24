@@ -142,6 +142,7 @@
     <ClInclude Include="Colors.h" />
     <ClInclude Include="ComManager.h" />
     <ClInclude Include="Decoration.h" />
+    <ClInclude Include="Door.h" />
     <ClInclude Include="DXErr.h" />
     <ClInclude Include="EditConstants.h" />
     <ClInclude Include="Editor.h" />
@@ -183,6 +184,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Decoration.cpp" />
+    <ClCompile Include="Door.cpp" />
     <ClCompile Include="DXErr.cpp" />
     <ClCompile Include="Editor.cpp" />
     <ClCompile Include="EditTool.cpp" />
