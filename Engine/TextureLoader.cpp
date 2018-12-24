@@ -16,9 +16,12 @@ void TextureLoader::ReadLine( const std::string& line )
 {
 	switch ( Mode )
 	{
+	case FileIOConstants::IOMode::Texture_Decoration:
 	case FileIOConstants::IOMode::Texture_Door_Dark:
 	case FileIOConstants::IOMode::Texture_Door_Light:
 	case FileIOConstants::IOMode::Texture_Font:
+	case FileIOConstants::IOMode::Texture_Furniture:
+	case FileIOConstants::IOMode::Texture_Health:
 	case FileIOConstants::IOMode::Texture_Treasure:
 	case FileIOConstants::IOMode::Texture_Wall_Dark:
 	case FileIOConstants::IOMode::Texture_Wall_Light:

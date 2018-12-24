@@ -7,6 +7,11 @@ Decoration::Decoration( const std::string name, const std::string type, const Su
 {
 }
 
+const bool Decoration::BlocksMovement() const
+{
+	return false;
+}
+
 void Decoration::Draw( const RectI area, Graphics & gfx ) const
 {
 	if ( Texture != nullptr )

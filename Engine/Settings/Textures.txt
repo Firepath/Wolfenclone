@@ -1,6 +1,10 @@
 [Texture Font]
 '{Texture Name} {Relative File Path}
 Font_Fixedsys16x28 Textures\Fonts\Fixedsys16x28.bmp
+[Texture Decoration]
+'{Texture Name} {Relative File Path}
+SPR00002 Textures\Decorations\Misc\SPR00002.bmp
+SPR00006 Textures\Decorations\Misc\SPR00006.bmp
 [Texture Door Dark]
 '{Texture Name} {Relative File Path}
 WAL00099 Textures\Doors\Dark\WAL00099.bmp
@@ -13,9 +17,18 @@ WAL00098 Textures\Doors\Light\WAL00098.bmp
 WAL00100 Textures\Doors\Light\WAL00100.bmp
 WAL00102 Textures\Doors\Light\WAL00102.bmp
 WAL00104 Textures\Doors\Light\WAL00104.bmp
+[Texture Furniture]
+'{Texture Name} {Relative File Path}
+SPR00003 Textures\Decorations\Furniture\SPR00003.bmp
+SPR00004 Textures\Decorations\Furniture\SPR00004.bmp
+SPR00005 Textures\Decorations\Furniture\SPR00005.bmp
+SPR00007 Textures\Decorations\Furniture\SPR00007.bmp
+[Texture Health]
+'{Texture Name} {Relative File Path}
+SPR00008 Textures\Decorations\Pickups\Health\SPR00008.bmp
 [Texture Treasure]
 '{Texture Name} {Relative File Path}
-SPR00031 Textures\Treasure\SPR00031.bmp
+SPR00031 Textures\Decorations\Pickups\Treasure\SPR00031.bmp
 [Texture Wall Dark]
 '{Texture Name} {Relative File Path}
 WAL00001 Textures\Walls\Dark\WAL00001.bmp

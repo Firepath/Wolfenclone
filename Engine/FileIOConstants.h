@@ -10,15 +10,21 @@ public:
 	{
 		None,
 		List_Files,
+		Texture_Decoration,
 		Texture_Door_Dark,
 		Texture_Door_Light,
 		Texture_Font,
+		Texture_Furniture,
+		Texture_Health,
 		Texture_Treasure,
 		Texture_Wall_Dark,
 		Texture_Wall_Light,
 		Font,
+		Fixture_Decoration,
 		Fixture_Door_Dark,
 		Fixture_Door_Light,
+		Fixture_Furniture,
+		Fixture_Health,
 		Fixture_Treasure,
 		Fixture_Wall_Dark,
 		Fixture_Wall_Light,
@@ -41,9 +47,12 @@ public:
 	static constexpr char FixtureList[] = "Fixtures";
 	static constexpr char MenuList[] = "Menus";
 
+	static constexpr char TextureDecoration[] = "[Texture Decoration]";
 	static constexpr char TextureDoorDark[] = "[Texture Door Dark]";
 	static constexpr char TextureDoorLight[] = "[Texture Door Light]";
 	static constexpr char TextureFont[] = "[Texture Font]";
+	static constexpr char TextureFurniture[] = "[Texture Furniture]";
+	static constexpr char TextureHealth[] = "[Texture Health]";
 	static constexpr char TextureTreasure[] = "[Texture Treasure]";
 	static constexpr char TextureWallDark[] = "[Texture Wall Dark]";
 	static constexpr char TextureWallLight[] = "[Texture Wall Light]";
@@ -53,9 +62,15 @@ public:
 	static constexpr char FontComment[] = "'{Font Name} {Texture Name}";
 	static constexpr char MenuFont[] = "MenuFont";
 
+	static constexpr char FixtureDecoration[] = "[Fixture Decoration]";
+	static constexpr char FixtureDecorationComment[] = "'{Fixture Name} {Texture Name}";
 	static constexpr char FixtureDoorDark[] = "[Fixture Door Dark]";
 	static constexpr char FixtureDoorLight[] = "[Fixture Door Light]";
 	static constexpr char FixtureDoorComment[] = "'{Fixture Name} {Texture Name}";
+	static constexpr char FixtureFurniture[] = "[Fixture Furniture]";
+	static constexpr char FixtureFurnitureComment[] = "'{Fixture Name} {Texture Name}";
+	static constexpr char FixtureHealth[] = "[Fixture Health]";
+	static constexpr char FixtureHealthComment[] = "'{Fixture Name} {Texture Name}";
 	static constexpr char FixtureTreasure[] = "[Fixture Treasure]";
 	static constexpr char FixtureTreasureComment[] = "'{Fixture Name} {Texture Name}";
 	static constexpr char FixtureWallDark[] = "[Fixture Wall Dark]";
@@ -78,12 +93,18 @@ public:
 			return FileIOConstants::None;
 		case IOMode::List_Files:
 			return FileIOConstants::ListFiles;
+		case IOMode::Texture_Decoration:
+			return FileIOConstants::TextureDecoration;
 		case IOMode::Texture_Door_Dark:
 			return FileIOConstants::TextureDoorDark;
 		case IOMode::Texture_Door_Light:
 			return FileIOConstants::TextureDoorLight;
 		case IOMode::Texture_Font:
 			return FileIOConstants::TextureFont;
+		case IOMode::Texture_Furniture:
+			return FileIOConstants::TextureFurniture;
+		case IOMode::Texture_Health:
+			return FileIOConstants::TextureHealth;
 		case IOMode::Texture_Treasure:
 			return FileIOConstants::TextureTreasure;
 		case IOMode::Texture_Wall_Dark:
@@ -92,10 +113,16 @@ public:
 			return FileIOConstants::TextureWallLight;
 		case IOMode::Font:
 			return FileIOConstants::Font;
+		case IOMode::Fixture_Decoration:
+			return FileIOConstants::FixtureDecoration;
 		case IOMode::Fixture_Door_Dark:
 			return FileIOConstants::FixtureDoorDark;
 		case IOMode::Fixture_Door_Light:
 			return FileIOConstants::FixtureDoorLight;
+		case IOMode::Fixture_Furniture:
+			return FileIOConstants::FixtureFurniture;
+		case IOMode::Fixture_Health:
+			return FileIOConstants::FixtureHealth;
 		case IOMode::Fixture_Treasure:
 			return FileIOConstants::FixtureTreasure;
 		case IOMode::Fixture_Wall_Dark:
@@ -124,18 +151,27 @@ public:
 			return FileIOConstants::None;
 		case IOMode::List_Files:
 			return FileIOConstants::ListFilesComment;
+		case IOMode::Texture_Decoration:
 		case IOMode::Texture_Door_Dark:
 		case IOMode::Texture_Door_Light:
 		case IOMode::Texture_Font:
+		case IOMode::Texture_Furniture:
+		case IOMode::Texture_Health:
 		case IOMode::Texture_Treasure:
 		case IOMode::Texture_Wall_Dark:
 		case IOMode::Texture_Wall_Light:
 			return FileIOConstants::TextureComment;
 		case IOMode::Font:
 			return FileIOConstants::FontComment;
+		case IOMode::Fixture_Decoration:
+			return FileIOConstants::FixtureDecorationComment;
 		case IOMode::Fixture_Door_Dark:
 		case IOMode::Fixture_Door_Light:
 			return FileIOConstants::FixtureDoorComment;
+		case IOMode::Fixture_Furniture:
+			return FileIOConstants::FixtureFurnitureComment;
+		case IOMode::Fixture_Health:
+			return FileIOConstants::FixtureHealthComment;
 		case IOMode::Fixture_Treasure:
 			return FileIOConstants::FixtureTreasureComment;
 		case IOMode::Fixture_Wall_Dark:

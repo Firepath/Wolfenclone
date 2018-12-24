@@ -1,3 +1,7 @@
+[Fixture Decoration]
+'{Fixture Name} {Texture Name}
+SPR00002 SPR00002
+SPR00006 SPR00006
 [Fixture Door Dark]
 '{Fixture Name} {Texture Name}
 WAL00099 WAL00099
@@ -8,6 +12,15 @@ WAL00105 WAL00105
 WAL00098 WAL00098
 WAL00102 WAL00102
 WAL00104 WAL00104
+[Fixture Furniture]
+'{Fixture Name} {Texture Name}
+SPR00003 SPR00003
+SPR00004 SPR00004
+SPR00005 SPR00005
+SPR00007 SPR00007
+[Fixture Health]
+'{Fixture Name} {Texture Name}
+SPR00008 SPR00008
 [Fixture Treasure]
 '{Fixture Name} {Texture Name}
 SPR00031 SPR00031

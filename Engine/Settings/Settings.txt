@@ -2,5 +2,5 @@
 '{List Name} {Relative File Path}
 Textures Settings\Textures.txt
 Fonts Settings\Fonts.txt
-Fixtures Settings\MapFixtures.txt
+Fixtures Settings\Fixtures.txt
 Menus Settings\Menus.txt

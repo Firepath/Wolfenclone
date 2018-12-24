@@ -219,6 +219,12 @@
     <ClInclude Include="Door.h">
       <Filter>Header Files\Map\Fixtures</Filter>
     </ClInclude>
+    <ClInclude Include="Furniture.h">
+      <Filter>Header Files\Map\Fixtures</Filter>
+    </ClInclude>
+    <ClInclude Include="Health.h">
+      <Filter>Header Files\Map\Fixtures</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Game.cpp">
@@ -336,6 +342,12 @@
       <Filter>Source Files\Map\Fixtures</Filter>
     </ClCompile>
     <ClCompile Include="Door.cpp">
+      <Filter>Source Files\Map\Fixtures</Filter>
+    </ClCompile>
+    <ClCompile Include="Furniture.cpp">
+      <Filter>Source Files\Map\Fixtures</Filter>
+    </ClCompile>
+    <ClCompile Include="Health.cpp">
       <Filter>Source Files\Map\Fixtures</Filter>
     </ClCompile>
   </ItemGroup>

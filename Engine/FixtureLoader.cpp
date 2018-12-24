@@ -2,6 +2,8 @@
 
 #include "Door.h"
 #include "FileIOConstants.h"
+#include "Furniture.h"
+#include "Health.h"
 #include "Treasure.h"
 #include "Wall.h"
 
@@ -25,8 +27,11 @@ void FixtureLoader::ReadLine( const std::string & line )
 {
 	switch ( Mode )
 	{
+	case FileIOConstants::IOMode::Fixture_Decoration:
 	case FileIOConstants::IOMode::Fixture_Door_Dark:
 	case FileIOConstants::IOMode::Fixture_Door_Light:
+	case FileIOConstants::IOMode::Fixture_Furniture:
+	case FileIOConstants::IOMode::Fixture_Health:
 	case FileIOConstants::IOMode::Fixture_Treasure:
 	case FileIOConstants::IOMode::Fixture_Wall_Dark:
 	case FileIOConstants::IOMode::Fixture_Wall_Light:
@@ -41,16 +46,24 @@ void FixtureLoader::ReadLine( const std::string & line )
 
 		switch ( Mode )
 		{
+		case FileIOConstants::IOMode::Fixture_Decoration:
+			fixture = std::make_unique<Decoration>( name, type, texture );
 		case FileIOConstants::IOMode::Fixture_Door_Dark:
 		case FileIOConstants::IOMode::Fixture_Door_Light:
 			fixture = std::make_unique<Door>( name, type, texture );
 			break;
-		case FileIOConstants::IOMode::Fixture_Wall_Dark:
-		case FileIOConstants::IOMode::Fixture_Wall_Light:
-			fixture = std::make_unique<Wall>( name, type, texture );
+		case FileIOConstants::IOMode::Fixture_Furniture:
+			fixture = std::make_unique<Furniture>( name, type, texture );
+			break;
+		case FileIOConstants::IOMode::Fixture_Health:
+			fixture = std::make_unique<Health>( name, type, texture );
 			break;
 		case FileIOConstants::IOMode::Fixture_Treasure:
 			fixture = std::make_unique<Treasure>( name, type, texture );
+			break;
+		case FileIOConstants::IOMode::Fixture_Wall_Dark:
+		case FileIOConstants::IOMode::Fixture_Wall_Light:
+			fixture = std::make_unique<Wall>( name, type, texture );
 			break;
 		default:
 			break;

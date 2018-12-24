@@ -31,10 +31,15 @@ defined differently to its parent.
 
 
 	 ->	Decoration
+		 - BlocksMovement
 		 - Draw
 
-		 ->	Pickup
+
+		 ->	Furniture
 			 - BlocksMovement
+
+
+		 ->	Pickup
 
 		 These could be different payloads inside a pickup, or just different types of pickups.
 		 There doesn't seem to be any real advantage to either way, except extra separation, but no idea why that is beneficial.
